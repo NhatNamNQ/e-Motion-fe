@@ -1,6 +1,4 @@
-import { MapPin } from 'lucide-react'
-import { Button } from '../components/ui/button'
-import SelectItems from '../components/SelectItems'
+import { Button } from '../../../components/ui/button'
 import { useEffect, useState } from 'react'
 
 function HomePage() {
@@ -23,18 +21,6 @@ function HomePage() {
 
   return (
     <div>
-      <header className='flex h-30 items-center border-b'>
-        <div className='container mx-auto flex justify-between px-4'>
-          <h1 className='text-3xl'>Logo</h1>
-          <nav className='flex items-center space-x-4'>
-            <p>Xem danh sách xe</p>
-            <div className='flex'>
-              <SelectItems children={<MapPin color='#51C09F' />} />
-            </div>
-            <Button className='bg-[#51C09F] px-6 py-2 hover:bg-[#51C09F]/80'>Đăng Nhập</Button>
-          </nav>
-        </div>
-      </header>
       <main>
         <div className='relative h-[calc(100vh-7.5rem)]'>
           <img
@@ -63,6 +49,13 @@ function HomePage() {
             </Button>
           </div>
         </div>
+        <div>Noi dung tiep theo</div>
+        <div>Noi dung tiep theo</div>
+        <div>Noi dung tiep theo</div>
+        <div>Noi dung tiep theo</div>
+        <div>Noi dung tiep theo</div>
+        <div>Noi dung tiep theo</div>
+        <div>Noi dung tiep theo</div>
         <div>Noi dung tiep theo</div>
       </main>
     </div>
