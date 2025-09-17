@@ -1,12 +1,51 @@
-# React + Vite
+# e-Motion Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the e-Motion project, built with React and Vite. It provides the user interface and interacts with the backend services.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Before you begin, ensure you have the following installed on your system:
 
-## Expanding the ESLint configuration
+- [Node.js](https://nodejs.org/) (v18.x or later is recommended)
+- [npm](https://www.npmjs.com/) (which comes with Node.js)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+Follow these instructions to get the project up and running on your local machine for development purposes.
+
+### 1. Clone the Repository
+
+If you haven't already, clone the project to your local machine.
+
+```bash
+git clone <your-repository-url>
+cd e-Motion-fe
+```
+
+### 2. Install Dependencies
+
+This command will install all the necessary packages required for the project.
+
+```bash
+npm install
+```
+
+### 3. Run the Development Server
+
+To start the local development server, run the following command. The server supports hot-reloading, so changes in the code will be reflected in the browser instantly.
+
+```bash
+npm run dev
+```
+
+By default, the application will be available at **http://localhost:5173**.
+
+## Available Scripts
+
+This project comes with several useful scripts defined in `package.json`:
+
+- `npm run dev`: Starts the development server.
+- `npm run build`: Bundles the app into static files for production. The output is in the `dist/` directory.
+- `npm run preview`: Starts a local server to preview the production build.
+- `npm run lint`: Lints the codebase to find and fix stylistic and syntax errors.
+- `npm run format`: Formats all code using Prettier.
