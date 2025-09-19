@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './features/home/pages/HomePage'
 import MainLayout from './layout/MainLayout'
 import LoginPage from './features/auth/pages/LoginPage'
+import RegisterPage from './features/auth/pages/RegisterPage' // Assuming the file is still named SignupPage.jsx
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       {
         path: '/auth/login',
         element: <LoginPage />
+      },
+      {
+        path: '/auth/register',
+        element: <RegisterPage />
       }
     ]
   }
