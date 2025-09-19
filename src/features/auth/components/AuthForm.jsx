@@ -59,19 +59,34 @@ const AuthForm = ({ config, formSchema, onSubmit, formType }) => {
             </Link>
           </div>
         )}
+        {/* Agree to Terms (Register) */}
+        {formType === 'register' && (
+          <FormFieldCheckbox
+            control={form.control}
+            name='agreeToTerms'
+            label={
+              <span>
+                Tôi đồng ý với{' '}
+                <Link to='/terms' className='hover:underline'>
+                  Điều khoản và Hợp đồng
+                </Link>
+              </span>
+            }
+          />
+        )}
         <Button type='submit' className='w-full bg-[#51C09F] hover:bg-[#51C09F]/80'>
           {config.buttonText}
           <ArrowRight className='' />
         </Button>
-        {/* Sign Up Link (Login)*/}
+        {/* Dont have account (Login)*/}
         {formType === 'login' && (
           <p className='mt-8 text-center text-sm text-gray-600'>
-            Don't have an account?{' '}
+            Không có tài khoản?{' '}
             <Link
-              to='/auth/signup'
+              to='/auth/register'
               className='font-medium text-teal-500 transition-colors hover:text-teal-600'
             >
-              Sign up
+              Đăng ký
             </Link>
           </p>
         )}
