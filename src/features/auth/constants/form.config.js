@@ -61,3 +61,42 @@ export const registerConfig = {
     }
   ]
 }
+
+export const forgotPasswordConfig = {
+  title: 'Quên mật khẩu',
+  buttonText: 'Nhập email đặt lại mật khẩu',
+  defaultValues: {
+    email: ''
+  },
+  fields: [
+    {
+      name: 'email',
+      label: 'Email',
+      type: 'email',
+      placeholder: 'Nhập email của bạn'
+    }
+  ]
+}
+
+export const resetPasswordConfig = {
+  title: 'Đặt lại mật khẩu',
+  buttonText: 'Xác nhận',
+  defaultValues: {
+    password: '',
+    confirmPassword: ''
+  },
+  fields: [
+    {
+      name: 'password',
+      label: 'Mật khẩu mới',
+      type: 'password',
+      placeholder: 'Nhập mật khẩu mới'
+    },
+    {
+      name: 'confirmPassword',
+      label: 'Xác nhận mật khẩu mới',
+      type: 'password',
+      placeholder: 'Nhập lại mật khẩu mới'
+    }
+  ]
+}
