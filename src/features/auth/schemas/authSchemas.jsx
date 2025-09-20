@@ -38,3 +38,17 @@ export const otpSchema = z.object({
     message: 'Mã OTP phải có 6 ký tự.'
   })
 })
+
+export const forgotPasswordSchema = z.object({
+  email: emailValidation
+})
+
+export const resetPasswordSchema = z
+  .object({
+    password: passwordValidation,
+    confirmPassword: z.string()
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Mật khẩu không khớp',
+    path: ['confirmPassword']
+  })
