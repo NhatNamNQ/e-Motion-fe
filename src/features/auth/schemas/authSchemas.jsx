@@ -32,3 +32,9 @@ export const registerSchema = z
     message: 'Mật khẩu không khớp',
     path: ['confirmPassword']
   })
+
+export const otpSchema = z.object({
+  otp: z.string().min(6, {
+    message: 'Mã OTP phải có 6 ký tự.'
+  })
+})
