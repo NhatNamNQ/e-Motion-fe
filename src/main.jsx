@@ -5,6 +5,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './features/home/pages/HomePage'
 import MainLayout from './layout/MainLayout'
 import LoginPage from './features/auth/pages/LoginPage'
+import RegisterPage from './features/auth/pages/RegisterPage' // Assuming the file is still named SignupPage.jsx
+import OtpPage from './features/auth/pages/OtpPage'
+import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
+import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 
 const router = createBrowserRouter([
   {
@@ -18,6 +22,22 @@ const router = createBrowserRouter([
       {
         path: '/auth/login',
         element: <LoginPage />
+      },
+      {
+        path: '/auth/register',
+        element: <RegisterPage />
+      },
+      {
+        path: '/auth/verify-otp',
+        element: <OtpPage />
+      },
+      {
+        path: '/auth/forgot-password',
+        element: <ForgotPasswordPage />
+      },
+      {
+        path: 'auth/reset-password',
+        element: <ResetPasswordPage />
       }
     ]
   }
