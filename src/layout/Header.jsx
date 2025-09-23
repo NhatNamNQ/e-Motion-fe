@@ -7,9 +7,11 @@ const Header = () => {
   return (
     <header className='flex h-30 items-center border-b'>
       <div className='container mx-auto flex justify-between px-4'>
-        <h1 className='text-3xl'>Logo</h1>
+        <Link to='/' className='cursor-pointer text-3xl'>
+          Logo
+        </Link>
         <nav className='flex items-center space-x-4'>
-          <p>Xem danh sách xe</p>
+          <Link to='/cars'>Xem danh sách xe</Link>
           <div className='flex'>
             <SelectItems children={<MapPin color='#51C09F' />} />
           </div>

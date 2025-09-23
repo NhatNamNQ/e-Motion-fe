@@ -9,6 +9,7 @@ import RegisterPage from './features/auth/pages/RegisterPage' // Assuming the fi
 import OtpPage from './features/auth/pages/OtpPage'
 import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
+import CarListPage from './features/cars/pages/CarListPage'
 
 const router = createBrowserRouter([
   {
@@ -36,8 +37,12 @@ const router = createBrowserRouter([
         element: <ForgotPasswordPage />
       },
       {
-        path: 'auth/reset-password',
+        path: '/auth/reset-password',
         element: <ResetPasswordPage />
+      },
+      {
+        path: '/cars',
+        element: <CarListPage />
       }
     ]
   }
