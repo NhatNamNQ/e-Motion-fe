@@ -1,9 +1,8 @@
 import { BatteryCharging, BatteryFull, CarFront, UsersRound } from 'lucide-react'
 
 const CarCard = ({ car }) => {
-  console.log(car)
   return (
-    <div className='rounded-md border'>
+    <div className='cursor-pointer rounded-md border'>
       <div className='relative'>
         <img
           src='https://placehold.co/282x210?text=Card'
@@ -13,7 +12,7 @@ const CarCard = ({ car }) => {
           className='w-full rounded-md'
         />
         <div
-          className={`absolute top-4 right-4 h-[40px] w-[90px] rounded-sm border p-2 text-center ${car.status === 'Sẵn có' ? 'bg-green-400' : 'bg-red-400'}`}
+          className={`text-background absolute top-4 right-4 rounded-sm border px-2 py-1 text-center text-sm ${car.status === 'Sẵn có' ? 'bg-green-400' : 'bg-red-400'}`}
         >
           {car.status}
         </div>
