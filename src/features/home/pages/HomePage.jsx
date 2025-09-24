@@ -1,10 +1,15 @@
 import { Button } from '../../../components/ui/button'
 import { useEffect, useState } from 'react'
+import { cars as mockCars } from '@/features/cars/constants/mockData'
+import CarsSlider from '@/features/cars/components/CarsSlider'
+import { Link } from 'react-router-dom'
 
 function HomePage() {
   const [isFixed, setIsFixed] = useState(false)
+  const [cars, setCars] = useState([])
 
   useEffect(() => {
+    setCars(mockCars)
     const handleScroll = () => {
       const scrollPosition = window.scrollY
       if (scrollPosition > 120) {
@@ -13,7 +18,6 @@ function HomePage() {
         setIsFixed(false)
       }
     }
-
     window.addEventListener('scroll', handleScroll)
     return () => {
       window.removeEventListener('scroll', handleScroll)
@@ -22,7 +26,7 @@ function HomePage() {
 
   return (
     <main>
-      <div className='relative h-[calc(100vh-7.5rem)] w-full'>
+      <section className='relative h-[calc(100vh-7.5rem)] w-full'>
         <div className="absolute inset-0 bg-[url('/backgroundHero.webp')] bg-cover bg-center" />
         <div className='absolute inset-0 bg-black/30' />
         <div
@@ -47,7 +51,18 @@ function HomePage() {
             </Button>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* View slider cars list */}
+      <section className='container mx-auto my-10'>
+        <h1 className='mb-4 text-center text-3xl font-bold'>Danh sách xe điện</h1>
+        <CarsSlider cars={cars} />
+        <div className='mt-6 flex justify-center'>
+          <Button className='bg-background text-secondary hover:text-background border-secondary hover:bg-secondary h-12 w-53 cursor-pointer border p-3 text-2xl'>
+            <Link to='/cars'>Xem thêm xe</Link>
+          </Button>
+        </div>
+      </section>
     </main>
   )
 }
