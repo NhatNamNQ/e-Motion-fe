@@ -1,15 +1,19 @@
 import { Button } from '../../../components/ui/button'
 import { useEffect, useState } from 'react'
 import { cars as mockCars } from '@/features/cars/constants/mockData'
+import { stations as mockStations } from '@/features/cars/constants/mockData'
 import CarsSlider from '@/features/cars/components/CarsSlider'
 import { Link } from 'react-router-dom'
+import MapboxMap from '@/components/MapboxMap'
 
 function HomePage() {
   const [isFixed, setIsFixed] = useState(false)
   const [cars, setCars] = useState([])
+  const [stations, setStations] = useState([])
 
   useEffect(() => {
     setCars(mockCars)
+    setStations(mockStations)
     const handleScroll = () => {
       const scrollPosition = window.scrollY
       if (scrollPosition > 120) {
@@ -53,16 +57,21 @@ function HomePage() {
         </div>
       </section>
 
-      {/* View slider cars list */}
-      <section className='container mx-auto my-10'>
-        <h1 className='mb-4 text-center text-3xl font-bold'>Danh sách xe điện</h1>
-        <CarsSlider cars={cars} />
-        <div className='mt-6 flex justify-center'>
-          <Button className='bg-background text-secondary hover:text-background border-secondary hover:bg-secondary h-12 w-53 cursor-pointer border p-3 text-2xl'>
-            <Link to='/cars'>Xem thêm xe</Link>
-          </Button>
-        </div>
-      </section>
+      <div className='container mx-auto'>
+        {/* View slider cars list */}
+        <section className='my-10'>
+          <h1 className='mb-4 text-center text-3xl font-bold'>Danh sách xe điện</h1>
+          <CarsSlider cars={cars} />
+          <div className='mt-6 flex justify-center'>
+            <Button className='bg-background text-secondary hover:text-background border-secondary hover:bg-secondary h-12 w-53 cursor-pointer border p-3 text-2xl'>
+              <Link to='/cars'>Xem thêm xe</Link>
+            </Button>
+          </div>
+        </section>
+
+        {/* Show map */}
+        <section>{stations.length > 0 && <MapboxMap station={stations[0]} />}</section>
+      </div>
     </main>
   )
 }

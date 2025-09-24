@@ -1,3 +1,29 @@
+export const stations = [
+  {
+    id: 'STN01',
+    name: 'Trạm Vincom Center Đồng Khởi',
+    district: 'Quận 1',
+    location: '72 Lê Thánh Tôn, P. Bến Nghé, Quận 1',
+    lng: 106.70189,
+    lat: 10.77815
+  },
+  {
+    id: 'STN02',
+    name: 'Trạm Crescent Mall',
+    district: 'Quận 7',
+    location: '101 Tôn Dật Tiên, P. Tân Phú, Quận 7',
+    lng: 106.71756,
+    lat: 10.72881
+  },
+  {
+    id: 'STN03',
+    name: 'Trạm Vạn Hạnh Mall',
+    district: 'Quận 10',
+    location: '11 Sư Vạn Hạnh, P. 12, Quận 10',
+    lng: 106.66952,
+    lat: 10.77061
+  }
+]
 export const cars = [
   {
     id: 1,
@@ -8,8 +34,9 @@ export const cars = [
     type: 'Crossover',
     battery: '42 kWh',
     consumption: '15.5 (WLTP)',
-    district: 'Quận 1',
-    location: 'Bãi xe Vincom Center, 72 Lê Thánh Tôn, P. Bến Nghé'
+    stationId: 'STN01', // Assigned to Station 1
+    district: 'Quận 1', // Location updated
+    location: 'Trạm Vincom Center Đồng Khởi' // Location updated
   },
   {
     id: 2,
@@ -18,10 +45,11 @@ export const cars = [
     status: 'Sẵn có',
     seats: 5,
     type: 'Sedan',
-    battery: '57.5 kWh', // Standard Range
+    battery: '57.5 kWh',
     consumption: '14.1 (WLTP)',
-    district: 'Quận 7',
-    location: 'Bãi xe Crescent Mall, 101 Tôn Dật Tiên, P. Tân Phú'
+    stationId: 'STN02', // Assigned to Station 2
+    district: 'Quận 7', // Location updated
+    location: 'Trạm Crescent Mall' // Location updated
   },
   {
     id: 3,
@@ -30,10 +58,11 @@ export const cars = [
     status: 'Đang thuê',
     seats: 5,
     type: 'SUV',
-    battery: '72.6 kWh', // Long Range
+    battery: '72.6 kWh',
     consumption: '16.8 (WLTP)',
-    district: 'TP. Thủ Đức',
-    location: 'Khu đô thị Sala, 10 Mai Chí Thọ, P. An Lợi Đông'
+    stationId: 'STN03', // Assigned to Station 3
+    district: 'Quận 10', // Location updated
+    location: 'Trạm Vạn Hạnh Mall' // Location updated
   },
   {
     id: 4,
@@ -42,10 +71,11 @@ export const cars = [
     status: 'Sẵn có',
     seats: 5,
     type: 'Crossover',
-    battery: '77.4 kWh', // Long Range
+    battery: '77.4 kWh',
     consumption: '16.5 (WLTP)',
-    district: 'Quận 3',
-    location: '28 Võ Văn Tần, P. Võ Thị Sáu'
+    stationId: 'STN01', // Assigned to Station 1
+    district: 'Quận 1',
+    location: 'Trạm Vincom Center Đồng Khởi'
   },
   {
     id: 5,
@@ -54,10 +84,11 @@ export const cars = [
     status: 'Sẵn có',
     seats: 5,
     type: 'SUV',
-    battery: '87.7 kWh', // Eco version
+    battery: '87.7 kWh',
     consumption: '18.6 (WLTP)',
-    district: 'Quận 10',
-    location: 'Vạn Hạnh Mall, 11 Sư Vạn Hạnh, P. 12'
+    stationId: 'STN02', // Assigned to Station 2
+    district: 'Quận 7',
+    location: 'Trạm Crescent Mall'
   },
   {
     id: 6,
@@ -66,10 +97,11 @@ export const cars = [
     status: 'Sẵn có',
     seats: 4,
     type: 'Sedan',
-    battery: '93.4 kWh', // Performance Battery Plus
+    battery: '93.4 kWh',
     consumption: '20.2 (WLTP)',
-    district: 'Quận 1',
-    location: 'Khách sạn Park Hyatt, 2 Công trường Lam Sơn, P. Bến Nghé'
+    stationId: 'STN03', // Assigned to Station 3
+    district: 'Quận 10',
+    location: 'Trạm Vạn Hạnh Mall'
   },
   {
     id: 7,
@@ -80,8 +112,9 @@ export const cars = [
     type: 'Hatchback',
     battery: '13.9 kWh',
     consumption: '8.8 (NEDC)',
-    district: 'Quận Bình Thạnh',
-    location: 'Landmark 81, 720A Điện Biên Phủ, P. 22'
+    stationId: 'STN01', // Assigned to Station 1
+    district: 'Quận 1',
+    location: 'Trạm Vincom Center Đồng Khởi'
   },
   {
     id: 8,
@@ -92,8 +125,9 @@ export const cars = [
     type: 'SUV',
     battery: '92 kWh',
     consumption: '21.0 (WLTP)',
-    district: 'Quận 2',
-    location: 'Estella Place, 88 Song Hành, P. An Phú'
+    stationId: 'STN02', // Assigned to Station 2
+    district: 'Quận 7',
+    location: 'Trạm Crescent Mall'
   },
   {
     id: 9,
@@ -104,8 +138,9 @@ export const cars = [
     type: 'Sedan',
     battery: '93.4 kWh',
     consumption: '19.6 (WLTP)',
-    district: 'Quận 7',
-    location: 'SECC, 799 Nguyễn Văn Linh, P. Tân Phú'
+    stationId: 'STN03', // Assigned to Station 3
+    district: 'Quận 10',
+    location: 'Trạm Vạn Hạnh Mall'
   },
   {
     id: 10,
@@ -114,10 +149,11 @@ export const cars = [
     status: 'Sẵn có',
     seats: 7,
     type: 'SUV',
-    battery: '75 kWh', // Long Range
+    battery: '75 kWh',
     consumption: '16.9 (WLTP)',
-    district: 'TP. Thủ Đức',
-    location: 'Trường Đại học Fulbright Việt Nam, 105 Tôn Dật Tiên, P. Tân Phú'
+    stationId: 'STN01', // Assigned to Station 1
+    district: 'Quận 1',
+    location: 'Trạm Vincom Center Đồng Khởi'
   },
   {
     id: 11,
@@ -126,10 +162,11 @@ export const cars = [
     status: 'Sẵn có',
     seats: 7,
     type: 'SUV',
-    battery: '75 kWh', // Long Range
+    battery: '75 kWh',
     consumption: '16.9 (WLTP)',
-    district: 'TP. Thủ Đức',
-    location: 'Trường Đại học Fulbright Việt Nam, 105 Tôn Dật Tiên, P. Tân Phú'
+    stationId: 'STN02', // Assigned to Station 2
+    district: 'Quận 7',
+    location: 'Trạm Crescent Mall'
   },
   {
     id: 12,
@@ -138,9 +175,10 @@ export const cars = [
     status: 'Sẵn có',
     seats: 7,
     type: 'SUV',
-    battery: '75 kWh', // Long Range
+    battery: '75 kWh',
     consumption: '16.9 (WLTP)',
-    district: 'TP. Thủ Đức',
-    location: 'Trường Đại học Fulbright Việt Nam, 105 Tôn Dật Tiên, P. Tân Phú'
+    stationId: 'STN03', // Assigned to Station 3
+    district: 'Quận 10',
+    location: 'Trạm Vạn Hạnh Mall'
   }
 ]
