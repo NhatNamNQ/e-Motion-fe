@@ -17,7 +17,7 @@ const OtpForm = ({ onSubmit }) => {
   const form = useForm({
     resolver: zodResolver(otpSchema),
     defaultValues: {
-      otp: ''
+      verificationCode: ''
     }
   })
 
@@ -26,7 +26,7 @@ const OtpForm = ({ onSubmit }) => {
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
         <FormField
           control={form.control}
-          name='otp'
+          name='verificationCode'
           render={({ field }) => (
             <FormItem>
               <FormLabel></FormLabel>
