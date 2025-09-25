@@ -2,12 +2,23 @@ import usePageTitle from '@/hooks/usePageTitle'
 import AuthForm from '../components/AuthForm'
 import { loginSchema } from '../schemas/authSchemas'
 import { loginConfig } from '../constants'
+import { useNavigate } from 'react-router-dom'
+import { authService } from '../services/authService'
 
 const LoginPage = () => {
   usePageTitle('Login')
+  const navigate = useNavigate()
 
-  const onLoginSubmit = (values) => {
-    console.log(values)
+  const onLoginSubmit = async (credentials) => {
+    try {
+      const { data } = await authService.login(credentials)
+      if (data.token) {
+        localStorage.setItem('token', data.token)
+        navigate('/')
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

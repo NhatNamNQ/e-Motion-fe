@@ -42,6 +42,12 @@ export const registerConfig = {
       placeholder: 'Nhập họ và tên của bạn'
     },
     {
+      name: 'phone',
+      label: 'Số điện thoại',
+      type: 'text',
+      placeholder: 'Nhập số điện thoại của bạn'
+    },
+    {
       name: 'email',
       label: 'Email',
       type: 'email',
