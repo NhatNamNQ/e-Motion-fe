@@ -5,6 +5,26 @@ import { stations as mockStations } from '@/features/cars/constants/mockData'
 import CarsSlider from '@/features/cars/components/CarsSlider'
 import { Link } from 'react-router-dom'
 import MapboxMap from '@/components/MapboxMap'
+import { Car, CreditCard, MapPin } from 'lucide-react'
+import InfoCard from '@/components/InfoCard'
+
+const features = [
+  {
+    icon: MapPin,
+    title: 'Tiện Lợi',
+    description: 'Dịch vụ chuyển đổi số cho sự tiện lợi tối đa'
+  },
+  {
+    icon: Car,
+    title: 'Thoải Mái',
+    description: 'Các giải pháp cao cấp với trải nghiệm người dùng vượt trội'
+  },
+  {
+    icon: CreditCard,
+    title: 'Tiết Kiệm',
+    description: 'Giá cả hiệu quả cho giá trị sử dụng tối đa'
+  }
+]
 
 function HomePage() {
   const [isFixed, setIsFixed] = useState(false)
@@ -57,7 +77,13 @@ function HomePage() {
         </div>
       </section>
 
-      <div className='container mx-auto'>
+      <div className='container mx-auto px-4 md:px-0'>
+        <div className='grid gap-8 pt-4 md:grid-cols-3'>
+          {features.map((feature, index) => {
+            const Icon = feature.icon
+            return <InfoCard key={index} Icon={Icon} feature={feature} />
+          })}
+        </div>
         {/* View slider cars list */}
         <section className='my-10'>
           <h1 className='mb-4 text-center text-3xl font-bold'>Danh sách xe điện</h1>
