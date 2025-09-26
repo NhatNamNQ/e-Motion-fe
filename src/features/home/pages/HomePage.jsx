@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import MapboxMap from '@/components/MapboxMap'
 import { Car, CreditCard, MapPin } from 'lucide-react'
 import InfoCard from '@/components/InfoCard'
+import LogosSlider from '../../cars/components/LogosSlider'
 
 const features = [
   {
@@ -93,6 +94,11 @@ function HomePage() {
               <Link to='/cars'>Xem thêm xe</Link>
             </Button>
           </div>
+        </section>
+
+        <section className='my-10'>
+          <h1 className='mb-4 text-center text-3xl font-bold'>Tìm xe theo hãng</h1>
+          <LogosSlider />
         </section>
 
         {/* Show map */}
