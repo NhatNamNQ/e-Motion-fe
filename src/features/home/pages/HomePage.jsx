@@ -1,15 +1,42 @@
 import { Button } from '../../../components/ui/button'
 import { useEffect, useState } from 'react'
 import { cars as mockCars } from '@/features/cars/constants/mockData'
+import { stations as mockStations } from '@/features/cars/constants/mockData'
 import CarsSlider from '@/features/cars/components/CarsSlider'
 import { Link } from 'react-router-dom'
+import MapboxMap from '@/components/MapboxMap'
+import { Car, CreditCard, MapPin } from 'lucide-react'
+import InfoCard from '@/components/InfoCard'
+import LogosSlider from '../../cars/components/LogosSlider'
+import { FaqSection } from '../components/FaqSection'
+import { HowItWorksSection } from '../components/HowItWorksSection'
+
+const features = [
+  {
+    icon: MapPin,
+    title: 'Tiện Lợi',
+    description: 'Dịch vụ chuyển đổi số cho sự tiện lợi tối đa'
+  },
+  {
+    icon: Car,
+    title: 'Thoải Mái',
+    description: 'Các giải pháp cao cấp với trải nghiệm người dùng vượt trội'
+  },
+  {
+    icon: CreditCard,
+    title: 'Tiết Kiệm',
+    description: 'Giá cả hiệu quả cho giá trị sử dụng tối đa'
+  }
+]
 
 function HomePage() {
   const [isFixed, setIsFixed] = useState(false)
   const [cars, setCars] = useState([])
+  const [stations, setStations] = useState([])
 
   useEffect(() => {
     setCars(mockCars)
+    setStations(mockStations)
     const handleScroll = () => {
       const scrollPosition = window.scrollY
       if (scrollPosition > 120) {
@@ -53,16 +80,34 @@ function HomePage() {
         </div>
       </section>
 
-      {/* View slider cars list */}
-      <section className='container mx-auto my-10'>
-        <h1 className='mb-4 text-center text-3xl font-bold'>Danh sách xe điện</h1>
-        <CarsSlider cars={cars} />
-        <div className='mt-6 flex justify-center'>
-          <Button className='bg-background text-secondary hover:text-background border-secondary hover:bg-secondary h-12 w-53 cursor-pointer border p-3 text-2xl'>
-            <Link to='/cars'>Xem thêm xe</Link>
-          </Button>
+      <div className='container mx-auto px-4 md:px-0'>
+        <div className='grid gap-8 pt-4 md:grid-cols-3'>
+          {features.map((feature, index) => {
+            const Icon = feature.icon
+            return <InfoCard key={index} Icon={Icon} feature={feature} />
+          })}
         </div>
-      </section>
+        {/* View slider cars list */}
+        <section className='my-10'>
+          <h1 className='mb-4 text-center text-3xl font-bold'>Danh sách xe điện</h1>
+          <CarsSlider cars={cars} />
+          <div className='mt-6 flex justify-center'>
+            <Button className='bg-background text-secondary hover:text-background border-secondary hover:bg-secondary h-12 w-53 cursor-pointer border p-3 text-2xl'>
+              <Link to='/cars'>Xem thêm xe</Link>
+            </Button>
+          </div>
+        </section>
+
+        <section className='my-10'>
+          <h1 className='mb-4 text-center text-3xl font-bold'>Tìm xe theo hãng</h1>
+          <LogosSlider />
+        </section>
+
+        {/* Show map */}
+        <section>{stations.length > 0 && <MapboxMap station={stations[0]} />}</section>
+        <HowItWorksSection />
+        <FaqSection />
+      </div>
     </main>
   )
 }
