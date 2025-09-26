@@ -9,6 +9,7 @@ import { Car, CreditCard, MapPin } from 'lucide-react'
 import InfoCard from '@/components/InfoCard'
 import LogosSlider from '../../cars/components/LogosSlider'
 import { FaqSection } from '../components/FaqSection'
+import { HowItWorksSection } from '../components/HowItWorksSection'
 
 const features = [
   {
@@ -104,6 +105,7 @@ function HomePage() {
 
         {/* Show map */}
         <section>{stations.length > 0 && <MapboxMap station={stations[0]} />}</section>
+        <HowItWorksSection />
         <FaqSection />
       </div>
     </main>
