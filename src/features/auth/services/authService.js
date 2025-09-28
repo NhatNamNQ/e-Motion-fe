@@ -1,10 +1,9 @@
-import axios from '@/lib/axios'
+import instance from '@/lib/axios'
 
 export const authService = {
   login: async (credentials) => {
-    console.log(credentials)
     try {
-      const { data } = await axios.post('/auth/login', {
+      const { data } = await instance.post('/auth/login', {
         email: credentials.email,
         password: credentials.password
       })
@@ -21,7 +20,7 @@ export const authService = {
   },
   register: async (userData) => {
     try {
-      const { data } = await axios.post('/auth/register', {
+      const { data } = await instance.post('/auth/register', {
         fullName: userData.fullName,
         userPassword: userData.password,
         email: userData.email,
@@ -40,13 +39,27 @@ export const authService = {
   },
   verifyOtp: async (otpData) => {
     try {
-      const { data } = await axios.post('/auth/verify', {
+      const { data } = await instance.post('/auth/verify', {
         email: otpData.email,
         verificationCode: otpData.verificationCode
       })
       return data
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Xác thực OTP thất bại'
+      const errorCode = error.response?.data?.status
+
+      throw {
+        message: errorMessage,
+        code: errorCode
+      }
+    }
+  },
+  getCurrentUser: async () => {
+    try {
+      const res = await instance.get('/users/me')
+      return res.data
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Lấy thông tin người dùng thất bại'
       const errorCode = error.response?.data?.status
 
       throw {
