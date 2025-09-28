@@ -13,7 +13,7 @@ const LoginPage = () => {
     try {
       const { data } = await authService.login(credentials)
       if (data.token) {
-        localStorage.setItem('token', data.token)
+        localStorage.setItem('accessToken', data.token)
         navigate('/')
       }
     } catch (error) {
