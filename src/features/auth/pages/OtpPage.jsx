@@ -1,13 +1,25 @@
 import usePageTitle from '@/hooks/usePageTitle'
 import OtpForm from '../components/OtpForm'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { authService } from '../services/authService'
 
 const OtpPage = () => {
   usePageTitle('Verify OTP')
+  const location = useLocation()
+  const navigate = useNavigate()
+  const email = location?.state
 
-  const onOtpSubmit = (values) => {
-    console.log('OTP submitted:', values)
-    // Handle OTP verification logic here
+  const onOtpSubmit = async (otpData) => {
+    try {
+      const res = await authService.verifyOtp({
+        email: email,
+        verificationCode: otpData.verificationCode
+      })
+      console.log(res)
+      navigate('/auth/login')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

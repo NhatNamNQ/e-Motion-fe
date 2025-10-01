@@ -21,6 +21,7 @@ export const loginSchema = z.object({
 export const registerSchema = z
   .object({
     fullName: z.string().min(2, 'Họ và tên phải có ít nhất 2 ký tự'),
+    phone: z.string(),
     email: emailValidation,
     password: passwordValidation,
     confirmPassword: z.string(),
@@ -34,7 +35,7 @@ export const registerSchema = z
   })
 
 export const otpSchema = z.object({
-  otp: z.string().min(6, {
+  verificationCode: z.string().min(6, {
     message: 'Mã OTP phải có 6 ký tự.'
   })
 })

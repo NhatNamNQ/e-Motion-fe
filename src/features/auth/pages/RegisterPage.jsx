@@ -2,13 +2,24 @@ import usePageTitle from '@/hooks/usePageTitle'
 import AuthForm from '../components/AuthForm'
 import { registerSchema } from '../schemas/authSchemas'
 import { registerConfig } from '../constants'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 
 const RegisterPage = () => {
   usePageTitle('Register')
+  const navigate = useNavigate()
+  const { register } = useAuth()
 
-  const onRegisterSubmit = (values) => {
-    console.log('Register form values:', values)
-    // Handle register logic here
+  const onRegisterSubmit = async (userData) => {
+    try {
+      const res = await register(userData)
+      console.log(res)
+      navigate('/auth/verify-otp', {
+        state: userData.email
+      })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
