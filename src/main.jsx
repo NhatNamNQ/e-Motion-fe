@@ -5,12 +5,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './features/home/pages/HomePage'
 import MainLayout from './layout/MainLayout'
 import LoginPage from './features/auth/pages/LoginPage'
-import RegisterPage from './features/auth/pages/RegisterPage' // Assuming the file is still named SignupPage.jsx
+import RegisterPage from './features/auth/pages/RegisterPage'
 import OtpPage from './features/auth/pages/OtpPage'
 import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import CarListPage from './features/cars/pages/CarListPage'
-import { AuthProvider } from './context/AuthContext'
+import AuthProvider from './context/AuthProvider'
 
 const router = createBrowserRouter([
   {
