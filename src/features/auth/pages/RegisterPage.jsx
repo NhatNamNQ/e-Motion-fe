@@ -3,18 +3,19 @@ import AuthForm from '../components/AuthForm'
 import { registerSchema } from '../schemas/authSchemas'
 import { registerConfig } from '../constants'
 import { useNavigate } from 'react-router-dom'
-import { authService } from '../services/authService'
+import { useAuth } from '@/hooks/useAuth'
 
 const RegisterPage = () => {
   usePageTitle('Register')
   const navigate = useNavigate()
+  const { register } = useAuth()
 
   const onRegisterSubmit = async (userData) => {
     try {
-      const res = await authService.register(userData)
+      const res = await register(userData)
       console.log(res)
       navigate('/auth/verify-otp', {
-        state: res.data
+        state: userData.email
       })
     } catch (error) {
       console.error(error)

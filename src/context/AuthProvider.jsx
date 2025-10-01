@@ -41,6 +41,20 @@ export const AuthProvider = ({ children }) => {
       setIsLoading(false)
     }
   }
+  const register = async (userData) => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const res = await authService.register(userData)
+      return res.data
+    } catch (error) {
+      setError(error.message)
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const logout = async () => {
     try {
       setIsLoading(true)
@@ -59,6 +73,7 @@ export const AuthProvider = ({ children }) => {
     user,
     isAuthenticated: !!user,
     login,
+    register,
     logout,
     isLoading,
     error

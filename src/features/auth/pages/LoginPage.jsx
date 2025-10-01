@@ -3,19 +3,17 @@ import AuthForm from '../components/AuthForm'
 import { loginSchema } from '../schemas/authSchemas'
 import { loginConfig } from '../constants'
 import { useNavigate } from 'react-router-dom'
-import { authService } from '../services/authService'
+import { useAuth } from '@/hooks/useAuth'
 
 const LoginPage = () => {
   usePageTitle('Login')
+  const { login } = useAuth()
   const navigate = useNavigate()
 
   const onLoginSubmit = async (credentials) => {
     try {
-      const { data } = await authService.login(credentials)
-      if (data.token) {
-        localStorage.setItem('accessToken', data.token)
-        navigate('/')
-      }
+      const data = await login(credentials)
+      if (data.token) navigate('/')
     } catch (error) {
       console.error(error)
     }

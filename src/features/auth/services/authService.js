@@ -1,4 +1,5 @@
 import instance from '@/lib/axios'
+import { handleError } from '@/lib/handleError'
 
 export const authService = {
   login: async (credentials) => {
@@ -9,13 +10,7 @@ export const authService = {
       })
       return data
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Đăng nhập thất bại'
-      const errorCode = error.response?.data?.status
-
-      throw {
-        message: errorMessage,
-        code: errorCode
-      }
+      throw handleError(error)
     }
   },
   register: async (userData) => {
@@ -28,13 +23,7 @@ export const authService = {
       })
       return data
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Đăng ký thất bại'
-      const errorCode = error.response?.data?.status
-
-      throw {
-        message: errorMessage,
-        code: errorCode
-      }
+      throw handleError(error)
     }
   },
   verifyOtp: async (otpData) => {
@@ -45,27 +34,23 @@ export const authService = {
       })
       return data
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Xác thực OTP thất bại'
-      const errorCode = error.response?.data?.status
-
-      throw {
-        message: errorMessage,
-        code: errorCode
-      }
+      throw handleError(error)
     }
   },
   getCurrentUser: async () => {
     try {
-      const res = await instance.get('/users/me')
-      return res.data
+      const { data } = await instance.get('/users/me')
+      return data
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Lấy thông tin người dùng thất bại'
-      const errorCode = error.response?.data?.status
-
-      throw {
-        message: errorMessage,
-        code: errorCode
-      }
+      throw handleError(error)
+    }
+  },
+  logout: async () => {
+    try {
+      const { data } = instance.post('/auth/logout')
+      return data
+    } catch (error) {
+      throw handleError(error)
     }
   }
 }
