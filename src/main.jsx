@@ -12,11 +12,13 @@ import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import CarListPage from './features/cars/pages/CarListPage'
 import AuthProvider from './context/AuthProvider'
 import PublicRoute from './layout/PublicRoute'
+import ErrorPage from './features/error/pages/ErrorPage'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
