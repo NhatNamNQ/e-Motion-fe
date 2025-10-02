@@ -11,6 +11,7 @@ import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import CarListPage from './features/cars/pages/CarListPage'
 import AuthProvider from './context/AuthProvider'
+import PublicRoute from './layout/PublicRoute'
 
 const router = createBrowserRouter([
   {
@@ -23,23 +24,43 @@ const router = createBrowserRouter([
       },
       {
         path: '/auth/login',
-        element: <LoginPage />
+        element: (
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        )
       },
       {
         path: '/auth/register',
-        element: <RegisterPage />
+        element: (
+          <PublicRoute>
+            <RegisterPage />
+          </PublicRoute>
+        )
       },
       {
         path: '/auth/verify-otp',
-        element: <OtpPage />
+        element: (
+          <PublicRoute>
+            <OtpPage />
+          </PublicRoute>
+        )
       },
       {
         path: '/auth/forgot-password',
-        element: <ForgotPasswordPage />
+        element: (
+          <PublicRoute>
+            <ForgotPasswordPage />
+          </PublicRoute>
+        )
       },
       {
         path: '/auth/reset-password',
-        element: <ResetPasswordPage />
+        element: (
+          <PublicRoute>
+            <ResetPasswordPage />
+          </PublicRoute>
+        )
       },
       {
         path: '/cars',
