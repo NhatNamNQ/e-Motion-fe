@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react'
 import CarList from '../components/CarList'
-import { cars as mockCars } from '../constants/mockData'
+import { carService } from '../services/carService'
 
 const CarListPage = () => {
   const [cars, setCars] = useState([])
   useEffect(() => {
-    setCars(mockCars)
+    try {
+      const getCars = async () => {
+        const res = await carService.getCars()
+        setCars(res.data)
+      }
+      getCars()
+    } catch (error) {
+      console.error(error)
+    }
   }, [])
   return (
     <div className='container mx-auto p-4'>

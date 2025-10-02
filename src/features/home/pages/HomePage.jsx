@@ -1,6 +1,5 @@
 import { Button } from '../../../components/ui/button'
 import { useEffect, useState } from 'react'
-import { cars as mockCars } from '@/features/cars/constants/mockData'
 import { stations as mockStations } from '@/features/cars/constants/mockData'
 import CarsSlider from '@/features/cars/components/CarsSlider'
 import { Link } from 'react-router-dom'
@@ -10,6 +9,7 @@ import InfoCard from '@/components/InfoCard'
 import LogosSlider from '../../cars/components/LogosSlider'
 import { FaqSection } from '../components/FaqSection'
 import { HowItWorksSection } from '../components/HowItWorksSection'
+import { carService } from '@/features/cars/services/carService'
 
 const features = [
   {
@@ -35,7 +35,18 @@ function HomePage() {
   const [stations, setStations] = useState([])
 
   useEffect(() => {
-    setCars(mockCars)
+    const getCarList = async () => {
+      try {
+        const res = await carService.getCars()
+        setCars(res.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getCarList()
+  })
+
+  useEffect(() => {
     setStations(mockStations)
     const handleScroll = () => {
       const scrollPosition = window.scrollY
