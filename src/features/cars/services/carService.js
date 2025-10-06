@@ -9,5 +9,13 @@ export const carService = {
     } catch (error) {
       handleError(error)
     }
+  },
+  searchCars: async (searchValues) => {
+    try {
+      const { data } = await instance.post('/vehicles/search', searchValues)
+      return data
+    } catch (error) {
+      handleError(error)
+    }
   }
 }
