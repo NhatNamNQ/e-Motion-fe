@@ -1,16 +1,48 @@
 import { useEffect, useState } from 'react'
 import CarList from '../components/CarList'
-import { cars as mockCars } from '../constants/mockData'
+import { carService } from '../services/carService'
+import { useLocation } from 'react-router-dom'
+import SkeletonCard from '@/components/SkeletonCard'
 
 const CarListPage = () => {
   const [cars, setCars] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const location = useLocation()
+
   useEffect(() => {
-    setCars(mockCars)
-  }, [])
+    const loadData = async () => {
+      setIsLoading(true)
+
+      if (location.state?.cars) {
+        setCars(location.state.cars)
+        setIsLoading(false)
+      } else {
+        try {
+          const res = await carService.getCars()
+          setCars(res.data)
+        } catch (error) {
+          console.error(error)
+        } finally {
+          setIsLoading(false)
+        }
+      }
+    }
+    loadData()
+  }, [location])
+
   return (
-    <div className='container mx-auto p-4'>
+    <div className='relative container mx-auto p-4'>
       <h1 className='mb-4 text-3xl font-bold'>Danh sách xe điện</h1>
-      <CarList cars={cars} />
+
+      {isLoading ? (
+        <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
+          {Array.from({ length: 8 }).map((_, index) => (
+            <SkeletonCard key={index} />
+          ))}
+        </div>
+      ) : (
+        <CarList cars={cars} />
+      )}
     </div>
   )
 }

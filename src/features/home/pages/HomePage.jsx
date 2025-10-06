@@ -1,6 +1,5 @@
 import { Button } from '../../../components/ui/button'
 import { useEffect, useState } from 'react'
-import { cars as mockCars } from '@/features/cars/constants/mockData'
 import { stations as mockStations } from '@/features/cars/constants/mockData'
 import CarsSlider from '@/features/cars/components/CarsSlider'
 import { Link } from 'react-router-dom'
@@ -10,6 +9,8 @@ import InfoCard from '@/components/InfoCard'
 import LogosSlider from '../../cars/components/LogosSlider'
 import { FaqSection } from '../components/FaqSection'
 import { HowItWorksSection } from '../components/HowItWorksSection'
+import { carService } from '@/features/cars/services/carService'
+import SearchDialog from '@/components/Search/SearchDialog'
 
 const features = [
   {
@@ -35,7 +36,18 @@ function HomePage() {
   const [stations, setStations] = useState([])
 
   useEffect(() => {
-    setCars(mockCars)
+    const getCarList = async () => {
+      try {
+        const res = await carService.getCars()
+        setCars(res.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getCarList()
+  }, [])
+
+  useEffect(() => {
     setStations(mockStations)
     const handleScroll = () => {
       const scrollPosition = window.scrollY
@@ -60,23 +72,7 @@ function HomePage() {
           className={`z-10 container ${isFixed ? 'fixed top-0 left-1/2 -translate-x-1/2' : 'absolute top-4 left-1/2 -translate-x-1/2'}`}
         >
           {/*-translate-x-1/2 shift back half by its own */}
-          <div className='bg-background grid grid-cols-11 place-items-center rounded-lg p-4 shadow-md transition-all duration-300 ease-in-out'>
-            <div className='col-span-3'>
-              <p>Địa điểm nhận xe</p>
-              <p>Chọn địa điểm nhận xe</p>
-            </div>
-            <div className='col-span-3'>
-              <p>Ngày nhận xe</p>
-              <p>Giờ nhận xe</p>
-            </div>
-            <div className='col-span-3'>
-              <p>Ngày trả xe</p>
-              <p>Giờ trả xe</p>
-            </div>
-            <Button className='col-span-2 h-12 w-full cursor-pointer bg-[#51C09F] hover:bg-[#51C09F]/80'>
-              TÌM XE
-            </Button>
-          </div>
+          <SearchDialog />
         </div>
       </section>
 
