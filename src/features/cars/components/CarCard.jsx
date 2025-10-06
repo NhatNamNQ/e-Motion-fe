@@ -4,15 +4,9 @@ const CarCard = ({ car }) => {
   return (
     <div className='cursor-pointer rounded-md border'>
       <div className='relative'>
-        <img
-          src='https://placehold.co/282x210?text=Card'
-          alt={car.name}
-          width={280}
-          height={210}
-          className='w-full rounded-md'
-        />
+        <img src={car.isMain} alt={car.name} className='h-56 w-full rounded-t-md object-cover' />
         <div
-          className={`text-background absolute top-4 right-4 rounded-sm border px-2 py-1 text-center text-sm ${car.status === 'AVAILABLE' ? 'bg-green-400' : 'bg-red-400'}`}
+          className={`text-background absolute top-4 right-4 rounded-sm px-2 py-1 text-center text-sm ${car.status === 'Sẵn sàng' ? 'bg-green-400' : 'bg-red-400'}`}
         >
           {car.status}
         </div>
