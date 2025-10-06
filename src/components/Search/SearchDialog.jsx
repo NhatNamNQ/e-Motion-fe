@@ -11,13 +11,20 @@ import SearchForm from './SearchForm'
 import { useForm } from 'react-hook-form'
 import { format } from 'date-fns'
 import { carService } from '@/features/cars/services/carService'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const SearchDialog = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const form = useForm({
     defaultValues: { location: '', startDate: null, endDate: null, startTime: null, endTime: null }
   })
+  useEffect(() => {
+    if (location?.state?.date) {
+      form.reset(location.state.date)
+    }
+  }, [form, location])
 
   const onSubmit = async (values) => {
     try {
@@ -28,7 +35,8 @@ const SearchDialog = () => {
       })
       navigate('/cars', {
         state: {
-          cars: data
+          cars: data,
+          date: values
         }
       })
     } catch (error) {
