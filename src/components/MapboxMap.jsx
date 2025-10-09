@@ -35,9 +35,8 @@ const MapboxMap = ({ station }) => {
   return (
     <div className='relative'>
       <LocateFixed
-        color='oklch(0.75 0.14 165)'
         onClick={handleCenter}
-        className='bg-background absolute right-3 bottom-6 z-10 h-12 w-12 cursor-pointer rounded-full border p-2'
+        className='bg-background text-secondary absolute right-3 bottom-6 z-10 h-12 w-12 cursor-pointer rounded-full border p-2'
       />
       <div className='mb-6 h-96 w-full' ref={mapContainerRef} />
     </div>
