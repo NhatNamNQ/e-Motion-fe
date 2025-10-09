@@ -49,7 +49,7 @@ const SearchBar = ({ form, ...props }) => {
         </div>
       </div>
 
-      <Button className='col-span-2 h-12 w-full cursor-pointer bg-[#51C09F] font-semibold shadow-sm hover:bg-[#51C09F]/80'>
+      <Button className='bg-secondary hover:bg-secondary/80 col-span-2 h-12 w-full cursor-pointer font-semibold shadow-sm'>
         TÌM XE
       </Button>
     </div>
