@@ -13,6 +13,7 @@ import CarListPage from './features/cars/pages/CarListPage'
 import AuthProvider from './context/AuthProvider'
 import PublicRoute from './layout/PublicRoute'
 import ErrorPage from './features/error/pages/ErrorPage'
+import CarDetailPage from './features/cars/pages/CarDetailPage'
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
       {
         path: '/cars',
         element: <CarListPage />
+      },
+      {
+        path: '/cars/:id',
+        element: <CarDetailPage />
       }
     ]
   }

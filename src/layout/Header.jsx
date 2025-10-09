@@ -16,18 +16,18 @@ const Header = () => {
         <nav className='flex items-center space-x-4'>
           <Link to='/cars'>Xem danh sách xe</Link>
           <div className='flex'>
-            <SelectItems children={<MapPin color='#51C09F' />} />
+            <SelectItems children={<MapPin color='#3B82F6' />} />
           </div>
           {isAuthenticated ? (
             <Button
-              className='cursor-pointer bg-[#51C09F] px-6 py-2 hover:bg-[#51C09F]/80'
+              className='bg-secondary hover:bg-secondary/80 cursor-pointer px-6 py-2'
               onClick={logout}
             >
               Đăng xuất
             </Button>
           ) : (
             <Link to='/auth/login'>
-              <Button className='cursor-pointer bg-[#51C09F] px-6 py-2 hover:bg-[#51C09F]/80'>
+              <Button className='bg-secondary hover:bg-secondary/80 cursor-pointer px-6 py-2'>
                 Đăng Nhập
               </Button>
             </Link>

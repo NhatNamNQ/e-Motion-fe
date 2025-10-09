@@ -112,7 +112,7 @@ const SearchForm = ({ form, onSubmit }) => {
         <div className='pt-4'>
           <Button
             type='submit'
-            className='h-11 w-full bg-[#51C09F] font-medium text-white hover:bg-[#51C09F]/90'
+            className='bg-secondary hover:bg-secondary/80 h-11 w-full font-medium text-white'
           >
             TÌM XE
           </Button>
