@@ -1,9 +1,7 @@
 import { Button } from '../../../components/ui/button'
 import { useEffect, useState } from 'react'
-import { stations as mockStations } from '@/features/cars/constants/mockData'
 import CarsSlider from '@/features/cars/components/CarsSlider'
 import { Link } from 'react-router-dom'
-import MapboxMap from '@/components/MapboxMap'
 import { Car, CreditCard, MapPin } from 'lucide-react'
 import InfoCard from '@/components/InfoCard'
 import LogosSlider from '../../cars/components/LogosSlider'
@@ -33,7 +31,6 @@ const features = [
 function HomePage() {
   const [isFixed, setIsFixed] = useState(false)
   const [cars, setCars] = useState([])
-  const [stations, setStations] = useState([])
 
   useEffect(() => {
     const getCarList = async () => {
@@ -48,7 +45,6 @@ function HomePage() {
   }, [])
 
   useEffect(() => {
-    setStations(mockStations)
     const handleScroll = () => {
       const scrollPosition = window.scrollY
       if (scrollPosition > 120) {
@@ -98,9 +94,6 @@ function HomePage() {
           <h1 className='mb-4 text-center text-3xl font-bold'>Tìm xe theo hãng</h1>
           <LogosSlider />
         </section>
-
-        {/* Show map */}
-        <section>{stations.length > 0 && <MapboxMap station={stations[0]} />}</section>
         <HowItWorksSection />
         <FaqSection />
       </div>

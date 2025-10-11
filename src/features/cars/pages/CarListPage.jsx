@@ -1,34 +1,26 @@
 import { useEffect, useState } from 'react'
 import CarList from '../components/CarList'
 import { carService } from '../services/carService'
-import { useLocation } from 'react-router-dom'
 import SkeletonCard from '@/components/SkeletonCard'
 
 const CarListPage = () => {
   const [cars, setCars] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const location = useLocation()
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true)
-
-      if (location.state?.cars) {
-        setCars(location.state.cars)
+      try {
+        const res = await carService.getCars()
+        setCars(res.data)
+      } catch (error) {
+        console.error(error)
+      } finally {
         setIsLoading(false)
-      } else {
-        try {
-          const res = await carService.getCars()
-          setCars(res.data)
-        } catch (error) {
-          console.error(error)
-        } finally {
-          setIsLoading(false)
-        }
       }
     }
     loadData()
-  }, [location])
+  }, [])
 
   return (
     <div className='relative container mx-auto p-4'>
