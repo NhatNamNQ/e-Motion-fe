@@ -1,5 +1,4 @@
 import MapboxMap from '@/components/MapboxMap'
-import { stations } from '../../constants/mockData'
 import { MapPin } from 'lucide-react'
 
 const CarLocation = ({ car }) => {
@@ -12,7 +11,7 @@ const CarLocation = ({ car }) => {
         <span>{car.address}</span>
       </div>
       <div className='rounded-lg'>
-        <MapboxMap station={stations[0]} />
+        <MapboxMap station={car.station} />
       </div>
     </section>
   )

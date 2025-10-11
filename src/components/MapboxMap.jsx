@@ -12,12 +12,12 @@ const MapboxMap = ({ station }) => {
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
-      center: [station.lng, station.lat],
+      center: [station.longitude, station.latitude],
       zoom: 17
     })
 
     new mapboxgl.Marker({ color: 'red' })
-      .setLngLat([station.lng, station.lat])
+      .setLngLat([station.longitude, station.latitude])
       .addTo(mapRef.current)
 
     return () => {
@@ -27,7 +27,7 @@ const MapboxMap = ({ station }) => {
 
   const handleCenter = () => {
     mapRef.current.flyTo({
-      center: [station.lng, station.lat],
+      center: [station.longitude, station.latitude],
       zoom: 17
     })
   }
