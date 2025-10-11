@@ -10,6 +10,14 @@ export const carService = {
       handleError(error)
     }
   },
+  getCarById: async (id) => {
+    try {
+      const { data } = await instance.get(`/vehicles/id/${id}`)
+      return data.data
+    } catch (error) {
+      handleError(error)
+    }
+  },
   searchCars: async (searchValues) => {
     try {
       const { data } = await instance.post('/vehicles/search', searchValues)

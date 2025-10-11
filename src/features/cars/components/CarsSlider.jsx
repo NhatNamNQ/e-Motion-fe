@@ -3,6 +3,7 @@ import { Scrollbar } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/scrollbar'
 import CarCard from '@/features/cars/components/CarCard'
+import SkeletonCard from '@/components/SkeletonCard'
 
 const CarsSlider = ({ cars }) => {
   return (
@@ -26,11 +27,17 @@ const CarsSlider = ({ cars }) => {
         }
       }}
     >
-      {cars.map((car) => (
-        <SwiperSlide className='mb-4'>
-          <CarCard car={car} />
-        </SwiperSlide>
-      ))}
+      {cars
+        ? cars.map((car) => (
+            <SwiperSlide className='mb-4'>
+              <CarCard car={car} />
+            </SwiperSlide>
+          ))
+        : Array.from({ length: 4 }).map((_, index) => (
+            <SwiperSlide className='mb-4'>
+              <SkeletonCard key={index} />
+            </SwiperSlide>
+          ))}
     </Swiper>
   )
 }
