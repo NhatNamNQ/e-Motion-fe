@@ -6,6 +6,7 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const res = await authService.login(credentials)
+      localStorage.setItem('accessToken', res.data.token)
       return res.data
     } catch (error) {
       return rejectWithValue(error.message || 'Đăng nhập thất bại')
