@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import Loader from '@/components/Loader'
 import { carService } from '../services/carService'
 import CarImageGallery from '../components/detail/CarImageGallery'
@@ -19,13 +19,21 @@ import AdditionalCosts from '../components/booking/AdditionalCosts'
 const CarDetailPage = () => {
   const { id } = useParams()
   const [car, setCar] = useState(null)
+  const [bookingFees, setBookingFees] = useState({
+    depositFee: 0,
+    vatFee: 0,
+    rentFee: 0,
+    totalFee: 0
+  })
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchCarDetails = async () => {
       try {
-        // setLoading(true)
+        setLoading(true)
         const carData = await carService.getCarById(id)
+
         setCar(carData)
       } catch (error) {
         console.error('Error fetching car details:', error)
@@ -36,6 +44,26 @@ const CarDetailPage = () => {
 
     fetchCarDetails()
   }, [id])
+
+  useEffect(() => {
+    if (car) {
+      const depositFee = car.depositFee
+      const vatFee = (car.pricePer4Hours * 10) / 100
+      const rentFee = car.pricePer4Hours
+      const totalFee = rentFee + depositFee + vatFee
+      setBookingFees({ depositFee, vatFee, rentFee, totalFee })
+    }
+  }, [car])
+
+  const handleConfirmBooking = () => {
+    const carData = {
+      ...car,
+      ...bookingFees
+    }
+
+    localStorage.setItem('carData', JSON.stringify(carData))
+    navigate('/booking/confirm')
+  }
 
   if (loading) {
     return (
@@ -83,8 +111,13 @@ const CarDetailPage = () => {
                       Xe có bảo hiểm vật chất hai chiều
                     </span>
                   </div>
-                  <PriceBreakdown car={car} />
-                  <Button className='bg-secondary mt-6 w-full hover:bg-blue-600'>Thuê xe</Button>
+                  <PriceBreakdown car={car} bookingFees={bookingFees} />
+                  <Button
+                    onClick={handleConfirmBooking}
+                    className='bg-secondary mt-6 w-full hover:bg-blue-600'
+                  >
+                    Thuê xe
+                  </Button>
                 </CardContent>
               </Card>
 

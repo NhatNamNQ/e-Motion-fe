@@ -1,29 +1,24 @@
 import { formatCurrency } from '@/lib/utils'
 
-const PriceBreakdown = ({ car }) => {
+const PriceBreakdown = ({ bookingFees }) => {
+  const { depositFee, vatFee, rentFee, totalFee } = bookingFees
   return (
     <div className='space-y-4 border-t pt-4'>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-bold text-gray-600'>Phí thuê xe</span>
-        <span className='text-sm font-bold text-gray-600'>
-          {formatCurrency(car.pricePer4Hours, 'VND')}
-        </span>
+        <span className='text-sm font-bold text-gray-600'>{formatCurrency(rentFee)}</span>
       </div>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-bold text-gray-600'>Thuế VAT</span>
-        <span className='text-sm font-bold text-gray-600'>294.000đ</span>
-      </div>
-      <div className='flex items-center justify-between text-lg font-bold'>
-        <span className='text-gray-800'>Tổng cộng tiền thuê</span>
-        <span className='text-blue-500'>
-          {formatCurrency(car.pricePer4Hours + car.depositFee, 'VND')}
-        </span>
+        <span className='text-sm font-bold text-gray-600'>{formatCurrency(vatFee)}</span>
       </div>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-bold text-gray-600'>Cọc xe</span>
-        <span className='text-sm font-bold text-gray-600'>
-          {formatCurrency(car.depositFee, 'VND')}
-        </span>
+        <span className='text-sm font-bold text-gray-600'>{formatCurrency(depositFee)}</span>
+      </div>
+      <div className='flex items-center justify-between text-lg font-bold'>
+        <span className='text-gray-800'>Tổng cộng tiền thuê</span>
+        <span className='text-blue-500'>{formatCurrency(totalFee)}</span>
       </div>
       <p className='text-xs text-gray-400'>
         Thanh toán khi nhận xe và kiểm tra xe, không nhận cọc xe máy. Lưu ý: Mức cọc sẽ cao hơn đối
