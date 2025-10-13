@@ -111,7 +111,7 @@ const BookingForm = ({ car, onSubmit, submitLoading }) => {
               <hr />
               <div className='flex justify-between text-lg font-semibold'>
                 <span>Tổng cộng tiền thuê</span>
-                <span>{formatCurrency(car.rentFee)}</span>
+                <span>{formatCurrency(car.totalFee)}</span>
               </div>
             </div>
 
