@@ -1,7 +1,6 @@
 import { formatCurrency } from '@/lib/utils'
 
 const PriceBreakdown = ({ bookingFees }) => {
-  console.log(bookingFees)
   const { depositFee, vatFee, rentFee, totalFee } = bookingFees
   return (
     <div className='space-y-4 border-t pt-4'>
