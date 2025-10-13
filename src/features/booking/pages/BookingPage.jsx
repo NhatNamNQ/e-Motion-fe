@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import Loader from '@/components/Loader'
+import { useSearchParams } from 'react-router-dom'
 import instance from '@/lib/axios'
 import BookingForm from '../components/BookingForm'
+import SuccessBooking from '../components/SuccessBooking'
+import BookingProgress from '../components/BookingProgress'
 
 const BookingPage = () => {
+  const [searchParams] = useSearchParams()
+  const status = searchParams.get('status')
+  const txnRef = searchParams.get('txnRef')
+
   const [car, setCar] = useState(null)
   const [submitLoading, setSubmitLoading] = useState(false)
 
@@ -54,7 +60,18 @@ const BookingPage = () => {
       </div>
     )
   }
-  return <BookingForm onSubmit={onSubmit} submitLoading={submitLoading} car={car} />
+  return (
+    <div className='h-full bg-gray-50 py-8'>
+      <div className='container mx-auto max-w-4xl px-4'>
+        <BookingProgress status={status} />
+        {status && txnRef ? (
+          <SuccessBooking car={car} txnRef={txnRef} />
+        ) : (
+          <BookingForm onSubmit={onSubmit} submitLoading={submitLoading} car={car} />
+        )}
+      </div>
+    </div>
+  )
 }
 
 export default BookingPage
