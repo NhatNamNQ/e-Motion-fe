@@ -14,6 +14,7 @@ import AuthProvider from './context/AuthProvider'
 import PublicRoute from './layout/PublicRoute'
 import ErrorPage from './features/error/pages/ErrorPage'
 import CarDetailPage from './features/cars/pages/CarDetailPage'
+import BookingPage from './features/booking/pages/BookingPage'
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,14 @@ const router = createBrowserRouter([
       {
         path: '/cars/:id',
         element: <CarDetailPage />
+      },
+      {
+        path: '/booking/confirm',
+        element: <BookingPage />
+      },
+      {
+        path: '/booking/payment-result',
+        element: <BookingPage />
       }
     ]
   }
