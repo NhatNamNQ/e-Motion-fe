@@ -16,10 +16,10 @@ export const loginUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
     await authService.logout()
-    localStorage.removeItem('token')
+    localStorage.removeItem('accessToken')
   } catch (error) {
     // quăng lỗi khi token hết hạn
-    localStorage.removeItem('token')
+    localStorage.removeItem('accessToken')
     return rejectWithValue(error.message || 'Đăng xuất thất bại')
   }
 })
