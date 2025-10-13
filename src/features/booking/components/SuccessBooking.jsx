@@ -20,7 +20,7 @@ const SuccessBooking = ({ txnRef, car }) => {
               <strong>Mã giao dịch:</strong> {txnRef}
             </p>
             <p>
-              <strong>Xe:</strong> {car.name}
+              <strong>Xe:</strong> {car?.name}
             </p>
           </div>
         )}
