@@ -12,7 +12,7 @@ const FormFieldCheckbox = ({ control, name, label, description }) => {
             <Checkbox
               checked={field.value}
               onCheckedChange={field.onChange}
-              className='cursor-pointer data-[state=checked]:bg-[#51C09F]'
+              className='data-[state=checked]:bg-secondary cursor-pointer'
             />
           </FormControl>
           <div className='text-sm text-gray-700'>

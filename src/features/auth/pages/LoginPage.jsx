@@ -3,30 +3,58 @@ import AuthForm from '../components/AuthForm'
 import { loginSchema } from '../schemas/authSchemas'
 import { loginConfig } from '../constants'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
+import { useDispatch, useSelector } from 'react-redux'
+import { clearError } from '../../../store/slices/authSlice'
+import { useEffect } from 'react'
+import { loginUser } from '@/store/actions/authActions'
+import {
+  selectAuthError,
+  selectAuthLoading,
+  selectIsAuthenticated
+} from '@/store/selectors/authSelectors'
+// import { useAuth } from '@/hooks/useAuth'
 
 const LoginPage = () => {
   usePageTitle('Login')
-  const { login } = useAuth()
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const onLoginSubmit = async (credentials) => {
-    try {
-      const data = await login(credentials)
-      if (data.token) navigate('/')
-    } catch (error) {
-      console.error(error)
+  const isLoading = useSelector(selectAuthLoading)
+  const error = useSelector(selectAuthError)
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/')
+    }
+  }, [isAuthenticated, navigate])
+
+  const handleLogin = async (formData) => {
+    dispatch(clearError())
+
+    const result = await dispatch(
+      loginUser({
+        email: formData.email,
+        password: formData.password
+      })
+    )
+
+    if (loginUser.fulfilled.match(result)) {
+      alert('Đăng nhập thành công')
+    } else {
+      alert(error)
     }
   }
 
   return (
-    <main className='flex flex-1 items-center justify-center bg-[#51C09F] py-12'>
+    <main className='bg-secondary flex h-screen items-center justify-center py-12'>
       <div className='w-full max-w-lg'>
         <div className='rounded-2xl bg-white p-8 shadow-lg'>
           <AuthForm
+            isLoading={isLoading}
             config={loginConfig}
             formSchema={loginSchema}
-            onSubmit={onLoginSubmit}
+            onSubmit={handleLogin}
             formType='login'
           />
         </div>

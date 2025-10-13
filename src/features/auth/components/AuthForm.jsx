@@ -53,7 +53,7 @@ const AuthForm = ({ config, formSchema, onSubmit, formType }) => {
             </div>
             <Link
               to='/auth/forgot-password'
-              className='text-sm font-medium text-teal-500 transition-colors hover:text-teal-600'
+              className='text-secondary/80 hover:text-secondary text-sm font-medium transition-colors'
             >
               Forgot password ?
             </Link>
@@ -74,7 +74,7 @@ const AuthForm = ({ config, formSchema, onSubmit, formType }) => {
             }
           />
         )}
-        <Button type='submit' className='w-full bg-[#51C09F] hover:bg-[#51C09F]/80'>
+        <Button type='submit' className='bg-secondary hover:bg-secondary/80 w-full'>
           {config.buttonText}
           <ArrowRight className='' />
         </Button>
@@ -84,7 +84,7 @@ const AuthForm = ({ config, formSchema, onSubmit, formType }) => {
             Không có tài khoản?{' '}
             <Link
               to='/auth/register'
-              className='font-medium text-teal-500 transition-colors hover:text-teal-600'
+              className='text-secondary/80 hover:text-secondary font-medium transition-colors'
             >
               Đăng ký
             </Link>

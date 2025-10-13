@@ -1,11 +1,24 @@
 import SelectItems from '@/components/SelectItems'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/hooks/useAuth'
+import { logoutUser } from '@/store/actions/authActions'
+import { selectIsAuthenticated } from '@/store/selectors/authSelectors'
 import { MapPin } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth()
+  const dispatch = useDispatch()
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser())
+      navigate('/')
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <header className='flex h-30 items-center border-b'>
@@ -21,7 +34,7 @@ const Header = () => {
           {isAuthenticated ? (
             <Button
               className='bg-secondary hover:bg-secondary/80 cursor-pointer px-6 py-2'
-              onClick={logout}
+              onClick={handleLogout}
             >
               Đăng xuất
             </Button>
