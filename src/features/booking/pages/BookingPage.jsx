@@ -5,6 +5,7 @@ import instance from '@/lib/axios'
 import BookingForm from '../components/BookingForm'
 import SuccessBooking from '../components/SuccessBooking'
 import BookingProgress from '../components/BookingProgress'
+import FailedBooking from '../components/FailedBooking'
 
 const BookingPage = () => {
   const [searchParams] = useSearchParams()
@@ -35,8 +36,8 @@ const BookingPage = () => {
         userEmail: 'nhatnam13112005@gmail.com',
         vehicleId: 2,
         stationId: 1,
-        startTime: '2026-10-14T03:00:00',
-        endTime: '2026-10-17T07:00:00'
+        startTime: '2027-10-14T03:00:00',
+        endTime: '2027-10-17T07:00:00'
       })
 
       window.location.href = data.data.vnpayUrl
@@ -64,8 +65,12 @@ const BookingPage = () => {
     <div className='h-full bg-gray-50 py-8'>
       <div className='container mx-auto max-w-4xl px-4'>
         <BookingProgress status={status} />
-        {status && txnRef ? (
-          <SuccessBooking car={car} txnRef={txnRef} />
+        {status ? (
+          status === 'success' ? (
+            <SuccessBooking car={car} txnRef={txnRef} />
+          ) : (
+            <FailedBooking />
+          )
         ) : (
           <BookingForm onSubmit={onSubmit} submitLoading={submitLoading} car={car} />
         )}
