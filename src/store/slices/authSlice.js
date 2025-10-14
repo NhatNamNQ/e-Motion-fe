@@ -41,12 +41,10 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false
         state.registrationEmail = action.meta.arg.email
-        state.isOtpSent = true
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload
-        state.isOtpSent = false
       })
       .addCase(logoutUser.pending, (state) => {
         state.isLoading = true

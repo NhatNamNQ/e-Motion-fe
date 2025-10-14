@@ -37,7 +37,7 @@ export const authService = {
       throw handleError(error)
     }
   },
-  resentOtp: async (email) => {
+  resendOtp: async (email) => {
     try {
       const { data } = await instance.post('/auth/resend', {
         email

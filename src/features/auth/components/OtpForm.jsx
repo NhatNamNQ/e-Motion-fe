@@ -14,6 +14,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { otpSchema } from '../schemas/authSchemas'
 import { useEffect, useState } from 'react'
 import { authService } from '../services/authService'
+import { toast } from 'sonner'
 
 const OtpForm = ({ onSubmit, isLoading, email }) => {
   const [countdown, setCountDown] = useState(30)
@@ -38,11 +39,14 @@ const OtpForm = ({ onSubmit, isLoading, email }) => {
 
   const handleResendOtp = async () => {
     if (canResend) {
-      const res = await authService.resentOtp(email)
-      console.log(res)
-      setCountDown(30)
-      setCanResend(false)
-      form.reset()
+      try {
+        await authService.resendOtp(email)
+        setCountDown(30)
+        setCanResend(false)
+        form.reset()
+      } catch (error) {
+        toast.error(error)
+      }
     }
   }
 
