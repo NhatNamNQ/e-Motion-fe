@@ -63,6 +63,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = null
         state.token = null
+        state.isAuthenticated = false
         state.error = action.payload
         state.isInitialized = true
       })
