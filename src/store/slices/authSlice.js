@@ -1,13 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getCurrentUser, loginUser, logoutUser } from '../actions/authActions'
+import { getCurrentUser, loginUser, logoutUser, registerUser } from '../actions/authActions'
 
 const initialState = {
   user: null,
   token: localStorage.getItem('accessToken'),
   isAuthenticated: !!localStorage.getItem('accessToken'),
   isLoading: false,
-  isInitialized: false,
-  error: null
+  error: null,
+  registrationEmail: null
 }
 
 const authSlice = createSlice({
@@ -35,20 +35,35 @@ const authSlice = createSlice({
         state.isAuthenticated = false
         state.token = null
       })
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.registrationEmail = action.meta.arg.email
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
       .addCase(logoutUser.pending, (state) => {
         state.isLoading = true
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.error = null
+        state.user = null
         state.token = null
         state.isAuthenticated = false
         state.isLoading = false
+        state.registrationEmail = null
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload
+        state.user = null
         state.token = null
         state.isAuthenticated = false
+        state.registrationEmail = null
       })
       .addCase(getCurrentUser.pending, (state) => {
         state.isLoading = true
@@ -57,7 +72,6 @@ const authSlice = createSlice({
         state.isLoading = false
         state.error = null
         state.user = action.payload
-        state.isInitialized = true
       })
       .addCase(getCurrentUser.rejected, (state, action) => {
         state.isLoading = false
@@ -65,7 +79,6 @@ const authSlice = createSlice({
         state.token = null
         state.isAuthenticated = false
         state.error = action.payload
-        state.isInitialized = true
       })
   }
 })

@@ -37,3 +37,15 @@ export const getCurrentUser = createAsyncThunk(
     }
   }
 )
+
+export const registerUser = createAsyncThunk(
+  'auth/register',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await authService.register(formData)
+      return res.data
+    } catch (error) {
+      return rejectWithValue(error.message || 'Đăng ký thất bại')
+    }
+  }
+)

@@ -12,7 +12,6 @@ import OtpPage from './features/auth/pages/OtpPage'
 import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import CarListPage from './features/cars/pages/CarListPage'
-import AuthProvider from './context/AuthProvider'
 import PublicRoute from './layout/PublicRoute'
 import ErrorPage from './features/error/pages/ErrorPage'
 import CarDetailPage from './features/cars/pages/CarDetailPage'
@@ -91,9 +90,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
+      <RouterProvider router={router} />
     </Provider>
   </StrictMode>
 )

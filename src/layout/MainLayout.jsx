@@ -3,7 +3,11 @@ import Header from './Header'
 import Footer from './Footer'
 import { Toaster } from '@/components/ui/sonner'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAuthError, selectIsInitialized, selectToken } from '@/store/selectors/authSelectors'
+import {
+  selectAuthError,
+  selectIsAuthenticated,
+  selectToken
+} from '@/store/selectors/authSelectors'
 import { useEffect } from 'react'
 import { getCurrentUser } from '@/store/actions/authActions'
 import { toast } from 'sonner'
@@ -12,21 +16,21 @@ const MainLayout = () => {
   const dispatch = useDispatch()
   const token = useSelector(selectToken)
   const error = useSelector(selectAuthError)
-  const isInitialized = useSelector(selectIsInitialized)
+  const isAuthenticated = useSelector(selectIsAuthenticated)
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (token && !isInitialized) {
+      if (token && isAuthenticated) {
         const result = await dispatch(getCurrentUser())
         if (getCurrentUser.fulfilled.match(result)) {
-          toast.success(`Chào mừng trở lại ${result.payload.fullName}`)
+          toast.success(`Chào mừng tới với e-Motion`)
         } else {
           toast.error(error)
         }
       }
     }
     fetchUser()
-  }, [dispatch, token, isInitialized, error])
+  }, [dispatch, token, isAuthenticated, error])
   return (
     <>
       <div className='min-h-screen'>
