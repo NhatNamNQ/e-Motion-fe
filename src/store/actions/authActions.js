@@ -24,3 +24,16 @@ export const logoutUser = createAsyncThunk('auth/logout', async (_, { rejectWith
     return rejectWithValue(error.message || 'Đăng xuất thất bại')
   }
 })
+
+export const getCurrentUser = createAsyncThunk(
+  'auth/getCurrentUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await authService.getCurrentUser()
+      return res.data
+    } catch (error) {
+      localStorage.removeItem('accessToken')
+      return rejectWithValue(error.message || 'Lấy thông tin user thất bại')
+    }
+  }
+)

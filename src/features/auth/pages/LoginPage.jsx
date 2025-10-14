@@ -12,7 +12,7 @@ import {
   selectAuthLoading,
   selectIsAuthenticated
 } from '@/store/selectors/authSelectors'
-// import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 
 const LoginPage = () => {
   usePageTitle('Login')
@@ -40,9 +40,9 @@ const LoginPage = () => {
     )
 
     if (loginUser.fulfilled.match(result)) {
-      alert('Đăng nhập thành công')
+      toast.success('Đăng nhập thành công')
     } else {
-      alert(error)
+      toast.error(error)
     }
   }
 

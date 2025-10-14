@@ -5,6 +5,7 @@ import { selectIsAuthenticated } from '@/store/selectors/authSelectors'
 import { MapPin } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const Header = () => {
   const dispatch = useDispatch()
@@ -14,6 +15,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser())
+      toast.success('Đăng xuất thành công')
       navigate('/')
     } catch (error) {
       console.error(error)
