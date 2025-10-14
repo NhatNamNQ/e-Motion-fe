@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { loginUser, logoutUser } from '../actions/authActions'
+import { getCurrentUser, loginUser, logoutUser } from '../actions/authActions'
 
 const initialState = {
   user: null,
   token: localStorage.getItem('accessToken'),
   isAuthenticated: !!localStorage.getItem('accessToken'),
   isLoading: false,
+  isInitialized: false,
   error: null
 }
 
@@ -21,10 +22,10 @@ const authSlice = createSlice({
     builder
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true
-        state.error = null
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false
+        state.error = null
         state.token = action.payload.token
         state.isAuthenticated = true
       })
@@ -35,16 +36,35 @@ const authSlice = createSlice({
         state.token = null
       })
       .addCase(logoutUser.pending, (state) => {
-        state.error = null
+        state.isLoading = true
       })
       .addCase(logoutUser.fulfilled, (state) => {
-        state.token = null
-        state.isAuthenticated = false
         state.error = null
-      })
-      .addCase(logoutUser.rejected, (state) => {
         state.token = null
         state.isAuthenticated = false
+        state.isLoading = false
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+        state.token = null
+        state.isAuthenticated = false
+      })
+      .addCase(getCurrentUser.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.error = null
+        state.user = action.payload
+        state.isInitialized = true
+      })
+      .addCase(getCurrentUser.rejected, (state, action) => {
+        state.isLoading = false
+        state.user = null
+        state.token = null
+        state.error = action.payload
+        state.isInitialized = true
       })
   }
 })
