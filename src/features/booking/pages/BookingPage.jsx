@@ -36,8 +36,8 @@ const BookingPage = () => {
         userEmail: 'nhatnam13112005@gmail.com',
         vehicleId: 2,
         stationId: 1,
-        startTime: '2027-10-14T03:00:00',
-        endTime: '2027-10-17T07:00:00'
+        startTime: '2030-10-14T03:00:00',
+        endTime: '2030-10-17T07:00:00'
       })
 
       window.location.href = data.data.vnpayUrl

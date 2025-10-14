@@ -1,5 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { store } from './store'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './features/home/pages/HomePage'
@@ -10,7 +12,6 @@ import OtpPage from './features/auth/pages/OtpPage'
 import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
 import CarListPage from './features/cars/pages/CarListPage'
-import AuthProvider from './context/AuthProvider'
 import PublicRoute from './layout/PublicRoute'
 import ErrorPage from './features/error/pages/ErrorPage'
 import CarDetailPage from './features/cars/pages/CarDetailPage'
@@ -87,7 +88,9 @@ const router = createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')).render(
-  <AuthProvider>
-    <RouterProvider router={router} />
-  </AuthProvider>
+  <StrictMode>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </StrictMode>
 )

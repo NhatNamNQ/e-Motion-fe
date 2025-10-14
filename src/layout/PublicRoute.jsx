@@ -1,10 +1,9 @@
-import Loader from '@/components/Loader'
-import { useAuth } from '@/hooks/useAuth'
+import { selectIsAuthenticated } from '@/store/selectors/authSelectors'
+import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth()
-  if (isLoading) return <Loader />
+  const isAuthenticated = useSelector(selectIsAuthenticated)
   if (isAuthenticated) return <Navigate to='/' replace />
 
   return children
