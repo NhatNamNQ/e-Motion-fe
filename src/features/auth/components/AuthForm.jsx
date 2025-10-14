@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 import FormFieldInput from '@/components/FormFieldInput'
 import { useEffect } from 'react'
 
-const AuthForm = ({ config, formSchema, onSubmit, formType }) => {
+const AuthForm = ({ config, formSchema, onSubmit, formType, isLoading }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: config.defaultValues
@@ -74,9 +74,20 @@ const AuthForm = ({ config, formSchema, onSubmit, formType }) => {
             }
           />
         )}
-        <Button type='submit' className='bg-secondary hover:bg-secondary/80 w-full'>
-          {config.buttonText}
-          <ArrowRight className='' />
+
+        <Button
+          type='submit'
+          className='bg-secondary hover:bg-secondary/80 w-full'
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            'Đang xác thực...'
+          ) : (
+            <div className='flex items-center gap-1'>
+              {config.buttonText}
+              <ArrowRight />
+            </div>
+          )}
         </Button>
         {/* Dont have account (Login)*/}
         {formType === 'login' && (

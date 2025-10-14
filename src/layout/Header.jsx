@@ -41,11 +41,16 @@ const Header = () => {
               Đăng xuất
             </Button>
           ) : (
-            <Link to='/auth/login'>
-              <Button className='bg-secondary hover:bg-secondary/80 cursor-pointer px-6 py-2'>
-                Đăng Nhập
-              </Button>
-            </Link>
+            <div className='flex gap-2'>
+              <Link to='/auth/register'>
+                <Button variant='outline'>Đăng Ký</Button>
+              </Link>
+              <Link to='/auth/login'>
+                <Button className='bg-secondary hover:bg-secondary/80 cursor-pointer px-6 py-2'>
+                  Đăng Nhập
+                </Button>
+              </Link>
+            </div>
           )}
         </nav>
       </div>

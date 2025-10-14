@@ -7,11 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { clearError } from '../../../store/slices/authSlice'
 import { useEffect } from 'react'
 import { loginUser } from '@/store/actions/authActions'
-import {
-  selectAuthError,
-  selectAuthLoading,
-  selectIsAuthenticated
-} from '@/store/selectors/authSelectors'
+import { selectAuthLoading, selectIsAuthenticated } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
 
 const LoginPage = () => {
@@ -20,7 +16,6 @@ const LoginPage = () => {
   const navigate = useNavigate()
 
   const isLoading = useSelector(selectAuthLoading)
-  const error = useSelector(selectAuthError)
   const isAuthenticated = useSelector(selectIsAuthenticated)
 
   useEffect(() => {
@@ -42,7 +37,7 @@ const LoginPage = () => {
     if (loginUser.fulfilled.match(result)) {
       toast.success('Đăng nhập thành công')
     } else {
-      toast.error(error)
+      toast.error(result.payload)
     }
   }
 

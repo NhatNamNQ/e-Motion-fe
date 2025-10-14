@@ -1,47 +1,58 @@
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { toast } from 'sonner'
 import usePageTitle from '@/hooks/usePageTitle'
 import OtpForm from '../components/OtpForm'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import {
+  selectAuthLoading,
+  selectIsAuthenticated,
+  selectRegistrationEmail
+} from '@/store/selectors/authSelectors'
 import { authService } from '../services/authService'
 
 const OtpPage = () => {
   usePageTitle('Verify OTP')
-  const location = useLocation()
   const navigate = useNavigate()
-  const email = location?.state
 
-  const onOtpSubmit = async (otpData) => {
+  const isLoading = useSelector(selectAuthLoading)
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+  const registrationEmail = useSelector(selectRegistrationEmail)
+
+  useEffect(() => {
+    if (isAuthenticated) navigate('/')
+    if (!registrationEmail) navigate('/auth/register')
+  }, [isAuthenticated, registrationEmail, navigate])
+
+  const handleVerifyOtp = async (formData) => {
+    if (!registrationEmail) {
+      toast.error('Vui lòng đăng ký trước khi xác thực OTP')
+      navigate('/auth/register')
+    }
+
     try {
-      const res = await authService.verifyOtp({
-        email: email,
-        verificationCode: otpData.verificationCode
+      await authService.verifyOtp({
+        email: registrationEmail,
+        verificationCode: formData.verificationCode
       })
-      console.log(res)
+      toast.success('Xác thực thành công! Đăng nhập để thuê xe')
       navigate('/auth/login')
     } catch (error) {
-      console.error(error)
+      toast.error(error.message || 'Xác thực OTP thất bại')
     }
   }
 
   return (
-    <main className='flex min-w-screen flex-1 items-center justify-center bg-[#51C09F] py-12'>
+    <main className='bg-secondary flex h-screen items-center justify-center py-12'>
       <div className='w-full max-w-lg'>
-        <div className='w-full rounded-2xl bg-white p-8 shadow-lg'>
-          <div>
-            <h1 className='text-center text-2xl font-bold tracking-tight'>Nhập mã xác thực</h1>
-            <div className='mt-8'>
-              <OtpForm onSubmit={onOtpSubmit} />
-            </div>
-
-            <p className='text-muted-foreground mt-6 text-center text-sm'>
-              Không nhận được mã?{' '}
-              <Link
-                to='#'
-                className='font-medium text-teal-500 transition-colors hover:text-teal-600'
-              >
-                Gửi lại
-              </Link>
+        <div className='rounded-2xl bg-white p-8 shadow-lg'>
+          <div className='mb-6 text-center'>
+            <h2 className='text-2xl font-bold'>Xác thực OTP</h2>
+            <p className='mt-2 text-gray-600'>
+              Mã xác thực đã được gửi đến email: <strong>{registrationEmail}</strong>
             </p>
           </div>
+          <OtpForm onSubmit={handleVerifyOtp} isLoading={isLoading} email={registrationEmail} />
         </div>
       </div>
     </main>

@@ -12,14 +12,39 @@ import {
 } from '@/components/ui/form'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { otpSchema } from '../schemas/authSchemas'
+import { useEffect, useState } from 'react'
+import { authService } from '../services/authService'
 
-const OtpForm = ({ onSubmit }) => {
+const OtpForm = ({ onSubmit, isLoading, email }) => {
+  const [countdown, setCountDown] = useState(30)
+  const [canResend, setCanResend] = useState(false)
   const form = useForm({
     resolver: zodResolver(otpSchema),
     defaultValues: {
       verificationCode: ''
     }
   })
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountDown(countdown - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    } else {
+      setCanResend(true)
+    }
+  }, [countdown])
+
+  const handleResendOtp = async () => {
+    if (canResend) {
+      const res = await authService.resentOtp(email)
+      console.log(res)
+      setCountDown(30)
+      setCanResend(false)
+      form.reset()
+    }
+  }
 
   return (
     <Form {...form}>
@@ -30,10 +55,10 @@ const OtpForm = ({ onSubmit }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel></FormLabel>
-              <div className='flex flex-col items-center gap-4'>
+              <div className='flex w-full flex-col items-center gap-4'>
                 <FormControl>
                   <InputOTP maxLength={6} {...field} pattern={/^[0-9]*$/}>
-                    <InputOTPGroup className='gap-4'>
+                    <InputOTPGroup className='w-full gap-4'>
                       <InputOTPSlot index={0} />
                       <InputOTPSlot index={1} />
                       <InputOTPSlot index={2} />
@@ -43,17 +68,32 @@ const OtpForm = ({ onSubmit }) => {
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>
-                <FormDescription></FormDescription>
+                <FormDescription className='text-center'></FormDescription>
               </div>
               <FormMessage className='text-center' />
             </FormItem>
           )}
         />
-
-        <Button type='submit' className='w-full bg-[#51C09F] hover:bg-[#51C09F]/80'>
-          Xác nhận
+        <Button
+          type='submit'
+          className='bg-secondary hover:bg-secondary/80 w-full'
+          disabled={isLoading}
+        >
+          {isLoading ? 'Đang xác thực...' : 'Xác nhận'}
         </Button>
       </form>
+      <div className='my-3 text-center'>
+        <p className='text-sm text-gray-600'>Không nhận được mã?</p>
+        <Button
+          type='button'
+          variant='outline'
+          onClick={handleResendOtp}
+          disabled={!canResend || isLoading}
+          className='border-none shadow-none'
+        >
+          {canResend ? 'Gửi lại mã OTP' : `Gửi lại sau ${countdown}s`}
+        </Button>
+      </div>
     </Form>
   )
 }
