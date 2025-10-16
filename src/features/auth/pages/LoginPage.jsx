@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearError } from '../../../store/slices/authSlice'
 import { getCurrentUser, loginUser } from '@/store/actions/authActions'
-import { selectAuthLoading, selectUser } from '@/store/selectors/authSelectors'
+import { selectAuthLoading } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
 
 const LoginPage = () => {
@@ -15,7 +15,6 @@ const LoginPage = () => {
   const navigate = useNavigate()
 
   const isLoading = useSelector(selectAuthLoading)
-  const user = useSelector(selectUser)
 
   const handleLogin = async (formData) => {
     dispatch(clearError())
@@ -31,8 +30,13 @@ const LoginPage = () => {
       const userResult = await dispatch(getCurrentUser())
       if (getCurrentUser.fulfilled.match(userResult)) {
         toast.success('Đăng nhập thành công')
-        if (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_STAFF') {
-          navigate('/dashboard')
+        switch (userResult.payload.role) {
+          case 'ROLE_ADMIN':
+          case 'ROLE_STAFF':
+            navigate('/dashboard')
+            break
+          default:
+            navigate('/')
         }
       }
     } else {

@@ -2,16 +2,19 @@ import { selectIsAuthenticated, selectUser } from '@/store/selectors/authSelecto
 import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
-const PublicRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated)
   const user = useSelector(selectUser)
-  if (isAuthenticated) {
-    if (user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_STAFF') {
-      return <Navigate to='/dashboard' replace />
-    }
+
+  if (!isAuthenticated) {
+    return <Navigate to='/auth/login' replace />
+  }
+
+  if (allowedRoles.length > 0 && (!user || !allowedRoles.includes(user.role))) {
     return <Navigate to='/' replace />
   }
+
   return children
 }
 
-export default PublicRoute
+export default ProtectedRoute
