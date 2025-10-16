@@ -5,9 +5,8 @@ import { loginConfig } from '../constants'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearError } from '../../../store/slices/authSlice'
-import { useEffect } from 'react'
-import { loginUser } from '@/store/actions/authActions'
-import { selectAuthLoading, selectIsAuthenticated } from '@/store/selectors/authSelectors'
+import { getCurrentUser, loginUser } from '@/store/actions/authActions'
+import { selectAuthLoading, selectUser } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
 
 const LoginPage = () => {
@@ -16,13 +15,7 @@ const LoginPage = () => {
   const navigate = useNavigate()
 
   const isLoading = useSelector(selectAuthLoading)
-  const isAuthenticated = useSelector(selectIsAuthenticated)
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/')
-    }
-  }, [isAuthenticated, navigate])
+  const user = useSelector(selectUser)
 
   const handleLogin = async (formData) => {
     dispatch(clearError())
@@ -35,7 +28,13 @@ const LoginPage = () => {
     )
 
     if (loginUser.fulfilled.match(result)) {
-      toast.success('Đăng nhập thành công')
+      const userResult = await dispatch(getCurrentUser())
+      if (getCurrentUser.fulfilled.match(userResult)) {
+        toast.success('Đăng nhập thành công')
+        if (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_STAFF') {
+          navigate('/dashboard')
+        }
+      }
     } else {
       toast.error(result.payload)
     }

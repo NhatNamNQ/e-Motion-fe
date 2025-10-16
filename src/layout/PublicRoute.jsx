@@ -1,11 +1,16 @@
-import { selectIsAuthenticated } from '@/store/selectors/authSelectors'
+import { selectIsAuthenticated, selectUser } from '@/store/selectors/authSelectors'
 import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
 const PublicRoute = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated)
-  if (isAuthenticated) return <Navigate to='/' replace />
-
+  const user = useSelector(selectUser)
+  if (isAuthenticated) {
+    if (user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_STAFF') {
+      return <Navigate to='/dashboard' replace />
+    }
+    return <Navigate to='/' replace />
+  }
   return children
 }
 

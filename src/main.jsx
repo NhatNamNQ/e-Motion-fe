@@ -16,6 +16,8 @@ import PublicRoute from './layout/PublicRoute'
 import ErrorPage from './features/error/pages/ErrorPage'
 import CarDetailPage from './features/cars/pages/CarDetailPage'
 import BookingPage from './features/booking/pages/BookingPage'
+import DashboardLayout from './layout/DashboardLayout'
+import AdminDashboardPage from './features/dashboard/pages/AdminDashboardPage'
 
 const router = createBrowserRouter([
   {
@@ -82,6 +84,17 @@ const router = createBrowserRouter([
       {
         path: '/booking/payment-result',
         element: <BookingPage />
+      }
+    ]
+  },
+  {
+    path: '/dashboard',
+    element: <DashboardLayout />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '/dashboard',
+        element: <AdminDashboardPage />
       }
     ]
   }
