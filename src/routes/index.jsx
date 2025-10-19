@@ -6,6 +6,8 @@ import PublicRoute from './PublicRoute'
 import ProtectedRoute from './ProtectedRoute'
 import ErrorPage from '@/features/error/pages/ErrorPage'
 import Loader from '@/components/Loader'
+import DashboardPage from '@/features/dashboard/pages/DashboardPage'
+import ReservationsPage from '@/features/dashboard/pages/ReservationsPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -16,7 +18,7 @@ const ResetPasswordPage = lazy(() => import('@/features/auth/pages/ResetPassword
 const CarListPage = lazy(() => import('@/features/cars/pages/CarListPage'))
 const CarDetailPage = lazy(() => import('@/features/cars/pages/CarDetailPage'))
 const BookingPage = lazy(() => import('@/features/booking/pages/BookingPage'))
-const AdminDashboardPage = lazy(() => import('@/features/dashboard/pages/AdminDashboardPage'))
+const AdminDashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPage'))
 
 export const routes = [
   {
@@ -118,19 +120,27 @@ export const routes = [
   },
   {
     path: '/dashboard',
-    element: (
-      <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
-        <DashboardLayout />
-      </ProtectedRoute>
-    ),
+    element: <DashboardLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
         path: '/dashboard',
         element: (
-          <Suspense fallback={<Loader />}>
-            <AdminDashboardPage />
-          </Suspense>
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <DashboardPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/reservations',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <ReservationsPage />
+            </Suspense>
+          </ProtectedRoute>
         )
       }
     ]

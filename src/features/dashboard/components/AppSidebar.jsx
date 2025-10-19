@@ -40,7 +40,7 @@ const staffMenuItems = [
   },
   {
     title: 'Reservations',
-    url: '/dashboard/bookings',
+    url: '/dashboard/reservations',
     icon: Calendar
   },
   {
