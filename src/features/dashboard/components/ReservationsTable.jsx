@@ -1,4 +1,5 @@
 import Loader from '@/components/Loader'
+import { useNavigate } from 'react-router-dom'
 import {
   Table,
   TableBody,
@@ -11,7 +12,13 @@ import { cn } from '@/lib/utils'
 import { flexRender } from '@tanstack/react-table'
 
 const ReservationsTable = ({ table, columns, globalFilter, isLoading }) => {
+  const navigate = useNavigate()
+
   if (isLoading) return <Loader />
+
+  const handleRowClick = (reservationCode) => {
+    navigate(`/dashboard/reservations/${reservationCode}`)
+  }
 
   return (
     <div className='rounded-md border'>
@@ -32,7 +39,11 @@ const ReservationsTable = ({ table, columns, globalFilter, isLoading }) => {
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow
+                key={row.id}
+                className='cursor-pointer transition-colors hover:bg-gray-50'
+                onClick={() => handleRowClick(row.original.code)}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -8,6 +8,7 @@ import ErrorPage from '@/features/error/pages/ErrorPage'
 import Loader from '@/components/Loader'
 import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 import ReservationsPage from '@/features/dashboard/pages/ReservationsPage'
+import ReservationDetailPage from '@/features/dashboard/pages/ReservationDetailPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -139,6 +140,16 @@ export const routes = [
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
             <Suspense fallback={<Loader />}>
               <ReservationsPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/reservations/:code',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <ReservationDetailPage />
             </Suspense>
           </ProtectedRoute>
         )
