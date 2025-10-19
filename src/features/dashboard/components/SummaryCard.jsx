@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { formatCurrency } from '@/lib/utils'
-import { adminService } from '../services/AdminService'
+import { adminService } from '../services/adminService'
 
 const SummaryCard = () => {
-  const [stats, setStats] = useState({
+  const [summary, setSummary] = useState({
     totalUsers: 0,
     totalCars: 0,
     totalReservations: 0,
@@ -16,8 +16,8 @@ const SummaryCard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const data = await adminService.getDataDashboardAdmin()
-        setStats({
+        const data = await adminService.getDashboardSummary()
+        setSummary({
           totalUsers: data.totalUsers ?? 0,
           totalCars: data.totalCars ?? 0,
           totalReservations: data.totalReservations ?? 0,
@@ -26,7 +26,6 @@ const SummaryCard = () => {
           usageRate: data.usageRate ?? 0,
           peakHours: data.peakHours ?? []
         })
-        console.log(data)
       } catch (error) {
         console.error('Error fetching data stats admin:', error)
       }
@@ -41,39 +40,41 @@ const SummaryCard = () => {
       <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
         <div className='rounded-xl border bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg'>
           <h3 className='mb-2 text-lg font-semibold text-gray-700'>Clients</h3>
-          <p className='text-3xl font-bold text-blue-600'>{stats.totalUsers}</p>
+          <p className='text-3xl font-bold text-blue-600'>{summary.totalUsers}</p>
         </div>
 
         <div className='rounded-xl border bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg'>
           <h3 className='mb-2 text-lg font-semibold text-gray-700'>Total Cars</h3>
-          <p className='text-3xl font-bold text-green-600'>{stats.totalCars}</p>
+          <p className='text-3xl font-bold text-green-600'>{summary.totalCars}</p>
         </div>
 
         <div className='rounded-xl border bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg'>
           <h3 className='mb-2 text-lg font-semibold text-gray-700'>Total Reservations</h3>
-          <p className='text-3xl font-bold text-purple-600'>{stats.totalReservations}</p>
+          <p className='text-3xl font-bold text-purple-600'>{summary.totalReservations}</p>
         </div>
 
         <div className='rounded-xl border bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg'>
           <h3 className='mb-2 text-lg font-semibold text-gray-700'>Total Bookings</h3>
-          <p className='text-3xl font-bold text-purple-600'>{stats.totalBookings}</p>
+          <p className='text-3xl font-bold text-purple-600'>{summary.totalBookings}</p>
         </div>
 
         <div className='rounded-xl border bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg'>
           <h3 className='mb-2 text-lg font-semibold text-gray-700'>Total Revenue</h3>
-          <p className='text-3xl font-bold text-green-600'>{formatCurrency(stats.totalRevenue)}</p>
+          <p className='text-3xl font-bold text-green-600'>
+            {formatCurrency(summary.totalRevenue)}
+          </p>
         </div>
 
         <div className='rounded-xl border bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg'>
           <h3 className='mb-2 text-lg font-semibold text-gray-700'>Usage Rate</h3>
-          <p className='text-3xl font-bold text-purple-600'>{stats.usageRate}%</p>
+          <p className='text-3xl font-bold text-purple-600'>{summary.usageRate}%</p>
         </div>
 
         <div className='rounded-xl border bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg'>
           <h3 className='mb-2 text-lg font-semibold text-gray-700'>Peak Hours</h3>
           <p className='text-xl font-medium text-gray-800'>
-            {stats.peakHours.length > 0
-              ? stats.peakHours.map((hour) => (
+            {summary.peakHours.length > 0
+              ? summary.peakHours.map((hour) => (
                   <span
                     key={hour}
                     className='mr-2 mb-1 inline-block rounded-full bg-blue-100 px-2 py-1 text-blue-800'
