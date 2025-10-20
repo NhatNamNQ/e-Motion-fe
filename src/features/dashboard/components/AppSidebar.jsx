@@ -28,7 +28,9 @@ import {
   LogOut,
   ChevronDown,
   User2,
-  ChevronUp
+  ChevronUp,
+  SquarePen,
+  BookOpen
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -41,12 +43,12 @@ const staffMenuItems = [
   {
     title: 'Reservations',
     url: '/dashboard/reservations',
-    icon: Calendar
+    icon: BookOpen
   },
   {
-    title: 'Car Locations',
-    url: '/dashboard/locations',
-    icon: MapPin
+    title: 'Check List',
+    url: '/dashboard/check-list',
+    icon: SquarePen
   }
 ]
 export function AppSidebar() {
@@ -54,7 +56,7 @@ export function AppSidebar() {
     <Sidebar variant='inset' collapsible='icon'>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>e-Motion</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {staffMenuItems.map((item) => (

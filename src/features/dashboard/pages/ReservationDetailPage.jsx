@@ -7,13 +7,18 @@ import { ArrowLeft, User, Car, Calendar, CreditCard, Plus, MapPin } from 'lucide
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { reservationService } from '../services/reservationService'
+import { rentalService } from '../services/rentalService'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@/store/selectors/authSelectors'
+import { toast } from 'sonner'
 
 const ReservationDetailPage = () => {
   const { code } = useParams()
   const navigate = useNavigate()
+  const user = useSelector(selectUser)
   const [reservation, setReservation] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [submitLoading, setSubmitLoading] = useState(false)
 
   useEffect(() => {
     const fetchReservation = async () => {
@@ -21,12 +26,10 @@ const ReservationDetailPage = () => {
 
       try {
         setLoading(true)
-        setError(null)
         const data = await reservationService.getReservationByCode(code)
         setReservation(data)
-      } catch (err) {
-        console.error('Error fetching reservation:', err)
-        setError('Failed to fetch reservation details')
+      } catch (error) {
+        toast.error(error.message)
       } finally {
         setLoading(false)
       }
@@ -35,21 +38,20 @@ const ReservationDetailPage = () => {
     fetchReservation()
   }, [code])
 
-  const handleCreateRental = () => {
-    console.log('Creating rental for reservation:', code)
+  const handleCreateRental = async () => {
+    try {
+      setSubmitLoading(true)
+      const res = await rentalService.createRentalFromReservation(code, user?.staffId)
+      if (res?.id) navigate(`/dashboard/rentals/${res.id}`)
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setSubmitLoading(false)
+    }
   }
 
   if (loading) {
     return <Loader />
-  }
-
-  if (error) {
-    return (
-      <div className='flex h-64 flex-col items-center justify-center space-y-4'>
-        <p className='text-red-500'>{error}</p>
-        <Button onClick={() => navigate('/dashboard/reservations')}>Back to Reservations</Button>
-      </div>
-    )
   }
 
   if (!reservation) {
@@ -69,6 +71,8 @@ const ReservationDetailPage = () => {
         return 'bg-yellow-100 text-yellow-800'
       case 'CANCELLED':
         return 'bg-red-100 text-red-800'
+      case 'COMPLETED':
+        return 'bg-secondary'
       default:
         return 'bg-gray-100 text-gray-800'
     }
@@ -88,7 +92,7 @@ const ReservationDetailPage = () => {
             variant='ghost'
             size='sm'
             onClick={() => navigate('/dashboard/reservations')}
-            className='text-blue-600 hover:text-blue-700'
+            className='text-secondary hover:text-secondary/80'
           >
             <ArrowLeft className='mr-1 h-4 w-4' />
             Back to Reservations
@@ -200,7 +204,8 @@ const ReservationDetailPage = () => {
         <div className='flex justify-center'>
           <Button
             onClick={handleCreateRental}
-            className='bg-blue-600 px-8 py-2 text-white hover:bg-blue-700'
+            className='bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-2'
+            disabled={submitLoading}
           >
             <Plus className='mr-2 h-4 w-4' />
             Create Rental from this Reservation
