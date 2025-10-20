@@ -27,16 +27,16 @@ export const uploadImage = async (file, folderName) => {
   })
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
+    const errorData = await res.json().catch(() => ({}))
     throw new Error(
       `Image upload failed: ${res.status} ${res.statusText}` +
-      (errorData.error && errorData.error.message ? ` - ${errorData.error.message}` : '')
-    );
+        (errorData.error && errorData.error.message ? ` - ${errorData.error.message}` : '')
+    )
   }
 
-  const data = await res.json();
+  const data = await res.json()
   if (!data.secure_url) {
-    throw new Error('Image upload failed: secure_url not found in response.');
+    throw new Error('Image upload failed: secure_url not found in response.')
   }
-  return data.secure_url;
+  return data.secure_url
 }
