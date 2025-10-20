@@ -29,11 +29,10 @@ const DashboardHeader = ({ className, ...props }) => {
     >
       <div
         className={cn(
-          'bg-background/20 relative inset-0 -z-10 flex h-full items-center gap-3 p-4 backdrop-blur-lg sm:gap-4'
+          'bg-background/20 relative inset-0 -z-10 flex h-full items-center justify-between gap-3 p-4 backdrop-blur-lg sm:gap-4'
         )}
       >
         <SidebarTrigger variant='outline' className='max-md:scale-125' />
-        <Separator orientation='vertical' className='h-6' />
         <ProfileDropdown />
       </div>
     </header>

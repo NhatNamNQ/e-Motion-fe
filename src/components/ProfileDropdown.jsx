@@ -5,9 +5,10 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+
+import { ChevronDown } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSelector, useDispatch } from 'react-redux'
@@ -44,11 +45,15 @@ const ProfileDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
+        <Button
+          variant='ghost'
+          className='flex items-center gap-2 rounded-full px-2 py-1 transition hover:bg-gray-100'
+        >
           <Avatar className='h-8 w-8'>
             <AvatarImage src='/logo.svg' alt={getUserDisplayName()} />
             <AvatarFallback>{getInitials(getUserDisplayName())}</AvatarFallback>
           </Avatar>
+          <ChevronDown className='h-4 w-4 opacity-70' />
         </Button>
       </DropdownMenuTrigger>
 
