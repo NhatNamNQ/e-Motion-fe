@@ -1,32 +1,8 @@
-import { useState, useEffect } from 'react'
-import { adminService } from '../services/adminService'
+import { formatCurrency } from '@/lib/utils'
 
-const StationRevenueTable = () => {
-  const [stationDetail, setStationDetail] = useState([])
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const data = await adminService.getDashboardStationDetail()
-        setStationDetail(
-          data.map((item) => ({
-            stationName: item.stationName,
-            revenue: item.revenue,
-            cars: item.cars ?? 0,
-            bookings: item.bookings ?? 0,
-            usageRate: item.usageRate,
-            peakHours: item.peakHours ?? []
-          }))
-        )
-      } catch (error) {
-        console.error('Error fetching data stats admin:', error)
-      }
-    }
-
-    fetchStats()
-  }, [])
+const StationRevenueTable = ({ stationDetail }) => {
   return (
-    <div className='overflow-x-auto rounded-xl bg-white p-6 shadow-md'>
+    <div className='mb-5 overflow-x-auto rounded-xl bg-white p-6 shadow-md'>
       <h3 className='mb-4 text-xl font-semibold text-gray-700'>Station Revenue Details</h3>
       <table className='min-w-full divide-y divide-gray-200'>
         <thead className='bg-gray-50'>
@@ -45,17 +21,19 @@ const StationRevenueTable = () => {
           {stationDetail.map((station, index) => (
             <tr key={index} className='transition-colors hover:bg-gray-50'>
               <td className='px-4 py-2'>{station.stationName}</td>
-              <td className='px-4 py-2 font-semibold text-green-600'>{`$${station.revenue}`}</td>
+              <td className='px-4 py-2 font-semibold text-green-600'>
+                {formatCurrency(station.revenue)}
+              </td>
               <td className='px-4 py-2'>{station.cars}</td>
               <td className='px-4 py-2'>{station.bookings}</td>
               <td className='px-4 py-2'>{station.usageRate}%</td>
               <td className='px-4 py-2'>
-                {station.peakHours.map((h) => (
+                {station.peakHours.map((hour) => (
                   <span
-                    key={h}
+                    key={hour}
                     className='mr-1 mb-1 inline-block rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800'
                   >
-                    {h}h
+                    {hour}h
                   </span>
                 ))}
               </td>

@@ -62,5 +62,16 @@ export const authService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  updateProfile: async (profileData) => {
+    try {
+      const { data } = await instance.post('/users/me/update-profile', {
+        fullName: profileData.fullName,
+        phone: profileData.phone
+      })
+      return data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

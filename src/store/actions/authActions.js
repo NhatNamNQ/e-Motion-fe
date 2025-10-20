@@ -49,3 +49,15 @@ export const registerUser = createAsyncThunk(
     }
   }
 )
+
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (profileData, { rejectWithValue }) => {
+    try {
+      const res = await authService.updateProfile(profileData)
+      return res.data
+    } catch (error) {
+      return rejectWithValue(error.message || 'Update profile thất bại')
+    }
+  }
+)
