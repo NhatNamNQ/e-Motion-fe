@@ -25,14 +25,6 @@ const StationRevenueTable = () => {
 
     fetchStats()
   }, [])
-  // data ví dụ
-  //   const sampleData = data || [
-  //     { stationName: 'Station A', revenue: 1200, rentals: 15, usageRate: 75, peakHours: [7, 15] },
-  //     { stationName: 'Station B', revenue: 950, rentals: 12, usageRate: 60, peakHours: [8] },
-  //     { stationName: 'Station C', revenue: 780, rentals: 10, usageRate: 50, peakHours: [17, 18] },
-  //     { stationName: 'Station D', revenue: 1500, rentals: 20, usageRate: 90, peakHours: [9, 16] }
-  //   ]
-
   return (
     <div className='overflow-x-auto rounded-xl bg-white p-6 shadow-md'>
       <h3 className='mb-4 text-xl font-semibold text-gray-700'>Station Revenue Details</h3>
