@@ -9,6 +9,7 @@ import Loader from '@/components/Loader'
 import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 import ReservationsPage from '@/features/dashboard/pages/ReservationsPage'
 import ReservationDetailPage from '@/features/dashboard/pages/ReservationDetailPage'
+import RentalDetailPage from '@/features/dashboard/pages/RentalDetailPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -19,7 +20,6 @@ const ResetPasswordPage = lazy(() => import('@/features/auth/pages/ResetPassword
 const CarListPage = lazy(() => import('@/features/cars/pages/CarListPage'))
 const CarDetailPage = lazy(() => import('@/features/cars/pages/CarDetailPage'))
 const BookingPage = lazy(() => import('@/features/booking/pages/BookingPage'))
-const AdminDashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPage'))
 
 export const routes = [
   {
@@ -153,7 +153,19 @@ export const routes = [
             </Suspense>
           </ProtectedRoute>
         )
+      },
+      {
+        path: '/dashboard/rentals/:id',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <RentalDetailPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
       }
     ]
   }
 ]
+
+// reservation/:code -> rentals/:code  -> check-inpayment -> rental-checklists
