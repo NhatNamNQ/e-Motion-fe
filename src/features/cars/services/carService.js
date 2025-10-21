@@ -7,15 +7,15 @@ export const carService = {
       const { data } = await instance.get('/vehicles')
       return data
     } catch (error) {
-      handleError(error)
+      throw handleError(error)
     }
   },
   getCarById: async (id) => {
     try {
       const { data } = await instance.get(`/vehicles/id/${id}`)
-      return data.data
+      return data
     } catch (error) {
-      handleError(error)
+      throw handleError(error)
     }
   },
   searchCars: async (searchValues) => {
@@ -23,7 +23,21 @@ export const carService = {
       const { data } = await instance.post('/vehicles/search', searchValues)
       return data
     } catch (error) {
-      handleError(error)
+      throw handleError(error)
+    }
+  },
+  calculateFees: async ({ id, startTime, endTime }) => {
+    try {
+      const { data } = await instance.get('/vehicles/booking', {
+        params: {
+          id,
+          startTime,
+          endTime
+        }
+      })
+      return data
+    } catch (error) {
+      throw handleError(error)
     }
   }
 }

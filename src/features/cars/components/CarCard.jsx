@@ -25,7 +25,7 @@ const CarCard = ({ car }) => {
                   style: 'currency',
                   currency: 'VND'
                 }).format(car.priceRate)}
-                /ngày
+                / <span className='text-secondary text-base font-bold'>/4 giờ</span>
               </span>
             </p>
             <p className='text-slate-700'>Giá tạm tính chưa bao gồm thuế VAT</p>

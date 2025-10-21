@@ -1,26 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import CarList from '../components/CarList'
-import { carService } from '../services/carService'
 import SkeletonCard from '@/components/SkeletonCard'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectCars, selectCarsLoading } from '@/store/selectors/carsSelectors'
+import { getCars } from '@/store/actions/carsActions'
+import { toast } from 'sonner'
 
 const CarListPage = () => {
-  const [cars, setCars] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const dispatch = useDispatch()
+  const cars = useSelector(selectCars)
+  const isLoading = useSelector(selectCarsLoading)
 
   useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true)
+    const loadCars = async () => {
       try {
-        const res = await carService.getCars()
-        setCars(res.data)
+        await dispatch(getCars())
       } catch (error) {
-        console.error(error)
-      } finally {
-        setIsLoading(false)
+        toast.error(error)
       }
     }
-    loadData()
-  }, [])
+    loadCars()
+  }, [dispatch])
 
   return (
     <div className='relative container mx-auto p-4'>
