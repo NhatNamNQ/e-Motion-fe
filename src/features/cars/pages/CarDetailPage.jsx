@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Loader from '@/components/Loader'
-import { carService } from '../services/carService'
 import CarImageGallery from '../components/detail/CarImageGallery'
 import CarBasicInfo from '../components/detail/CarBasicInfo'
 import CarTerms from '../components/detail/CarTerms'
@@ -15,57 +14,45 @@ import RentalTime from '../components/booking/RentalTime'
 import PickupLocation from '../components/booking/PickupLocation'
 import PriceBreakdown from '../components/booking/PriceBreakdown'
 import AdditionalCosts from '../components/booking/AdditionalCosts'
+import { useDispatch, useSelector } from 'react-redux'
+import { calculateBookingFees, getCarDetail } from '@/store/actions/carsActions'
+import {
+  selectBookingFees,
+  selectCarDetailLoading,
+  selectCarError,
+  selectSelectedCar
+} from '@/store/selectors/carsSelectors'
 
 const CarDetailPage = () => {
   const { id } = useParams()
-  const [car, setCar] = useState(null)
-  const [bookingFees, setBookingFees] = useState({
-    depositFee: 0,
-    vatFee: 0,
-    rentFee: 0,
-    totalFee: 0
-  })
-  const [loading, setLoading] = useState(true)
+  const dispatch = useDispatch()
   const navigate = useNavigate()
+  const car = useSelector(selectSelectedCar)
+  const bookingFees = useSelector(selectBookingFees)
+  const isLoading = useSelector(selectCarDetailLoading)
+  const error = useSelector(selectCarError)
 
   useEffect(() => {
-    const fetchCarDetails = async () => {
-      try {
-        setLoading(true)
-        const carData = await carService.getCarById(id)
-
-        setCar(carData)
-      } catch (error) {
-        console.error('Error fetching car details:', error)
-      } finally {
-        setLoading(false)
-      }
+    const loadCarDetail = async () => {
+      await dispatch(getCarDetail(id))
     }
-
-    fetchCarDetails()
-  }, [id])
+    loadCarDetail()
+  }, [dispatch, id])
 
   useEffect(() => {
-    if (car) {
-      const depositFee = car.depositFee
-      const vatFee = (car.pricePer4Hours * 10) / 100
-      const rentFee = car.pricePer4Hours
-      const totalFee = rentFee + depositFee + vatFee
-      setBookingFees({ depositFee, vatFee, rentFee, totalFee })
+    const loadBookingFees = async () => {
+      await dispatch(
+        calculateBookingFees({
+          id,
+          startTime: '2025-10-28T10:00:00',
+          endTime: '2025-10-28T14:00:00'
+        })
+      )
     }
-  }, [car])
+    loadBookingFees()
+  }, [id, dispatch])
 
-  const handleConfirmBooking = () => {
-    const carData = {
-      ...car,
-      ...bookingFees
-    }
-
-    localStorage.setItem('carData', JSON.stringify(carData))
-    navigate('/booking/confirm')
-  }
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <Loader />
@@ -73,12 +60,12 @@ const CarDetailPage = () => {
     )
   }
 
-  if (!car) {
+  if (!car || error) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <div className='text-center'>
           <h1 className='mb-2 text-2xl font-bold text-gray-700'>Không tìm thấy xe</h1>
-          <p className='text-gray-500'>Xe bạn đang tìm kiếm không tồn tại.</p>
+          <p className='text-gray-500'>{error}</p>
         </div>
       </div>
     )
@@ -113,7 +100,7 @@ const CarDetailPage = () => {
                   </div>
                   <PriceBreakdown car={car} bookingFees={bookingFees} />
                   <Button
-                    onClick={handleConfirmBooking}
+                    onClick={() => navigate('/booking/confirm')}
                     className='bg-secondary mt-6 w-full hover:bg-blue-600'
                   >
                     Thuê xe

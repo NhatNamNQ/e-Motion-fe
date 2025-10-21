@@ -5,7 +5,6 @@ export const handleError = (error) => {
       message: error.message || 'Failed to connect internet'
     }
   }
-
   return {
     message: error.response?.data?.message || 'Server error',
     status: error.response?.status,
