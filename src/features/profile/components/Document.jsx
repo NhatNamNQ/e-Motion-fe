@@ -105,13 +105,13 @@ const Document = () => {
             <div key={config.type} className='rounded-lg border-2 bg-gray-50 p-6'>
               <div className='mb-4 flex justify-between'>
                 <div className='flex items-center gap-2'>
-                  <FileText className='h-5 w-5 text-blue-600' />
+                  <FileText className={'h-5 w-5 text-blue-600'} />
                   <h4 className='font-semibold'>{config.label}</h4>
                 </div>
                 {doc && (
                   <button
                     className='text-red-600 hover:cursor-pointer hover:text-red-700'
-                    onClick={() => handleDeleteDocument('CCCD')}
+                    onClick={() => handleDeleteDocument(config.type)}
                   >
                     <Trash2 className='h-4 w-4' />
                   </button>
@@ -131,7 +131,7 @@ const Document = () => {
                   />
                   <button
                     onClick={() => setViewImage(doc.imgUrl)}
-                    className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-white bg-${config.color}-600 hover:bg-${config.color}-700`}
+                    className={`flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700`}
                   >
                     <Eye className='h-4 w-4' /> View
                   </button>
@@ -139,7 +139,7 @@ const Document = () => {
               ) : (
                 <button
                   onClick={() => openModal(config.type)}
-                  className={`flex w-full justify-center gap-2 rounded-lg border-2 border-dashed py-8 hover:border-${config.color}-500 hover:bg-${config.color}-50`}
+                  className={`flex w-full justify-center gap-2 rounded-lg border-2 border-dashed py-8 hover:border-blue-500 hover:bg-blue-50`}
                 >
                   <Plus className='h-6 w-6 text-gray-400' />
                   Add {config.label}

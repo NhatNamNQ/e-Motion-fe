@@ -69,7 +69,7 @@ export const changePassword = createAsyncThunk(
       const res = await authService.changePassword(passwordData)
       return res
     } catch (error) {
-      return rejectWithValue(error.message || 'Change passowrd thất bại')
+      return rejectWithValue(error.message || 'Thay đổi mật khẩu thất bại')
     }
   }
 )

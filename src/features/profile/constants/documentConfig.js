@@ -1,12 +1,10 @@
 export const documentConfigs = [
   {
     type: 'CCCD',
-    label: 'CCCD/CMND',
-    color: 'blue'
+    label: 'CCCD/CMND'
   },
   {
     type: 'LICENSE',
-    label: 'License',
-    color: 'green'
+    label: 'License'
   }
 ]
