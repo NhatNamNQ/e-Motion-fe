@@ -1,54 +1,44 @@
-import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useSearchParams } from 'react-router-dom'
-import instance from '@/lib/axios'
 import BookingForm from '../components/BookingForm'
 import SuccessBooking from '../components/SuccessBooking'
 import BookingProgress from '../components/BookingProgress'
 import FailedBooking from '../components/FailedBooking'
+import { useSelector } from 'react-redux'
+import { selectBookingFees, selectSelectedCar } from '@/store/selectors/carsSelectors'
+import { selectEndTime, selectSearchForm, selectStartTime } from '@/store/selectors/searchSelectors'
+import { selectUser } from '@/store/selectors/authSelectors'
+import { bookingService } from '../services/bookingService'
+import { toast } from 'sonner'
 
 const BookingPage = () => {
   const [searchParams] = useSearchParams()
   const status = searchParams.get('status')
   const txnRef = searchParams.get('txnRef')
 
-  const [car, setCar] = useState(null)
-  const [submitLoading, setSubmitLoading] = useState(false)
-
-  useEffect(() => {
-    const fetchCarDetails = () => {
-      try {
-        const cachedCarData = localStorage.getItem('carData')
-        const carData = JSON.parse(cachedCarData)
-        setCar(carData)
-      } catch (error) {
-        console.error('Error fetching car details:', error)
-      }
-    }
-
-    fetchCarDetails()
-  }, [])
+  const user = useSelector(selectUser)
+  const car = useSelector(selectSelectedCar)
+  const bookingFees = useSelector(selectBookingFees)
+  const searchForm = useSelector(selectSearchForm)
+  const startTime = useSelector(selectStartTime)
+  const endTime = useSelector(selectEndTime)
 
   const onSubmit = async () => {
     try {
-      setSubmitLoading(true)
-      const { data } = await instance.post('/reservations', {
-        userEmail: 'southern13112005@gmail.com',
-        vehicleId: 2,
-        stationId: 1,
-        startTime: '2030-10-14T03:00:00',
-        endTime: '2030-10-17T07:00:00'
+      const { data } = await bookingService.bookReservation({
+        userEmail: user.email,
+        vehicleId: car.id,
+        stationId: car.station.id,
+        startTime,
+        endTime
       })
-
-      window.location.href = data.data.vnpayUrl
+      window.location.href = data.vnpayUrl
     } catch (error) {
-      console.error('Error creating reservation:', error)
-    } finally {
-      setSubmitLoading(false)
+      toast.error(error.message)
     }
   }
 
-  if (!car) {
+  if (!car && !status) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <div className='text-center'>
@@ -67,12 +57,17 @@ const BookingPage = () => {
         <BookingProgress status={status} />
         {status ? (
           status === 'success' ? (
-            <SuccessBooking car={car} txnRef={txnRef} />
+            <SuccessBooking txnRef={txnRef} />
           ) : (
             <FailedBooking />
           )
         ) : (
-          <BookingForm onSubmit={onSubmit} submitLoading={submitLoading} car={car} />
+          <BookingForm
+            onSubmit={onSubmit}
+            bookingFees={bookingFees}
+            car={car}
+            searchForm={searchForm}
+          />
         )}
       </div>
     </div>
