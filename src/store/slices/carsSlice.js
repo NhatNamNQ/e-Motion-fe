@@ -13,7 +13,7 @@ const initialState = {
   selectedCar: null,
   loading: {
     cars: false,
-    carDetail: true
+    carDetail: false
   },
   error: null
 }

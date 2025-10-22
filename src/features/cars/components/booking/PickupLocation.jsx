@@ -12,7 +12,7 @@ const PickupLocation = ({ car }) => {
       <div className='flex items-start gap-3'>
         <MapPin className='text-secondary mt-1 h-5 w-5' />
         <div>
-          <p className='mb-2 text-base font-semibold text-gray-700'>{car.address}</p>
+          <p className='mb-2 text-base font-semibold text-gray-700'>{car.station.address}</p>
           <p className='text-sm text-gray-500'>
             Địa điểm cụ thể sẽ được hiển thị sau khi thanh toán thành công, thời gian lấy xe 24/24.
           </p>

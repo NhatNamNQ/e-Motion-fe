@@ -36,15 +36,3 @@ export const calculateBookingFees = createAsyncThunk(
     }
   }
 )
-
-export const searchCars = createAsyncThunk(
-  'cars/searchCars',
-  async (searchValues, { rejectWithValue }) => {
-    try {
-      const res = await carService.searchCars(searchValues)
-      return res.data
-    } catch (error) {
-      return rejectWithValue(error.message || 'Tìm kiếm xe thất bại')
-    }
-  }
-)

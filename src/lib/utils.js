@@ -1,4 +1,5 @@
 import { clsx } from 'clsx'
+import { format, parse } from 'date-fns'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs) {
@@ -10,6 +11,11 @@ export const formatCurrency = (price, currency = 'VND') => {
     style: 'currency',
     currency: currency
   }).format(price)
+}
+
+export const formatDate = (date, inputFormat = 'dd/MM/yyyy', outputFormat = 'yyyy-MM-dd') => {
+  const dateObject = parse(date, inputFormat, new Date())
+  return format(dateObject, outputFormat)
 }
 
 export const uploadImage = async (file, folderName) => {
