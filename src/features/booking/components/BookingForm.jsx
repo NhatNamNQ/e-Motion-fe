@@ -3,11 +3,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
-const BookingForm = ({ car, onSubmit, submitLoading }) => {
-  const startDate = '07/10/2025'
-  const endDate = '09/10/2025'
-  const startTime = '18:00'
-  const endTime = '22:00'
+const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) => {
+  const { startDate, startHour, endDate, endHour } = searchForm
+  const { vat, deposit, total, holdCar, booking } = bookingFees
   return (
     <Card className='shadow-lg'>
       <CardContent className='p-8'>
@@ -38,7 +36,7 @@ const BookingForm = ({ car, onSubmit, submitLoading }) => {
             <div>
               <div className='font-medium text-gray-800'>Thời gian thuê</div>
               <div className='text-sm text-gray-600'>
-                {startTime}, {startDate} đến {endTime}, {endDate}
+                {startHour}, {startDate} đến {endHour}, {endDate}
               </div>
             </div>
           </div>
@@ -61,16 +59,16 @@ const BookingForm = ({ car, onSubmit, submitLoading }) => {
         <div className='mb-8 space-y-4'>
           <div className='flex justify-between'>
             <span className='text-gray-600'>Phí thuê xe</span>
-            <span className='font-medium'>{formatCurrency(car.pricePer4Hours)}</span>
+            <span className='font-medium'>{formatCurrency(booking)}</span>
           </div>
           <div className='flex justify-between'>
             <span className='text-gray-600'>Thuế VAT</span>
-            <span className='font-medium'>{formatCurrency(car.vatFee)}</span>
+            <span className='font-medium'>{formatCurrency(vat)}</span>
           </div>
           <hr />
           <div className='flex justify-between text-lg font-semibold'>
             <span>Tổng cộng tiền thuê</span>
-            <span>{formatCurrency(car.totalFee)}</span>
+            <span>{formatCurrency(booking + vat)}</span>
           </div>
         </div>
 
@@ -88,7 +86,7 @@ const BookingForm = ({ car, onSubmit, submitLoading }) => {
             <div className='flex-1'>
               <div className='flex justify-between'>
                 <span className='font-medium'>Thanh toán giữ chỗ qua e-Motion</span>
-                <span className='font-bold text-blue-600'>500.000đ</span>
+                <span className='text-secondary font-bold'>{formatCurrency(holdCar)}</span>
               </div>
               <p className='text-sm text-gray-600'>
                 Tiền này để xác nhận đơn thuê xe giữ chỗ. Số được trừ vào tổng tiền thuê khi nhận xe
@@ -104,18 +102,18 @@ const BookingForm = ({ car, onSubmit, submitLoading }) => {
             <div className='flex-1'>
               <div className='flex justify-between'>
                 <span className='font-medium'>Thanh toán khi nhận xe</span>
-                <span className='font-bold'>{formatCurrency(car.totalFee - 500000)}</span>
+                <span className='font-bold'>{formatCurrency(total - holdCar)}</span>
               </div>
               <div className='mt-2 space-y-1 text-sm text-gray-600'>
                 <div className='flex justify-between'>
                   <span>Tiền thuê</span>
-                  <span>{formatCurrency(car.rentFee)}</span>
+                  <span>{formatCurrency(booking + vat)}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Tiền cọc xe</span>
                   <div>
-                    <span className='mr-2 line-through'>{formatCurrency(car.depositFee)}</span>
-                    <span>{formatCurrency(car.depositFee - 500000)}</span>
+                    <span className='mr-2 line-through'>{formatCurrency(deposit)}</span>
+                    <span>{formatCurrency(deposit - holdCar)}</span>
                   </div>
                 </div>
               </div>

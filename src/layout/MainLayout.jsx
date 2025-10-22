@@ -5,14 +5,12 @@ import { Toaster } from '@/components/ui/sonner'
 
 const MainLayout = () => {
   return (
-    <>
-      <div className='min-h-screen'>
-        <Header />
-        <Outlet />
-      </div>
+    <div className='min-h-screen'>
+      <Header />
+      <Outlet />
       <Footer />
-      <Toaster position='top-center' expand={true} richColors />
-    </>
+      <Toaster expand={true} richColors />
+    </div>
   )
 }
 

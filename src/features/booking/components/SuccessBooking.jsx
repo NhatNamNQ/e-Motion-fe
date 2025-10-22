@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { CheckCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-const SuccessBooking = ({ txnRef, car }) => {
+const SuccessBooking = ({ txnRef }) => {
   const navigate = useNavigate()
   return (
     <Card className='shadow-lg'>
@@ -18,9 +18,6 @@ const SuccessBooking = ({ txnRef, car }) => {
           <div className='mb-6 rounded-lg bg-gray-50 p-4'>
             <p>
               <strong>Mã giao dịch:</strong> {txnRef}
-            </p>
-            <p>
-              <strong>Xe:</strong> {car?.name}
             </p>
           </div>
         )}

@@ -9,7 +9,7 @@ import storage from 'redux-persist/lib/storage'
 const searchPersistConfig = {
   key: 'search',
   storage,
-  whitelist: ['searchForm']
+  whitelist: ['searchForm', 'startTime', 'endTime']
 }
 
 export const store = configureStore({
