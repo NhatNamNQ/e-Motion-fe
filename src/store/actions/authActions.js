@@ -61,3 +61,15 @@ export const updateProfile = createAsyncThunk(
     }
   }
 )
+
+export const changePassword = createAsyncThunk(
+  'auth/changePassword',
+  async (passwordData, { rejectWithValue }) => {
+    try {
+      const res = await authService.changePassword(passwordData)
+      return res
+    } catch (error) {
+      return rejectWithValue(error.message || 'Change passowrd thất bại')
+    }
+  }
+)
