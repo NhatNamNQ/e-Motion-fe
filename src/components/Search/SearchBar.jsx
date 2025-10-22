@@ -1,8 +1,7 @@
-import { format } from 'date-fns'
 import { Button } from '../ui/button'
 
-const SearchBar = ({ form, ...props }) => {
-  const { startDate, endDate, location, startTime, endTime } = form.watch()
+const SearchBar = ({ form, onSubmit, ...props }) => {
+  const { startDate, endDate, location, startHour, endHour } = form.watch()
 
   return (
     <div className='bg-background grid grid-cols-11 items-center rounded-lg border border-gray-200 pr-4 shadow-md transition-all duration-300 ease-in-out'>
@@ -22,13 +21,11 @@ const SearchBar = ({ form, ...props }) => {
       >
         <div>
           <p className='text-xs font-medium text-gray-500'>Ngày nhận xe</p>
-          <p className='text-sm font-semibold text-gray-900'>
-            {startDate ? format(startDate, 'dd/MM/yyyy') : 'Chọn ngày'}
-          </p>
+          <p className='text-sm font-semibold text-gray-900'>{startDate || 'Chọn ngày'}</p>
         </div>
         <div>
           <p className='text-xs font-medium text-gray-500'>Giờ nhận xe</p>
-          <p className='text-sm font-semibold text-gray-900'>{startTime || 'Chọn giờ'}</p>
+          <p className='text-sm font-semibold text-gray-900'>{startHour || 'Chọn giờ'}</p>
         </div>
       </div>
 
@@ -39,17 +36,18 @@ const SearchBar = ({ form, ...props }) => {
       >
         <div>
           <p className='text-xs font-medium text-gray-500'>Ngày trả xe</p>
-          <p className='text-sm font-semibold text-gray-900'>
-            {endDate ? format(endDate, 'dd/MM/yyyy') : 'Chọn ngày'}
-          </p>
+          <p className='text-sm font-semibold text-gray-900'>{endDate || 'Chọn ngày'}</p>
         </div>
         <div>
           <p className='text-xs font-medium text-gray-500'>Giờ trả xe</p>
-          <p className='text-sm font-semibold text-gray-900'>{endTime || 'Chọn giờ'}</p>
+          <p className='text-sm font-semibold text-gray-900'>{endHour || 'Chọn giờ'}</p>
         </div>
       </div>
 
-      <Button className='bg-secondary hover:bg-secondary/80 col-span-2 h-12 w-full cursor-pointer font-semibold shadow-sm'>
+      <Button
+        onClick={form.handleSubmit(onSubmit)}
+        className='bg-secondary hover:bg-secondary/80 col-span-2 h-12 w-full cursor-pointer font-semibold shadow-sm'
+      >
         TÌM XE
       </Button>
     </div>

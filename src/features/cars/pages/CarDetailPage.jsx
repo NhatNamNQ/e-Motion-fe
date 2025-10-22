@@ -22,12 +22,16 @@ import {
   selectCarError,
   selectSelectedCar
 } from '@/store/selectors/carsSelectors'
+import { selectEndTime, selectSearchForm, selectStartTime } from '@/store/selectors/searchSelectors'
 
 const CarDetailPage = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const startTime = useSelector(selectStartTime)
+  const endTime = useSelector(selectEndTime)
   const car = useSelector(selectSelectedCar)
+  const searchForm = useSelector(selectSearchForm)
   const bookingFees = useSelector(selectBookingFees)
   const isLoading = useSelector(selectCarDetailLoading)
   const error = useSelector(selectCarError)
@@ -44,15 +48,15 @@ const CarDetailPage = () => {
       await dispatch(
         calculateBookingFees({
           id,
-          startTime: '2025-10-28T10:00:00',
-          endTime: '2025-10-28T14:00:00'
+          startTime,
+          endTime
         })
       )
     }
     loadBookingFees()
-  }, [id, dispatch])
+  }, [id, dispatch, startTime, endTime])
 
-  if (isLoading) {
+  if (isLoading && !car) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <Loader />
@@ -90,7 +94,7 @@ const CarDetailPage = () => {
               <Card className='shadow-lg'>
                 <CardContent className=''>
                   <PricingDisplay car={car} />
-                  <RentalTime />
+                  <RentalTime searchForm={searchForm} />
                   <PickupLocation car={car} />
                   <div className='mb-6 flex items-center gap-3'>
                     <Shield className='h-4 w-4 text-blue-500' />

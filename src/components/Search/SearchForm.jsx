@@ -33,28 +33,25 @@ const generateHours = () => {
 
 const SearchForm = ({ form, onSubmit }) => {
   const hours = generateHours()
-  const { startDate, endDate, location, startTime, endTime } = form.watch()
+  const { startDate, endDate, location, startHour, endHour } = form.watch()
 
   const handleLocationSelect = (location) => {
     form.setValue('location', location)
   }
 
-  const handleStartTimeSelect = (time) => {
-    form.setValue('startTime', time)
+  const handleStartHourSelect = (time) => {
+    form.setValue('startHour', time)
   }
-  const handleEndTimeSelect = (time) => {
-    form.setValue('endTime', time)
+  const handleEndHourSelect = (time) => {
+    form.setValue('endHour', time)
   }
 
   const handleStartDateSelect = (date) => {
-    form.setValue('startDate', date)
+    form.setValue('startDate', format(date, 'dd/MM/yyyy'))
   }
   const handleEndDateSelect = (date) => {
-    form.setValue('endDate', date)
+    form.setValue('endDate', format(date, 'dd/MM/yyyy'))
   }
-
-  const startDateTitle = startDate ? format(startDate, 'dd/MM/yyyy') : 'Ngày nhận xe'
-  const endDateTitle = endDate ? format(endDate, 'dd/MM/yyyy') : 'Ngày trả xe'
 
   return (
     <Form {...form}>
@@ -77,15 +74,15 @@ const SearchForm = ({ form, onSubmit }) => {
             <DatePicker
               form={form}
               handleSelect={handleStartDateSelect}
-              title={startDateTitle}
+              title={startDate || 'Ngày nhận xe'}
               name='startDate'
             />
             <Combobox
               form={form}
-              name='startTime'
-              title={startTime ? startTime : 'Giờ nhận xe'}
+              name='startHour'
+              title={startHour ? startHour : 'Giờ nhận xe'}
               list={hours}
-              handleSelect={handleStartTimeSelect}
+              handleSelect={handleStartHourSelect}
             />
           </div>
         </div>
@@ -96,15 +93,15 @@ const SearchForm = ({ form, onSubmit }) => {
             <DatePicker
               form={form}
               handleSelect={handleEndDateSelect}
-              title={endDateTitle}
+              title={endDate || 'Ngày trả xe'}
               name='endDate'
             />
             <Combobox
               form={form}
-              name='endTime'
-              title={endTime ? endTime : 'Giờ trả xe'}
+              name='endHour'
+              title={endHour ? endHour : 'Giờ trả xe'}
               list={hours}
-              handleSelect={handleEndTimeSelect}
+              handleSelect={handleEndHourSelect}
             />
           </div>
         </div>

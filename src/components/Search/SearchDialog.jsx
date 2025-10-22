@@ -9,45 +9,45 @@ import {
 import SearchBar from './SearchBar'
 import SearchForm from './SearchForm'
 import { useForm } from 'react-hook-form'
-import { format } from 'date-fns'
-import { carService } from '@/features/cars/services/carService'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { selectSearchForm } from '@/store/selectors/searchSelectors'
+import { setDefaultTime, setSearchForm } from '@/store/slices/searchSlice'
+import { searchCars } from '@/store/actions/searchActions'
+import { formatDate } from '@/lib/utils'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const SearchDialog = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
-  const location = useLocation()
+  const searchForm = useSelector(selectSearchForm)
+  const [open, setOpen] = useState(false)
   const form = useForm({
-    defaultValues: { location: '', startDate: null, endDate: null, startTime: null, endTime: null }
+    defaultValues: searchForm
   })
+
   useEffect(() => {
-    if (location?.state?.date) {
-      form.reset(location.state.date)
-    }
-  }, [form, location])
+    if (!searchForm.startDate || !searchForm.startHour) dispatch(setDefaultTime())
+  }, [dispatch, searchForm])
 
   const onSubmit = async (values) => {
-    try {
-      const { data } = await carService.searchCars({
+    dispatch(setSearchForm(values))
+    setOpen(false)
+    navigate('/cars')
+    await dispatch(
+      searchCars({
         city: values.location,
-        startTime: `${format(values.startDate, 'yyyy-MM-dd')}T${values.startTime}:00`,
-        endTime: `${format(values.endDate, 'yyyy-MM-dd')}T${values.endTime}:00`
+        startTime: `${formatDate(values.startDate)}T${values.startHour}:00`,
+        endTime: `${formatDate(values.endDate)}T${values.endHour}:00`
       })
-      navigate('/cars', {
-        state: {
-          cars: data,
-          date: values
-        }
-      })
-    } catch (error) {
-      console.error('Search failed', error)
-    }
+    )
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <SearchBar form={form} />
+        <SearchBar form={form} onSubmit={onSubmit} />
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
