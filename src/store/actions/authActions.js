@@ -49,3 +49,27 @@ export const registerUser = createAsyncThunk(
     }
   }
 )
+
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (profileData, { rejectWithValue }) => {
+    try {
+      const res = await authService.updateProfile(profileData)
+      return res.data
+    } catch (error) {
+      return rejectWithValue(error.message || 'Update profile thất bại')
+    }
+  }
+)
+
+export const changePassword = createAsyncThunk(
+  'auth/changePassword',
+  async (passwordData, { rejectWithValue }) => {
+    try {
+      const res = await authService.changePassword(passwordData)
+      return res
+    } catch (error) {
+      return rejectWithValue(error.message || 'Thay đổi mật khẩu thất bại')
+    }
+  }
+)

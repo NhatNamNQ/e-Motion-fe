@@ -53,3 +53,18 @@ export const resetPasswordSchema = z
     message: 'Mật khẩu không khớp',
     path: ['confirmPassword']
   })
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: passwordValidation,
+    newPassword: passwordValidation,
+    confirmPassword: z.string()
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Mật khẩu không khớp',
+    path: ['confirmPassword']
+  })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    message: 'Mật khẩu mới phải khác mật khẩu cũ',
+    path: ['newPassword']
+  })

@@ -1,5 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getCurrentUser, loginUser, logoutUser, registerUser } from '../actions/authActions'
+import {
+  changePassword,
+  getCurrentUser,
+  loginUser,
+  logoutUser,
+  registerUser,
+  updateProfile
+} from '../actions/authActions'
 
 const initialState = {
   user: null,
@@ -78,6 +85,31 @@ const authSlice = createSlice({
         state.user = null
         state.token = null
         state.isAuthenticated = false
+        state.error = action.payload
+      })
+      // Update Profile - FullName and Phone
+      .addCase(updateProfile.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.error = null
+        state.user = action.payload
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
+      // change password
+      .addCase(changePassword.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(changePassword.fulfilled, (state) => {
+        state.isLoading = false
+        state.error = null
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.isLoading = false
         state.error = action.payload
       })
   }

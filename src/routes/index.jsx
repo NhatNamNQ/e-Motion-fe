@@ -20,6 +20,7 @@ const ResetPasswordPage = lazy(() => import('@/features/auth/pages/ResetPassword
 const CarListPage = lazy(() => import('@/features/cars/pages/CarListPage'))
 const CarDetailPage = lazy(() => import('@/features/cars/pages/CarDetailPage'))
 const BookingPage = lazy(() => import('@/features/booking/pages/BookingPage'))
+const ProfilePage = lazy(() => import('@/features/profile/pages/ProfilePage'))
 
 export const routes = [
   {
@@ -114,6 +115,14 @@ export const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <BookingPage />
+          </Suspense>
+        )
+      },
+      {
+        path: '/profile',
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ProfilePage />
           </Suspense>
         )
       }

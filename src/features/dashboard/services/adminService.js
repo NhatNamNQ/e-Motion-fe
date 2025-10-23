@@ -2,20 +2,12 @@ import instance from '@/lib/axios'
 import { handleError } from '@/lib/handleError'
 
 export const adminService = {
-  getDashboardSummary: async () => {
+  geDataDashboard: async () => {
     try {
-      const { data } = await instance.get('users/admin-dashboard/summary')
+      const { data } = await instance.get('users/admin-dashboard')
       return data.data
     } catch (error) {
-      handleError(error)
-    }
-  },
-  getDashboardStationDetail: async () => {
-    try {
-      const { data } = await instance.get('users/admin-dashboard/station-detail')
-      return data.data
-    } catch (error) {
-      handleError(error)
+      throw handleError(error)
     }
   }
 }

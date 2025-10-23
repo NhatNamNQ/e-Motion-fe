@@ -17,6 +17,7 @@ import { User, Settings, LogOut, CreditCard, HelpCircle, Shield } from 'lucide-r
 import { logoutUser } from '@/store/actions/authActions'
 import { Button } from './ui/button'
 import { selectUser } from '@/store/selectors/authSelectors'
+import { toast } from 'sonner'
 
 const ProfileDropdown = () => {
   const user = useSelector(selectUser)
@@ -25,8 +26,13 @@ const ProfileDropdown = () => {
   const navigate = useNavigate()
 
   const handleLogout = async () => {
-    await dispatch(logoutUser())
-    navigate('/auth/login')
+    try {
+      await dispatch(logoutUser())
+      toast.success('Đăng xuất thành công')
+      navigate('/auth/login')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const getInitials = (name) => {
