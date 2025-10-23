@@ -1,19 +1,31 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search, X } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
+import { getStatusColor } from '@/lib/utils'
 
 const DataTableToolbar = ({
   table,
   searchPlaceholder = 'Filter...',
   globalFilter = '',
   setGlobalFilter,
-  onClearSearch
+  onClearSearch,
+  statusOptions,
+  statusFilter = '',
+  onStatusFilterChange
 }) => {
   const handleClear = () => {
     onClearSearch()
   }
 
-  const isFiltered = globalFilter?.length > 0
+  const isFiltered = globalFilter?.length > 0 || statusFilter !== ''
 
   return (
     <div className='flex items-center justify-between'>
@@ -27,6 +39,21 @@ const DataTableToolbar = ({
             className='h-8 w-[150px] pl-8 lg:w-[250px]'
           />
         </div>
+
+        {statusOptions && (
+          <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+            <SelectTrigger className='h-8 w-[150px]'>
+              <SelectValue placeholder='All Status' />
+            </SelectTrigger>
+            <SelectContent className='max-h-[300px]'>
+              {statusOptions.map((status) => (
+                <SelectItem key={status} value={status}>
+                  <Badge className={getStatusColor(status)}>{status}</Badge>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         {isFiltered && (
           <Button type='button' variant='ghost' onClick={handleClear} className='h-8 px-2 lg:px-3'>

@@ -1,5 +1,4 @@
 import Loader from '@/components/Loader'
-import { useNavigate } from 'react-router-dom'
 import {
   Table,
   TableBody,
@@ -11,14 +10,8 @@ import {
 import { cn } from '@/lib/utils'
 import { flexRender } from '@tanstack/react-table'
 
-const ReservationsTable = ({ table, columns, globalFilter, isLoading }) => {
-  const navigate = useNavigate()
-
+const DataTable = ({ table, columns, globalFilter, isLoading, onRowClick }) => {
   if (isLoading) return <Loader />
-
-  const handleRowClick = (reservationCode) => {
-    navigate(`/dashboard/reservations/${reservationCode}`)
-  }
 
   return (
     <div className='rounded-md border'>
@@ -42,7 +35,7 @@ const ReservationsTable = ({ table, columns, globalFilter, isLoading }) => {
               <TableRow
                 key={row.id}
                 className='cursor-pointer transition-colors hover:bg-gray-50'
-                onClick={() => handleRowClick(row.original.code)}
+                onClick={() => onRowClick(row.original.code || row.original.id)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -54,9 +47,7 @@ const ReservationsTable = ({ table, columns, globalFilter, isLoading }) => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className='h-24 text-center'>
-                {globalFilter
-                  ? `No reservations found matching "${globalFilter}"`
-                  : 'No reservations found.'}
+                {globalFilter ? `No results found matching "${globalFilter}"` : 'No results found.'}
               </TableCell>
             </TableRow>
           )}
@@ -66,4 +57,4 @@ const ReservationsTable = ({ table, columns, globalFilter, isLoading }) => {
   )
 }
 
-export default ReservationsTable
+export default DataTable

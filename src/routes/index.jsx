@@ -10,6 +10,7 @@ import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 import ReservationsPage from '@/features/dashboard/pages/ReservationsPage'
 import ReservationDetailPage from '@/features/dashboard/pages/ReservationDetailPage'
 import RentalDetailPage from '@/features/dashboard/pages/RentalDetailPage'
+import RentalsPage from '@/features/dashboard/pages/RentalsPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -154,6 +155,16 @@ export const routes = [
         )
       },
       {
+        path: '/dashboard/rentals',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <RentalsPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
         path: '/dashboard/reservations/:code',
         element: (
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
@@ -176,5 +187,3 @@ export const routes = [
     ]
   }
 ]
-
-// reservation/:code -> rentals/:code  -> check-inpayment -> rental-checklists

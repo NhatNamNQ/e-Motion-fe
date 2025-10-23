@@ -3,8 +3,11 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/re
 import { useCallback, useEffect, useState } from 'react'
 
 import DataTableToolbar from '../components/DataTableToolbar'
-import ReservationsTable from '../components/ReservationsTable'
 import { useDebounce } from 'use-debounce'
+import DataTable from '../components/DataTable'
+import { getStatusColor } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
+import { useNavigate } from 'react-router-dom'
 
 const columnHelper = createColumnHelper()
 
@@ -13,10 +16,13 @@ const ReservationsPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [globalFilter, setGlobalFilter] = useState('')
   const [debouncedFilter] = useDebounce(globalFilter, 500)
+  const navigate = useNavigate()
+
+  const statusOptions = ['FAILED', 'CONFIRM', 'COMPLETED', 'PENDING']
 
   const columns = [
     columnHelper.accessor('code', {
-      header: 'Reservation Code',
+      header: 'Code',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('email', {
@@ -27,19 +33,7 @@ const ReservationsPage = () => {
       header: 'Status',
       cell: (info) => {
         const status = info.getValue()
-        return (
-          <span
-            className={`rounded-full px-2 py-1 text-xs font-medium ${
-              status === 'CONFIRM'
-                ? 'bg-green-100 text-green-800'
-                : status === 'PENDING'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-red-100 text-red-800'
-            }`}
-          >
-            {status}
-          </span>
-        )
+        return <Badge className={getStatusColor(status)}>{status}</Badge>
       }
     }),
     columnHelper.accessor('createdAt', {
@@ -63,7 +57,6 @@ const ReservationsPage = () => {
     manualFiltering: true //Disable client-side filtering
   })
 
-  // Fetch all reservations
   const fetchAllReservations = async () => {
     try {
       setIsLoading(true)
@@ -124,6 +117,10 @@ const ReservationsPage = () => {
     fetchAllReservations()
   }
 
+  const handleRowClick = (code) => {
+    navigate(`/dashboard/reservations/${code}`)
+  }
+
   // Initial load
   useEffect(() => {
     fetchAllReservations()
@@ -137,7 +134,7 @@ const ReservationsPage = () => {
     <div className='space-y-4'>
       <div>
         <h2 className='text-2xl font-bold tracking-tight'>Reservations</h2>
-        <p className='text-muted-foreground'>Manage your rental operations</p>
+        <p className='text-muted-foreground'>Manage your reservation operations</p>
       </div>
 
       <DataTableToolbar
@@ -146,12 +143,14 @@ const ReservationsPage = () => {
         globalFilter={globalFilter}
         setGlobalFilter={handleGlobalFilterChange}
         onClearSearch={handleClearSearch}
+        statusOptions={statusOptions}
       />
-      <ReservationsTable
+      <DataTable
         table={table}
         columns={columns}
         globalFilter={globalFilter}
         isLoading={isLoading}
+        onRowClick={handleRowClick}
       />
     </div>
   )

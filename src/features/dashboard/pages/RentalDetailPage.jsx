@@ -7,6 +7,7 @@ import { ArrowLeft, User, Car, Calendar, DollarSign, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { rentalService } from '../services/rentalService'
+import { getStatusColor } from '@/lib/utils'
 
 const RentalDetailPage = () => {
   const { id } = useParams()
@@ -65,21 +66,6 @@ const RentalDetailPage = () => {
         <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
       </div>
     )
-  }
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'ONGOING':
-        return 'bg-blue-100 text-blue-800'
-      case 'COMPLETED':
-        return 'bg-green-100 text-green-800'
-      case 'OVERDUE':
-        return 'bg-red-100 text-red-800'
-      case 'CANCELLED':
-        return 'bg-gray-100 text-gray-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
   }
 
   const formatDateTime = (dateTimeString) => {
@@ -217,7 +203,7 @@ const RentalDetailPage = () => {
           className='bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6'
           size='lg'
         >
-          <DollarSign className='mr-2 h-5 w-5' />
+          <DollarSign className='h-5 w-5' />
           Create Check-in Payment
         </Button>
         <Button
@@ -225,7 +211,7 @@ const RentalDetailPage = () => {
           className='bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6'
           size='lg'
         >
-          <DollarSign className='mr-2 h-5 w-5' />
+          <DollarSign className='h-5 w-5' />
           Create Check-out Payment
         </Button>
       </div>

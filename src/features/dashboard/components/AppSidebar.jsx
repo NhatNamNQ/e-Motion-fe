@@ -46,8 +46,8 @@ const staffMenuItems = [
     icon: BookOpen
   },
   {
-    title: 'Check List',
-    url: '/dashboard/check-list',
+    title: 'Rentals',
+    url: '/dashboard/rentals',
     icon: SquarePen
   }
 ]

@@ -20,5 +20,13 @@ export const rentalService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getRentals: async () => {
+    try {
+      const { data } = await instance.get('/rentals')
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }
