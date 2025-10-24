@@ -8,6 +8,7 @@ import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { rentalService } from '../services/rentalService'
 import { getStatusColor } from '@/lib/utils'
+import { toast } from 'sonner'
 
 const RentalDetailPage = () => {
   const { id } = useParams()
@@ -37,8 +38,12 @@ const RentalDetailPage = () => {
   }, [id])
 
   const handleCreateCheckInPayment = async () => {
-    console.log('Creating check-in payment for rental:', id)
-    // TODO: Implement check-in payment creation
+    try {
+      const data = await rentalService.checkInRental(id)
+      window.location.href = data
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   const handleCreateCheckOutPayment = async () => {

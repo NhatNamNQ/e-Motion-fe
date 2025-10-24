@@ -66,7 +66,7 @@ export const getStatusColor = (status) => {
     case 'CANCELLED':
       return 'bg-gray-100 text-gray-800'
     case 'CONFIRM':
-      return 'bg-secondary text-gray-800s'
+      return 'bg-secondary text-gray-800'
     case 'PENDING':
       return 'bg-yellow-100 text-yellow-800'
     case 'FAILED':

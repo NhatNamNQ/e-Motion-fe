@@ -1,9 +1,4 @@
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable
-} from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import DataTable from '../components/DataTable'
 import { getStatusColor } from '@/lib/utils'
@@ -12,45 +7,34 @@ import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import DataTableToolbar from '../components/DataTableToolbar'
 import { useNavigate } from 'react-router-dom'
+import { useDebounce } from 'use-debounce'
 
 const columnHelper = createColumnHelper()
 
 const RentalsPage = () => {
   const [rentals, setRentals] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [searchKey, setSearchKey] = useState('')
+  const [debouncedFilter] = useDebounce(searchKey, 500)
+  const [statusFilter, setStatusFilter] = useState([])
   const navigate = useNavigate()
 
-  const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING']
-
-  useEffect(() => {
-    const fetchAllRentals = async () => {
-      try {
-        setIsLoading(true)
-        const res = await rentalService.getRentals()
-        setRentals(res)
-      } catch (error) {
-        toast.error(error.message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchAllRentals()
-  }, [])
+  const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING', 'CONFIRM']
 
   const columns = [
     columnHelper.accessor('id', {
       header: 'ID',
       cell: (info) => info.getValue()
     }),
-    columnHelper.accessor('email', {
-      header: 'Customer Email',
+    columnHelper.accessor('userEmail', {
+      header: 'User Email',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('status', {
       header: 'Status',
       cell: (info) => {
-        return <Badge className={getStatusColor(info.getValue())}>{info.getValue()}</Badge>
+        const status = info.getValue()
+        return <Badge className={getStatusColor(status)}>{status}</Badge>
       }
     }),
     columnHelper.accessor('startTime', {
@@ -66,26 +50,34 @@ const RentalsPage = () => {
   const table = useReactTable({
     data: rentals,
     columns,
-    state: {
-      globalFilter
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    manualFiltering: true //Disable client-side filtering
+    getCoreRowModel: getCoreRowModel()
   })
-
-  const handleGlobalFilterChange = (value) => {
-    setGlobalFilter(value)
-  }
-
-  const handleClearSearch = () => {
-    setGlobalFilter('')
-  }
 
   const handleRowClick = (id) => {
     navigate(`/dashboard/rentals/${id}`)
   }
+
+  useEffect(() => {
+    const searchRentals = async (searchKey) => {
+      try {
+        setIsLoading(true)
+        const data =
+          !searchKey.trim() && statusFilter.length === 0
+            ? await rentalService.getRentals()
+            : await rentalService.searchRentals({
+                email: searchKey,
+                status: statusFilter
+              })
+        setRentals(data)
+      } catch (error) {
+        toast.error(error.message)
+        setRentals([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    searchRentals(debouncedFilter)
+  }, [debouncedFilter, statusFilter])
 
   return (
     <div className='space-y-4'>
@@ -96,16 +88,17 @@ const RentalsPage = () => {
 
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Search by rental ID...'
-        globalFilter={globalFilter}
-        setGlobalFilter={handleGlobalFilterChange}
-        onClearSearch={handleClearSearch}
+        searchPlaceholder='Search by customer email...'
+        searchKey={searchKey}
+        setSearchKey={setSearchKey}
         statusOptions={statusOptions}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
       />
       <DataTable
         table={table}
         columns={columns}
-        globalFilter={globalFilter}
+        searchKey={searchKey}
         isLoading={isLoading}
         onRowClick={handleRowClick}
       />
