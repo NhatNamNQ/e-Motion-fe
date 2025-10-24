@@ -51,6 +51,10 @@ const RentalDetailPage = () => {
     // TODO: Implement check-out payment creation
   }
 
+  const handleCreateCheckInList = () => {
+    navigate(`/dashboard/rentals/${id}/check-in`)
+  }
+
   if (loading) {
     return <Loader />
   }
@@ -202,7 +206,7 @@ const RentalDetailPage = () => {
       </Card>
 
       {/* Action Buttons */}
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+      <div className='grid grid-cols-2 gap-4 md:grid-cols-2'>
         <Button
           onClick={handleCreateCheckInPayment}
           className='bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6'
@@ -218,6 +222,14 @@ const RentalDetailPage = () => {
         >
           <DollarSign className='h-5 w-5' />
           Create Check-out Payment
+        </Button>
+        <Button
+          onClick={handleCreateCheckInList}
+          className='bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6'
+          size='lg'
+        >
+          <DollarSign className='h-5 w-5' />
+          Create Check-in List
         </Button>
       </div>
     </div>

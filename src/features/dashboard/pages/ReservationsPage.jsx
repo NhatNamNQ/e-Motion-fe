@@ -63,7 +63,7 @@ const ReservationsPage = () => {
       try {
         setIsLoading(true)
         const data =
-          !searchKey.trim() && !statusFilter.length === 0
+          !searchKey.trim() && !statusFilter.length > 0
             ? await reservationService.getAllReservations()
             : await reservationService.searchReservations({
                 keyword: searchKey,
