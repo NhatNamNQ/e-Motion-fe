@@ -11,6 +11,7 @@ import { rentalService } from '../services/rentalService'
 import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
+import { getStatusColor } from '@/lib/utils'
 
 const ReservationDetailPage = () => {
   const { code } = useParams()
@@ -61,21 +62,6 @@ const ReservationDetailPage = () => {
         <Button onClick={() => navigate('/dashboard/reservations')}>Back to Reservations</Button>
       </div>
     )
-  }
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'CONFIRM':
-        return 'bg-green-100 text-green-800'
-      case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'CANCELLED':
-        return 'bg-red-100 text-red-800'
-      case 'COMPLETED':
-        return 'bg-secondary'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
   }
 
   const formatDateTime = (dateTimeString) => {

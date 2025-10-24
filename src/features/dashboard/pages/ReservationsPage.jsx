@@ -1,6 +1,5 @@
-import instance from '@/lib/axios'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import DataTableToolbar from '../components/DataTableToolbar'
 import { useDebounce } from 'use-debounce'
@@ -8,25 +7,28 @@ import DataTable from '../components/DataTable'
 import { getStatusColor } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { useNavigate } from 'react-router-dom'
+import { reservationService } from '../services/reservationService'
+import { toast } from 'sonner'
 
 const columnHelper = createColumnHelper()
 
 const ReservationsPage = () => {
   const [reservations, setReservations] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [globalFilter, setGlobalFilter] = useState('')
-  const [debouncedFilter] = useDebounce(globalFilter, 500)
+  const [searchKey, setSearchKey] = useState('')
+  const [debouncedFilter] = useDebounce(searchKey, 500)
+  const [statusFilter, setStatusFilter] = useState([])
   const navigate = useNavigate()
 
-  const statusOptions = ['FAILED', 'CONFIRM', 'COMPLETED', 'PENDING']
+  const statusOptions = ['FAILED', 'COMPLETED', 'PENDING']
 
   const columns = [
     columnHelper.accessor('code', {
       header: 'Code',
       cell: (info) => info.getValue()
     }),
-    columnHelper.accessor('email', {
-      header: 'Customer Email',
+    columnHelper.accessor('userEmail', {
+      header: 'User Email',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('status', {
@@ -49,86 +51,34 @@ const ReservationsPage = () => {
   const table = useReactTable({
     data: reservations,
     columns,
-    state: {
-      globalFilter
-    },
-    getCoreRowModel: getCoreRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    manualFiltering: true //Disable client-side filtering
+    getCoreRowModel: getCoreRowModel()
   })
-
-  const fetchAllReservations = async () => {
-    try {
-      setIsLoading(true)
-      const { data } = await instance.get('/reservations')
-      const reservationsData = data.data.map((reservation) => ({
-        code: reservation.code,
-        email: reservation.userEmail,
-        status: reservation.status,
-        createdAt: reservation.createdAt,
-        endTime: reservation.endTime
-      }))
-      setReservations(reservationsData)
-    } catch (error) {
-      console.error('Error fetching reservations:', error)
-      setReservations([])
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const searchReservations = useCallback(async (searchQuery) => {
-    if (!searchQuery.trim()) {
-      fetchAllReservations()
-      return
-    }
-
-    try {
-      setIsLoading(true)
-      const { data } = await instance.get(`/reservations/search`, {
-        params: {
-          code: searchQuery
-        }
-      })
-
-      const reservationData = data.data.map((reservation) => ({
-        code: reservation.code,
-        email: reservation.userEmail,
-        status: reservation.status,
-        createdAt: reservation.createdAt,
-        endTime: reservation.endTime
-      }))
-
-      setReservations(reservationData)
-    } catch (error) {
-      console.error('Error searching reservation:', error)
-      setReservations([])
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  const handleGlobalFilterChange = (value) => {
-    setGlobalFilter(value)
-  }
-
-  const handleClearSearch = () => {
-    setGlobalFilter('')
-    fetchAllReservations()
-  }
 
   const handleRowClick = (code) => {
     navigate(`/dashboard/reservations/${code}`)
   }
 
-  // Initial load
   useEffect(() => {
-    fetchAllReservations()
-  }, [])
-
-  useEffect(() => {
+    const searchReservations = async (searchKey) => {
+      try {
+        setIsLoading(true)
+        const data =
+          !searchKey.trim() && !statusFilter.length === 0
+            ? await reservationService.getAllReservations()
+            : await reservationService.searchReservations({
+                keyword: searchKey,
+                status: statusFilter
+              })
+        setReservations(data)
+      } catch (error) {
+        toast.error(error.message)
+        setReservations([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
     searchReservations(debouncedFilter)
-  }, [debouncedFilter, searchReservations])
+  }, [debouncedFilter, statusFilter])
 
   return (
     <div className='space-y-4'>
@@ -140,15 +90,16 @@ const ReservationsPage = () => {
       <DataTableToolbar
         table={table}
         searchPlaceholder='Search by reservation code...'
-        globalFilter={globalFilter}
-        setGlobalFilter={handleGlobalFilterChange}
-        onClearSearch={handleClearSearch}
+        searchKey={searchKey}
+        setSearchKey={setSearchKey}
         statusOptions={statusOptions}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
       />
       <DataTable
         table={table}
         columns={columns}
-        globalFilter={globalFilter}
+        searchKey={searchKey}
         isLoading={isLoading}
         onRowClick={handleRowClick}
       />
