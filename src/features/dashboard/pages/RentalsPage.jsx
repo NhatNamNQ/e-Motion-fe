@@ -62,7 +62,7 @@ const RentalsPage = () => {
       try {
         setIsLoading(true)
         const data =
-          !searchKey.trim() && statusFilter.length === 0
+          !searchKey.trim() && !statusFilter.length > 0
             ? await rentalService.getRentals()
             : await rentalService.searchRentals({
                 email: searchKey,

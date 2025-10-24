@@ -18,20 +18,7 @@ import {
   SidebarMenuSubButton
 } from '@/components/ui/sidebar'
 
-import {
-  LayoutDashboard,
-  Users,
-  Car,
-  Calendar,
-  MapPin,
-  Settings,
-  LogOut,
-  ChevronDown,
-  User2,
-  ChevronUp,
-  SquarePen,
-  BookOpen
-} from 'lucide-react'
+import { LayoutDashboard, User2, ChevronUp, SquarePen, BookOpen, Package } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const staffMenuItems = [
@@ -48,6 +35,11 @@ const staffMenuItems = [
   {
     title: 'Rentals',
     url: '/dashboard/rentals',
+    icon: Package
+  },
+  {
+    title: 'Check List',
+    url: '/dashboard/check-list',
     icon: SquarePen
   }
 ]
