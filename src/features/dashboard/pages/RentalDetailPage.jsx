@@ -50,6 +50,7 @@ const RentalDetailPage = () => {
     try {
       const data = await rentalService.checkOutRental(id)
       if (data.paymentUrl) window.location.href = data.paymentUrl
+      if (data) toast.success('Check out thành công')
     } catch (error) {
       toast.error(error.message)
     }

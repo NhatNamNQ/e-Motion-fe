@@ -15,6 +15,8 @@ import CheckListPage from '@/features/dashboard/pages/CheckListPage'
 import CheckInPage from '@/features/dashboard/pages/CheckInPage'
 import CheckOutPage from '@/features/dashboard/pages/CheckOutPage'
 import CheckListDetailPage from '@/features/dashboard/pages/CheckListDetailPage'
+import PaymentResultHandler from '@/components/PaymentResultHandler'
+import SuccessPaymentPage from '@/features/dashboard/pages/SuccessPaymentPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -114,6 +116,10 @@ export const routes = [
             <BookingPage />
           </Suspense>
         )
+      },
+      {
+        path: '/payments/payment-result',
+        element: <PaymentResultHandler />
       },
       {
         path: '/booking/payment-result',
@@ -224,6 +230,16 @@ export const routes = [
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
             <Suspense fallback={<Loader />}>
               <CheckListDetailPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/payment-result',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <SuccessPaymentPage />
             </Suspense>
           </ProtectedRoute>
         )

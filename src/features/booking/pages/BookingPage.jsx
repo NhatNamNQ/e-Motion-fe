@@ -1,20 +1,20 @@
 import { Button } from '@/components/ui/button'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import BookingForm from '../components/BookingForm'
-import SuccessBooking from '../components/SuccessBooking'
 import BookingProgress from '../components/BookingProgress'
-import FailedBooking from '../components/FailedBooking'
 import { useSelector } from 'react-redux'
 import { selectBookingFees, selectSelectedCar } from '@/store/selectors/carsSelectors'
 import { selectEndTime, selectSearchForm, selectStartTime } from '@/store/selectors/searchSelectors'
 import { selectUser } from '@/store/selectors/authSelectors'
 import { bookingService } from '../services/bookingService'
 import { toast } from 'sonner'
+import SuccessPaymentCard from '../../../components/SuccessPaymentCard'
+import FailedPaymentCard from '../../../components/FailedPaymentCard'
 
 const BookingPage = () => {
-  const [searchParams] = useSearchParams()
-  const status = searchParams.get('status')
-  const txnRef = searchParams.get('txnRef')
+  const location = useLocation()
+  const status = location?.state?.status
+  const txnRef = location?.state?.txnRef
 
   const user = useSelector(selectUser)
   const car = useSelector(selectSelectedCar)
@@ -57,9 +57,9 @@ const BookingPage = () => {
         <BookingProgress status={status} />
         {status ? (
           status === 'success' ? (
-            <SuccessBooking txnRef={txnRef} />
+            <SuccessPaymentCard txnRef={txnRef} />
           ) : (
-            <FailedBooking />
+            <FailedPaymentCard />
           )
         ) : (
           <BookingForm
