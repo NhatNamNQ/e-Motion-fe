@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { User, Mail, Phone, Calendar, Shield, Edit2, Save, X, LockKeyhole } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectUser, selectAuthLoading } from '@/store/selectors/authSelectors'
+import { formatVNDate } from '@/lib/utils'
 import { toast } from 'sonner'
 import { updateProfile, getCurrentUser } from '@/store/actions/authActions'
 import Loader from '@/components/Loader'
@@ -173,7 +174,7 @@ export default function UserProfile() {
               </div>
               <div className='flex-1'>
                 <label className='text-sm font-medium text-gray-500'>Created At</label>
-                <p className='mt-1 text-lg text-gray-800'>{formatProfileDate(user.createdAt)}</p>
+                <p className='mt-1 text-lg text-gray-800'>{formatVNDate(user.createdAt)}</p>
               </div>
             </div>
           </div>

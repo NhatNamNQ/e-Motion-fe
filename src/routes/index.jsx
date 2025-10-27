@@ -22,6 +22,7 @@ import HistoryPage from '@/features/profile/pages/HistoryPage'
 import AccountLayout from '@/layout/AccountLayout'
 import VehicleLogsPage from '@/features/dashboard/pages/VehicleLogsPage'
 import VehicleLogDetailPage from '@/features/dashboard/pages/VehicleLogDetailPage'
+import UsersPage from '@/features/dashboard/pages/UsersPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -305,3 +306,19 @@ export const routes = [
     ]
   }
 ]
+      },
+      {
+        path: '/dashboard/users',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <UsersPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      }
+    ]
+  }
+]
+
+// reservation/:code -> rentals/:code  -> check-inpayment -> rental-checklists

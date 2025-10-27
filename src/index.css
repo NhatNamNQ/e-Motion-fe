@@ -166,3 +166,7 @@
     font-style: normal;
   }
 }
+
+html {
+  scrollbar-gutter: stable;
+}

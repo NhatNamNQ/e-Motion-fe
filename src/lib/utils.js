@@ -26,6 +26,15 @@ export const formatProfileDate = (dateString) => {
   })
 }
 
+export const formatVNDate = (dateString) =>
+  dateString
+    ? new Date(dateString).toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      })
+    : ''
+
 export const uploadImage = async (file, folderName) => {
   const cloudName = import.meta.env.VITE_CLOUD_NAME
   const uploadPreset = import.meta.env.VITE_UPLOAD_PRESET

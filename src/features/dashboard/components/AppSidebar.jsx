@@ -54,6 +54,11 @@ const staffMenuItems = [
     title: 'Vehicle logs',
     url: '/dashboard/vehicle-logs',
     icon: ClipboardPenLine
+  },
+  {
+    title: 'Users',
+    url: '/dashboard/users',
+    icon: User2
   }
 ]
 export function AppSidebar() {
