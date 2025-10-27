@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useNavigate } from 'react-router-dom'
 
-const FailedBooking = () => {
+const FailedPaymentCard = () => {
   const navigate = useNavigate()
   return (
     <Card className='shadow-lg'>
@@ -31,4 +31,4 @@ const FailedBooking = () => {
   )
 }
 
-export default FailedBooking
+export default FailedPaymentCard

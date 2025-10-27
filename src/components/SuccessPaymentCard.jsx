@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { CheckCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-const SuccessBooking = ({ txnRef }) => {
+const SuccessPaymentCard = ({ txnRef }) => {
   const navigate = useNavigate()
   return (
     <Card className='shadow-lg'>
@@ -38,4 +38,4 @@ const SuccessBooking = ({ txnRef }) => {
   )
 }
 
-export default SuccessBooking
+export default SuccessPaymentCard
