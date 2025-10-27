@@ -37,6 +37,14 @@ export const rentalService = {
       throw handleError(error)
     }
   },
+  checkOutRental: async (id) => {
+    try {
+      const { data } = await instance.post(`/rentals/${id}/check-outpayment`, id)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
   searchRentals: async (searchQuery) => {
     try {
       const { data } = await instance.get('/rentals/search', {

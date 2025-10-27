@@ -13,6 +13,8 @@ import RentalDetailPage from '@/features/dashboard/pages/RentalDetailPage'
 import RentalsPage from '@/features/dashboard/pages/RentalsPage'
 import CheckListPage from '@/features/dashboard/pages/CheckListPage'
 import CheckInPage from '@/features/dashboard/pages/CheckInPage'
+import CheckOutPage from '@/features/dashboard/pages/CheckOutPage'
+import CheckListDetailPage from '@/features/dashboard/pages/CheckListDetailPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -197,11 +199,31 @@ export const routes = [
         )
       },
       {
+        path: '/dashboard/rentals/:id/check-out',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <CheckOutPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
         path: '/dashboard/check-list',
         element: (
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
             <Suspense fallback={<Loader />}>
               <CheckListPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/check-list/:id',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <CheckListDetailPage />
             </Suspense>
           </ProtectedRoute>
         )

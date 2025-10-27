@@ -47,12 +47,20 @@ const RentalDetailPage = () => {
   }
 
   const handleCreateCheckOutPayment = async () => {
-    console.log('Creating check-out payment for rental:', id)
-    // TODO: Implement check-out payment creation
+    try {
+      const data = await rentalService.checkOutRental(id)
+      if (data.paymentUrl) window.location.href = data.paymentUrl
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
-  const handleCreateCheckInList = () => {
+  const handleCreateCheckIn = () => {
     navigate(`/dashboard/rentals/${id}/check-in`)
+  }
+
+  const handleCreateCheckOut = () => {
+    navigate(`/dashboard/rentals/${id}/check-out`)
   }
 
   if (loading) {
@@ -224,12 +232,20 @@ const RentalDetailPage = () => {
           Create Check-out Payment
         </Button>
         <Button
-          onClick={handleCreateCheckInList}
+          onClick={handleCreateCheckIn}
           className='bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6'
           size='lg'
         >
           <DollarSign className='h-5 w-5' />
           Create Check-in List
+        </Button>
+        <Button
+          onClick={handleCreateCheckOut}
+          className='bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6'
+          size='lg'
+        >
+          <DollarSign className='h-5 w-5' />
+          Create Check-out
         </Button>
       </div>
     </div>
