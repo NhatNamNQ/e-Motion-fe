@@ -10,6 +10,7 @@ import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 import ReservationsPage from '@/features/dashboard/pages/ReservationsPage'
 import ReservationDetailPage from '@/features/dashboard/pages/ReservationDetailPage'
 import RentalDetailPage from '@/features/dashboard/pages/RentalDetailPage'
+import UsersPage from '@/features/dashboard/pages/UsersPage'
 import RentalsPage from '@/features/dashboard/pages/RentalsPage'
 import CheckListPage from '@/features/dashboard/pages/CheckListPage'
 import CheckInPage from '@/features/dashboard/pages/CheckInPage'
@@ -22,7 +23,6 @@ import HistoryPage from '@/features/profile/pages/HistoryPage'
 import AccountLayout from '@/layout/AccountLayout'
 import VehicleLogsPage from '@/features/dashboard/pages/VehicleLogsPage'
 import VehicleLogDetailPage from '@/features/dashboard/pages/VehicleLogDetailPage'
-import UsersPage from '@/features/dashboard/pages/UsersPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -192,6 +192,16 @@ export const routes = [
         )
       },
       {
+        path: '/dashboard/users',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <UsersPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
         path: '/dashboard/rentals/:id/check-in',
         element: (
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
@@ -270,6 +280,16 @@ export const routes = [
             </Suspense>
           </ProtectedRoute>
         )
+      },
+      {
+        path: '/dashboard/users',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <UsersPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
       }
     ]
   },
@@ -306,19 +326,3 @@ export const routes = [
     ]
   }
 ]
-      },
-      {
-        path: '/dashboard/users',
-        element: (
-          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
-            <Suspense fallback={<Loader />}>
-              <UsersPage />
-            </Suspense>
-          </ProtectedRoute>
-        )
-      }
-    ]
-  }
-]
-
-// reservation/:code -> rentals/:code  -> check-inpayment -> rental-checklists
