@@ -23,11 +23,14 @@ import {
   selectSelectedCar
 } from '@/store/selectors/carsSelectors'
 import { selectEndTime, selectSearchForm, selectStartTime } from '@/store/selectors/searchSelectors'
+import { selectUser } from '@/store/selectors/authSelectors'
+import { toast } from 'sonner'
 
 const CarDetailPage = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const user = useSelector(selectUser)
   const startTime = useSelector(selectStartTime)
   const endTime = useSelector(selectEndTime)
   const car = useSelector(selectSelectedCar)
@@ -55,6 +58,14 @@ const CarDetailPage = () => {
     }
     loadBookingFees()
   }, [id, dispatch, startTime, endTime])
+
+  const handleRentCar = () => {
+    if (!user) {
+      toast.error('Vui lòng đăng nhập để thuê xe')
+    } else {
+      navigate('/booking/confirm')
+    }
+  }
 
   if (isLoading && !car) {
     return (
@@ -104,7 +115,7 @@ const CarDetailPage = () => {
                   </div>
                   <PriceBreakdown car={car} bookingFees={bookingFees} />
                   <Button
-                    onClick={() => navigate('/booking/confirm')}
+                    onClick={handleRentCar}
                     className='bg-secondary mt-6 w-full hover:bg-blue-600'
                   >
                     Thuê xe

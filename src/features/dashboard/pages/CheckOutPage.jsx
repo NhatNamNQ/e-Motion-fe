@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -22,16 +21,7 @@ import { uploadImage } from '@/lib/utils'
 import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
 import { checkListService } from '../services/checkListService'
-
-const checkOutSchema = z.object({
-  type: z.string().default('CHECK_OUT'),
-  currentBattery: z
-    .number()
-    .min(0, 'Battery percentage must be at least 0')
-    .max(100, 'Battery percentage must be at most 100'),
-  img: z.string().min(1, 'Image is required'),
-  maintain: z.boolean().default(true)
-})
+import { checkOutSchema } from '../schemas/checkListSchema'
 
 const CheckOutPage = () => {
   const { id } = useParams()
@@ -253,23 +243,6 @@ const CheckOutPage = () => {
                         Upload an image of the vehicle. Supported formats: JPEG, PNG, WebP (max 5MB)
                       </FormDescription>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Maintain Checkbox */}
-                <FormField
-                  control={form.control}
-                  name='maintain'
-                  render={({ field }) => (
-                    <FormItem className='flex flex-row items-start space-y-0 space-x-3'>
-                      <FormControl>
-                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
-                      <div className='space-y-1 leading-none'>
-                        <FormLabel>Maintain</FormLabel>
-                        <FormDescription>Check if the vehicle requires maintenance</FormDescription>
-                      </div>
                     </FormItem>
                   )}
                 />
