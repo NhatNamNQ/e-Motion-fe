@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, User, Car, Calendar, CreditCard, Plus, MapPin } from 'lucide-react'
+import { ArrowLeft, User, Car, Calendar, Plus, MapPin, Bell } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { reservationService } from '../services/reservationService'
@@ -12,6 +12,15 @@ import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
 import { getStatusColor } from '@/lib/utils'
+import { Separator } from '@/components/ui/separator'
+
+// Helper component để hiển thị một dòng thông tin, giúp code gọn hơn
+const InfoRow = ({ label, children }) => (
+  <div>
+    <p className='text-muted-foreground text-sm font-medium'>{label}</p>
+    <p className='text-sm font-semibold'>{children || 'N/A'}</p>
+  </div>
+)
 
 const ReservationDetailPage = () => {
   const { code } = useParams()
@@ -24,7 +33,6 @@ const ReservationDetailPage = () => {
   useEffect(() => {
     const fetchReservation = async () => {
       if (!code) return
-
       try {
         setLoading(true)
         const data = await reservationService.getReservationByCode(code)
@@ -35,7 +43,6 @@ const ReservationDetailPage = () => {
         setLoading(false)
       }
     }
-
     fetchReservation()
   }, [code])
 
@@ -70,149 +77,110 @@ const ReservationDetailPage = () => {
   }
 
   return (
-    <div className=''>
-      {/* Header */}
-      <div className='mb-6 flex items-center justify-between'>
-        <div className='flex items-center gap-4'>
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => navigate('/dashboard/reservations')}
-            className='text-secondary hover:text-secondary/80'
-          >
-            <ArrowLeft className='mr-1 h-4 w-4' />
-            Back to Reservations
-          </Button>
-        </div>
+    <div className='container mx-auto p-4 md:p-6'>
+      <div className='mb-6'>
+        <Button variant='outline' size='sm' onClick={() => navigate('/dashboard/reservations')}>
+          <ArrowLeft className='mr-2 h-4 w-4' />
+          Quay lại danh sách
+        </Button>
       </div>
 
-      {/* Reservation code and Status */}
-      <div className='mb-6 flex items-center justify-between'>
-        <h1 className='text-2xl font-bold'>#{reservation.code}</h1>
-        <Badge className={getStatusColor(reservation.status)}>{reservation.status}</Badge>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className='mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3'>
-        {/* Renter Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <User className='h-5 w-5' />
-              Renter Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-3'>
-            <div>
-              <label className='text-sm font-medium text-gray-600'>Email:</label>
-              <p className='text-sm'>{reservation.userEmail}</p>
-            </div>
-            <div>
-              <label className='text-sm font-medium text-gray-600'>Created At:</label>
-              <p className='text-sm'>{formatDateTime(reservation.createdAt)}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Vehicle Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <Car className='h-5 w-5' />
-              Vehicle Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-3'>
-            <div>
-              <label className='text-sm font-medium text-gray-600'>Name:</label>
-              <p className='text-sm'>{reservation.vehicleName}</p>
-            </div>
-            <div>
-              <label className='text-sm font-medium text-gray-600'>Plate Number:</label>
-              <p className='text-sm'>{reservation.plateNumber}</p>
-            </div>
-            <div>
-              <label className='text-sm font-medium text-gray-600'>Vehicle ID:</label>
-              <p className='text-sm'>{reservation.vehicleId}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Station Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <MapPin className='h-5 w-5' />
-              Station Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-3'>
-            <div>
-              <label className='text-sm font-medium text-gray-600'>Station ID:</label>
-              <p className='text-sm'>{reservation.stationId}</p>
-            </div>
-            <div>
-              <label className='text-sm font-medium text-gray-600'>End Time:</label>
-              <p className='text-sm'>{formatDateTime(reservation.endTime)}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Notification Status */}
-      <Card className='mb-6'>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Calendar className='h-5 w-5' />
-            Notification Status
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <div className='flex items-center justify-between'>
-              <label className='text-sm font-medium text-gray-600'>Overdue Notified:</label>
-              <Badge variant={reservation.overdueNotified ? 'default' : 'secondary'}>
-                {reservation.overdueNotified ? 'Yes' : 'No'}
-              </Badge>
-            </div>
-            <div className='flex items-center justify-between'>
-              <label className='text-sm font-medium text-gray-600'>Expiring Notified:</label>
-              <Badge variant={reservation.expiringNotified ? 'default' : 'secondary'}>
-                {reservation.expiringNotified ? 'Yes' : 'No'}
-              </Badge>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Create Rental Button - Only show if status is CONFIRM */}
-      {reservation.status === 'CONFIRM' && (
-        <div className='flex justify-center'>
-          <Button
-            onClick={handleCreateRental}
-            className='bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-2'
-            disabled={submitLoading}
-          >
-            <Plus className='mr-2 h-4 w-4' />
-            Create Rental from this Reservation
-          </Button>
+      <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
+        {/* Cột thông tin chính */}
+        <div className='lg:col-span-2'>
+          <Card>
+            <CardHeader>
+              <div className='flex flex-col gap-2 md:flex-row md:items-start md:justify-between'>
+                <div>
+                  <CardTitle className='text-2xl'>Đơn đặt chỗ #{reservation.code}</CardTitle>
+                  <CardDescription>
+                    Tạo lúc: {formatDateTime(reservation.createdAt)}
+                  </CardDescription>
+                </div>
+                <Badge className={`text-base ${getStatusColor(reservation.status)}`}>
+                  {reservation.status}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Separator className='my-4' />
+              <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
+                <div className='space-y-4'>
+                  <h3 className='flex items-center gap-2 font-semibold'>
+                    <User size={18} /> Thông tin người thuê
+                  </h3>
+                  <InfoRow label='Email'>{reservation.userEmail}</InfoRow>
+                </div>
+                <div className='space-y-4'>
+                  <h3 className='flex items-center gap-2 font-semibold'>
+                    <Car size={18} /> Thông tin xe
+                  </h3>
+                  <InfoRow label='Tên xe'>{reservation.vehicleName}</InfoRow>
+                  <InfoRow label='Biển số'>{reservation.plateNumber}</InfoRow>
+                  <InfoRow label='Mã xe'>{reservation.vehicleId}</InfoRow>
+                </div>
+                <div className='space-y-4'>
+                  <h3 className='flex items-center gap-2 font-semibold'>
+                    <MapPin size={18} /> Thông tin trạm
+                  </h3>
+                  <InfoRow label='Mã trạm'>{reservation.stationId}</InfoRow>
+                  <InfoRow label='Thời gian kết thúc'>
+                    {formatDateTime(reservation.endTime)}
+                  </InfoRow>
+                </div>
+                <div className='space-y-4'>
+                  <h3 className='flex items-center gap-2 font-semibold'>
+                    <Bell size={18} /> Trạng thái thông báo
+                  </h3>
+                  <div className='flex items-center justify-between text-sm'>
+                    <span>Sắp hết hạn:</span>
+                    <Badge variant={reservation.expiringNotified ? 'default' : 'secondary'}>
+                      {reservation.expiringNotified ? 'Đã gửi' : 'Chưa gửi'}
+                    </Badge>
+                  </div>
+                  <div className='flex items-center justify-between text-sm'>
+                    <span>Quá hạn:</span>
+                    <Badge variant={reservation.overdueNotified ? 'default' : 'secondary'}>
+                      {reservation.overdueNotified ? 'Đã gửi' : 'Chưa gửi'}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      )}
 
-      {/* Show message for other statuses */}
-      {reservation.status !== 'CONFIRM' && (
-        <div className='flex justify-center'>
-          <div className='rounded-lg bg-gray-100 p-4 text-center'>
-            <p className='text-sm text-gray-600'>
-              {reservation.status === 'CANCELLED'
-                ? 'This reservation has been cancelled'
-                : reservation.status === 'PENDING'
-                  ? 'This reservation is still pending'
-                  : 'Cannot create rental for this reservation status'}
-            </p>
-          </div>
+        <div className='lg:col-span-1'>
+          <Card>
+            <CardHeader>
+              <CardTitle>Hành động</CardTitle>
+              <CardDescription>Tạo hợp đồng thuê xe từ thông tin đặt chỗ này.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {reservation.status === 'CONFIRM' ? (
+                <Button
+                  onClick={handleCreateRental}
+                  className='bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full'
+                  disabled={submitLoading}
+                >
+                  <Plus className='mr-2 h-4 w-4' />
+                  {submitLoading ? 'Đang xử lý...' : 'Tạo hợp đồng thuê'}
+                </Button>
+              ) : (
+                <div className='bg-muted rounded-lg border p-4 text-center'>
+                  <p className='text-muted-foreground text-sm'>
+                    {reservation.status === 'CANCELLED'
+                      ? 'Đơn đặt chỗ này đã bị hủy.'
+                      : reservation.status === 'PENDING'
+                        ? 'Đơn đặt chỗ này đang chờ xử lý.'
+                        : `Không thể tạo hợp đồng cho trạng thái "${reservation.status}".`}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
-      )}
+      </div>
     </div>
   )
 }

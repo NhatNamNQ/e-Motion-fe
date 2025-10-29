@@ -1,15 +1,41 @@
+// src/pages/SuccessPaymentPage.jsx
+
+import { useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import SuccessPaymentCard from '@/components/SuccessPaymentCard'
 import FailedPaymentCard from '@/components/FailedPaymentCard'
-import { useLocation } from 'react-router-dom'
+import Loader from '@/components/Loader' // Giả sử bạn có component này
 
 const SuccessPaymentPage = () => {
   const location = useLocation()
-  const status = location?.state?.status
-  const txnRef = location?.state?.txnRef
+  const navigate = useNavigate()
+  const { payment } = location.state || {}
+
+  useEffect(() => {
+    if (!payment) {
+      console.warn('Không có dữ liệu thanh toán. Điều hướng về dashboard.')
+      navigate('/dashboard/rentals')
+    }
+  }, [payment, navigate])
+
+  const handleNavigateBack = () => {
+    navigate(`/dashboard/rentals/${payment.rentalResponse.id}`)
+  }
+
+  if (!payment) {
+    return <Loader />
+  }
+
+  const status = payment.status
+  const txnRef = payment.txnRef
 
   return (
     <div>
-      {status === 'success' ? <SuccessPaymentCard txnRef={txnRef} /> : <FailedPaymentCard />}
+      {status === 'SUCCESS' ? (
+        <SuccessPaymentCard txnRef={txnRef} onNavigate={handleNavigateBack} />
+      ) : (
+        <FailedPaymentCard onNavigate={handleNavigateBack} />
+      )}
     </div>
   )
 }

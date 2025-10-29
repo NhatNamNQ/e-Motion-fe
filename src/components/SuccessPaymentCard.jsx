@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { CheckCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-const SuccessPaymentCard = ({ txnRef }) => {
+const SuccessPaymentCard = ({ txnRef, onNavigate }) => {
   const navigate = useNavigate()
   return (
     <Card className='shadow-lg'>
@@ -25,7 +25,7 @@ const SuccessPaymentCard = ({ txnRef }) => {
         <div className='flex justify-center gap-4'>
           <Button
             className='bg-secondary hover:bg-secondary/80 cursor-pointer'
-            onClick={() => navigate('/my-bookings')}
+            onClick={onNavigate}
           >
             Xem đơn hàng
           </Button>

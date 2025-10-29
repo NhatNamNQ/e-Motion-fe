@@ -112,15 +112,14 @@ export const routes = [
       {
         path: '/booking/confirm',
         element: (
-          <Suspense fallback={<Loader />}>
-            <BookingPage />
-          </Suspense>
+          <ProtectedRoute allowedRoles={['ROLE_USER']}>
+            <Suspense fallback={<Loader />}>
+              <BookingPage />
+            </Suspense>
+          </ProtectedRoute>
         )
       },
-      {
-        path: '/payments/payment-result',
-        element: <PaymentResultHandler />
-      },
+
       {
         path: '/booking/payment-result',
         element: (
@@ -132,9 +131,11 @@ export const routes = [
       {
         path: '/profile',
         element: (
-          <Suspense fallback={<Loader />}>
-            <ProfilePage />
-          </Suspense>
+          <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+            <Suspense fallback={<Loader />}>
+              <ProfilePage />
+            </Suspense>
+          </ProtectedRoute>
         )
       }
     ]
@@ -245,5 +246,9 @@ export const routes = [
         )
       }
     ]
+  },
+  {
+    path: '/payments/payment-result',
+    element: <PaymentResultHandler />
   }
 ]
