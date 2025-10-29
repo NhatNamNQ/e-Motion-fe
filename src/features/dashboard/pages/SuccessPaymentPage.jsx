@@ -1,10 +1,8 @@
-// src/pages/SuccessPaymentPage.jsx
-
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import SuccessPaymentCard from '@/components/SuccessPaymentCard'
 import FailedPaymentCard from '@/components/FailedPaymentCard'
-import Loader from '@/components/Loader' // Giả sử bạn có component này
+import Loader from '@/components/Loader'
 
 const SuccessPaymentPage = () => {
   const location = useLocation()
