@@ -81,10 +81,28 @@ export const addUserSchema = z
     phone: phoneValidation,
     email: emailValidation,
     password: passwordValidation,
-    confirmPassword: z.string(),
+    confirmPassword: z.string().optional(),
     role: z.string()
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Mật khẩu không khớp',
-    path: ['confirmPassword']
-  })
+  .refine(
+    (data) => {
+      if (data.password) {
+        return data.password === data.confirmPassword
+      }
+      return true
+    },
+    {
+      message: 'Mật khẩu không khớp',
+      path: ['confirmPassword']
+    }
+  )
+
+export const editUserSchema = addUserSchema.safeExtend({
+  password: z.string().refine(
+    (val) => {
+      if (!val) return true
+      return val.length >= 8 && passwordRegex.test(val)
+    },
+    { message: passwordMessage }
+  )
+})

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { UserPlus, CirclePlus, Check, X } from 'lucide-react'
 import { userService } from '../services/userService'
 import { toast } from 'sonner'
@@ -36,7 +36,7 @@ const UsersPage = () => {
   const [searchKey, setSearchKey] = useState('')
   const [debouncedFilter] = useDebounce(searchKey, 500)
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true)
     try {
       const res = await userService.getUsers(
@@ -61,7 +61,7 @@ const UsersPage = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter])
 
   const handleClickFilterStatus = (status) => {
     if (selectedStatuses.includes(status)) {
@@ -119,7 +119,7 @@ const UsersPage = () => {
 
   useEffect(() => {
     fetchUsers()
-  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter])
+  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter, fetchUsers])
 
   const tableProps = {
     users,

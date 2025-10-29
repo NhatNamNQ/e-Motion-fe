@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { addUserSchema } from '@/features/auth/schemas/authSchemas'
-import { X, Eye, EyeOff, ChevronDownIcon, CheckIcon } from 'lucide-react'
+import { addUserSchema, editUserSchema } from '@/features/auth/schemas/authSchemas'
+import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { roleOptions } from '../constants/userConfig'
 import {
@@ -43,7 +43,7 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm }) => {
     setValue,
     watch
   } = useForm({
-    resolver: zodResolver(addUserSchema),
+    resolver: zodResolver(mode.user ? editUserSchema : addUserSchema),
     mode: 'onBlur',
     defaultValues: {
       fullName: mode.user?.fullname || '',

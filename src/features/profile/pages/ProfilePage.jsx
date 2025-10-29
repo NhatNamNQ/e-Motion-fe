@@ -8,7 +8,6 @@ import { updateProfile, getCurrentUser } from '@/store/actions/authActions'
 import Loader from '@/components/Loader'
 import ChangePasswordPage from '@/features/profile/components/ChangePassword'
 import Document from '../components/Document'
-import { formatProfileDate } from '@/lib/utils'
 
 export default function UserProfile() {
   const dispatch = useDispatch()
