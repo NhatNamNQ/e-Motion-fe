@@ -24,7 +24,6 @@ import {
 } from '@/store/selectors/carsSelectors'
 import { selectEndTime, selectSearchForm, selectStartTime } from '@/store/selectors/searchSelectors'
 import { selectUser } from '@/store/selectors/authSelectors'
-import { toast } from 'sonner'
 
 const CarDetailPage = () => {
   const { id } = useParams()
@@ -61,7 +60,7 @@ const CarDetailPage = () => {
 
   const handleRentCar = () => {
     if (!user) {
-      toast.error('Vui lòng đăng nhập để thuê xe')
+      navigate('/auth/login')
     } else {
       navigate('/booking/confirm')
     }

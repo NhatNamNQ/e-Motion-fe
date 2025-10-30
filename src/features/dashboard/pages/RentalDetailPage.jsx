@@ -65,7 +65,10 @@ const RentalDetailPage = () => {
 
   const handleCreateCheckIn = () => navigate(`/dashboard/rentals/${id}/check-in`)
   const handleCreateCheckOut = () => navigate(`/dashboard/rentals/${id}/check-out`)
-  const handleNavigateToVehicleLog = () => navigate(`/dashboard/rentals/${id}/vehicle-log`)
+  const handleNavigateToVehicleLog = () =>
+    navigate(`/dashboard/rentals/${id}/vehicle-log`, {
+      state: { carId: rental.vehicleId }
+    })
 
   if (loading) return <Loader />
   if (error) return <div>Error</div>
@@ -143,13 +146,15 @@ const RentalDetailPage = () => {
                 </div>
                 <div className='flex justify-between'>
                   <span className='text-muted-foreground'>Phí cọc giữ xe:</span>
-                  <span className='font-semibold'>{formatCurrency(rental.deposit.amount)}</span>
+                  <span className='font-semibold'>
+                    {formatCurrency(rental.reservationDeposit.amount)}
+                  </span>
                 </div>
                 <Separator />
                 <div className='flex items-baseline justify-between'>
                   <span className='text-base font-bold'>Tổng cộng:</span>
                   <span className='text-primary text-xl font-bold'>
-                    {formatCurrency(rental.rentFee + rental.deposit.amount)}
+                    {formatCurrency(rental.rentFee + rental.reservationDeposit.amount)}
                   </span>
                 </div>
               </div>
@@ -179,7 +184,7 @@ const RentalDetailPage = () => {
                 </Button>
                 <Button
                   onClick={handleNavigateToVehicleLog}
-                  disabled={!isOngoing}
+                  disabled={!isPendingFee}
                   className='bg-secondary hover:bg-secondary/90'
                 >
                   Cập nhật nhật ký xe

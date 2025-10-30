@@ -13,8 +13,9 @@ import FailedPaymentCard from '../../../components/FailedPaymentCard'
 
 const BookingPage = () => {
   const location = useLocation()
-  const status = location?.state?.status
-  const txnRef = location?.state?.txnRef
+  const payment = location?.state?.payment
+  const status = payment?.status
+  const txnRef = payment?.txnRef
 
   const user = useSelector(selectUser)
   const car = useSelector(selectSelectedCar)
@@ -56,7 +57,7 @@ const BookingPage = () => {
       <div className='container mx-auto max-w-4xl px-4'>
         <BookingProgress status={status} />
         {status ? (
-          status === 'success' ? (
+          status === 'SUCCESS' ? (
             <SuccessPaymentCard txnRef={txnRef} />
           ) : (
             <FailedPaymentCard />
