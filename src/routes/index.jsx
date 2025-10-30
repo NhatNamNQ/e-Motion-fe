@@ -17,6 +17,7 @@ import CheckOutPage from '@/features/dashboard/pages/CheckOutPage'
 import CheckListDetailPage from '@/features/dashboard/pages/CheckListDetailPage'
 import PaymentResultHandler from '@/components/PaymentResultHandler'
 import SuccessPaymentPage from '@/features/dashboard/pages/SuccessPaymentPage'
+import RentalLogPage from '@/features/dashboard/pages/RentalLogPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -201,6 +202,16 @@ export const routes = [
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
             <Suspense fallback={<Loader />}>
               <CheckInPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/rentals/:rentalId/vehicle-log',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <RentalLogPage />
             </Suspense>
           </ProtectedRoute>
         )
