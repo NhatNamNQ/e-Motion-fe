@@ -13,9 +13,9 @@ import FailedPaymentCard from '../../../components/FailedPaymentCard'
 
 const BookingPage = () => {
   const location = useLocation()
-  const { payment } = location.state
-  const status = payment.status
-  const txnRef = payment.txnRef
+  const payment = location?.state?.payment
+  const status = payment?.status
+  const txnRef = payment?.txnRef
 
   const user = useSelector(selectUser)
   const car = useSelector(selectSelectedCar)

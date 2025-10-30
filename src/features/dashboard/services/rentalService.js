@@ -54,5 +54,13 @@ export const rentalService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  createVehicleLog: async (formData) => {
+    try {
+      const { data } = await instance.post('/vehicleLogs', formData)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }
