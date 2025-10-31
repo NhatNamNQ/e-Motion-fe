@@ -59,8 +59,8 @@ export default function UserProfile() {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12'>
-      <div className='mx-auto max-w-4xl'>
+    <div className='w-full bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12'>
+      <div>
         {/* Header Card */}
         <div className='mb-6 overflow-hidden rounded-2xl bg-white shadow-xl'>
           <div className='h-32 bg-gradient-to-r from-blue-600 to-indigo-600'></div>

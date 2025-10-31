@@ -18,6 +18,8 @@ import CheckListDetailPage from '@/features/dashboard/pages/CheckListDetailPage'
 import PaymentResultHandler from '@/components/PaymentResultHandler'
 import SuccessPaymentPage from '@/features/dashboard/pages/SuccessPaymentPage'
 import RentalLogPage from '@/features/dashboard/pages/RentalLogPage'
+import HistoryPage from '@/features/profile/pages/HistoryPage'
+import AccountLayout from '@/layout/AccountLayout'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -127,16 +129,6 @@ export const routes = [
           <Suspense fallback={<Loader />}>
             <BookingPage />
           </Suspense>
-        )
-      },
-      {
-        path: '/profile',
-        element: (
-          <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
-            <Suspense fallback={<Loader />}>
-              <ProfilePage />
-            </Suspense>
-          </ProtectedRoute>
         )
       }
     ]
@@ -261,5 +253,33 @@ export const routes = [
   {
     path: '/payments/payment-result',
     element: <PaymentResultHandler />
+  },
+  {
+    path: '/account',
+    element: (
+      <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+        <AccountLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: '/account/history',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+            <HistoryPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/account/profile',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+            <Suspense fallback={<Loader />}>
+              <ProfilePage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      }
+    ]
   }
 ]
