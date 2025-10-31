@@ -62,5 +62,21 @@ export const rentalService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getVehicleLogs: async () => {
+    try {
+      const { data } = await instance.get('/vehicleLogs')
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getVehicleLogDetail: async (id) => {
+    try {
+      const { data } = await instance.get(`/vehicleLogs/${id}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

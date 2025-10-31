@@ -20,6 +20,8 @@ import SuccessPaymentPage from '@/features/dashboard/pages/SuccessPaymentPage'
 import RentalLogPage from '@/features/dashboard/pages/RentalLogPage'
 import HistoryPage from '@/features/profile/pages/HistoryPage'
 import AccountLayout from '@/layout/AccountLayout'
+import VehicleLogsPage from '@/features/dashboard/pages/VehicleLogsPage'
+import VehicleLogDetailPage from '@/features/dashboard/pages/VehicleLogDetailPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -244,6 +246,26 @@ export const routes = [
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
             <Suspense fallback={<Loader />}>
               <SuccessPaymentPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/vehicle-logs',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <VehicleLogsPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/vehicle-logs/:id',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <VehicleLogDetailPage />
             </Suspense>
           </ProtectedRoute>
         )
