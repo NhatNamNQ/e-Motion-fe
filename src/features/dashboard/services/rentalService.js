@@ -78,5 +78,13 @@ export const rentalService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  updateVehicleLog: async (id, formData) => {
+    try {
+      const { data } = await instance.put(`/vehicleLogs/${id}`, formData)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

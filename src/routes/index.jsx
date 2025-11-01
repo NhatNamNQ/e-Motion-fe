@@ -222,6 +222,16 @@ export const routes = [
         )
       },
       {
+        path: '/dashboard/rentals/:rentalId/vehicle-log/edit/:logId',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <RentalLogPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
         path: '/dashboard/rentals/:id/check-out',
         element: (
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>

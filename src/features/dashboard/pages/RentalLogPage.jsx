@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForm, useFieldArray } from 'react-hook-form'
 
@@ -19,17 +19,24 @@ import { selectUser } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
 import { rentalService } from '../services/rentalService'
 import { uploadImage } from '@/lib/utils'
+import Loader from '@/components/Loader'
 
 export default function RentalLogPage() {
-  const { rentalId } = useParams()
+  const { rentalId, logId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
   const [imagePreviews, setImagePreviews] = useState([])
   const [imageFiles, setImageFiles] = useState([])
   const [uploadingImages, setUploadingImages] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [existingLog, setExistingLog] = useState(null)
 
   const { staffId } = useSelector(selectUser)
   const vehicleId = location.state?.carId
+  console.log(location.state)
+
+  // Check if this is edit mode
+  const isEditMode = !!logId
 
   const form = useForm({
     defaultValues: {
@@ -42,6 +49,47 @@ export default function RentalLogPage() {
     control: form.control,
     name: 'repairItems'
   })
+
+  // Load existing vehicle log data if in edit mode
+  useEffect(() => {
+    const loadExistingLog = async () => {
+      if (!isEditMode || !logId) return
+
+      try {
+        setLoading(true)
+        const logData = await rentalService.getVehicleLogDetail(logId)
+        setExistingLog(logData)
+
+        // Populate form with existing data
+        const repairItems =
+          logData.repairCost && logData.repairCost.length > 0
+            ? logData.repairCost
+            : [{ description: '', cost: 0 }]
+
+        form.reset({
+          repairItems: repairItems,
+          imgs: logData.imgs || []
+        })
+
+        // Set image previews for existing images
+        if (logData.imgs && logData.imgs.length > 0) {
+          const existingPreviews = logData.imgs.map((url, index) => ({
+            url: url,
+            name: `existing-image-${index}`,
+            isExisting: true
+          }))
+          setImagePreviews(existingPreviews)
+        }
+      } catch (error) {
+        toast.error(`Lỗi khi tải dữ liệu: ${error.message}`)
+        navigate(`/dashboard/rentals/${rentalId}`)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadExistingLog()
+  }, [isEditMode, logId, form, navigate, rentalId])
 
   const repairItems = form.watch('repairItems')
   const totalCost = repairItems.reduce((acc, item) => acc + (Number(item.cost) || 0), 0)
@@ -74,7 +122,8 @@ export default function RentalLogPage() {
         // Create previews
         const newPreviews = validFiles.map((file) => ({
           url: URL.createObjectURL(file),
-          name: file.name
+          name: file.name,
+          isExisting: false
         }))
         setImagePreviews((prev) => [...prev, ...newPreviews])
       }
@@ -82,21 +131,26 @@ export default function RentalLogPage() {
   }
 
   const handleRemoveImage = (index) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== index))
-    setImagePreviews((prev) => {
-      // Revoke object URL to prevent memory leaks
-      URL.revokeObjectURL(prev[index].url)
-      return prev.filter((_, i) => i !== index)
-    })
+    const imageToRemove = imagePreviews[index]
 
-    // Also remove from form if already uploaded
-    const currentUrls = form.getValues('imgs')
-    if (currentUrls[index]) {
-      form.setValue(
-        'imgs',
-        currentUrls.filter((_, i) => i !== index)
-      )
+    if (imageToRemove.isExisting) {
+      // Remove from existing images in form
+      const currentUrls = form.getValues('imgs')
+      const existingImagesBeforeIndex = imagePreviews
+        .slice(0, index)
+        .filter((img) => img.isExisting).length
+      const updatedUrls = currentUrls.filter((_, i) => i !== existingImagesBeforeIndex)
+      form.setValue('imgs', updatedUrls)
+    } else {
+      // Remove from new uploaded files
+      const newFilesIndex = imagePreviews.slice(0, index).filter((img) => !img.isExisting).length
+      setImageFiles((prev) => prev.filter((_, i) => i !== newFilesIndex))
+
+      // Revoke object URL to prevent memory leaks
+      URL.revokeObjectURL(imageToRemove.url)
     }
+
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleUploadImages = async () => {
@@ -114,6 +168,11 @@ export default function RentalLogPage() {
       const currentUrls = form.getValues('imgs') || []
       form.setValue('imgs', [...currentUrls, ...uploadedUrls])
 
+      // Update previews to mark new files as existing
+      setImagePreviews((prev) =>
+        prev.map((preview) => (preview.isExisting ? preview : { ...preview, isExisting: true }))
+      )
+
       // Clear files after successful upload
       setImageFiles([])
 
@@ -127,37 +186,57 @@ export default function RentalLogPage() {
   }
 
   const onSubmit = async (values) => {
-    // Check if images are uploaded
-    if (values.imgs.length === 0) {
+    // Check if images are uploaded for new files
+    if (imageFiles.length > 0) {
+      toast.error('Vui lòng upload hình ảnh trước khi lưu')
+      return
+    }
+
+    // For create mode, require at least one image
+    if (!isEditMode && values.imgs.length === 0) {
       toast.error('Vui lòng upload hình ảnh trước khi lưu')
       return
     }
 
     try {
-      const data = await rentalService.createVehicleLog({
+      const submitData = {
         rentalId: rentalId,
-        vehicleId: vehicleId,
+        vehicleId: vehicleId || existingLog?.vehicleId,
         staffId: staffId,
         repairItems: values.repairItems,
         imgs: values.imgs
-      })
+      }
+
+      let data
+      if (isEditMode) {
+        data = await rentalService.updateVehicleLog(logId, submitData)
+        toast.success('Cập nhật vehicle log thành công!')
+      } else {
+        data = await rentalService.createVehicleLog(submitData)
+        toast.success('Tạo vehicle log thành công!')
+      }
 
       if (data) {
         form.reset()
         setImagePreviews([])
         setImageFiles([])
-        toast.success('Tạo vehicle log thành công!')
         navigate(`/dashboard/rentals/${rentalId}`)
       }
     } catch (error) {
-      toast.error(`Lỗi khi tạo log: ${error.message}`)
+      toast.error(`Lỗi khi ${isEditMode ? 'cập nhật' : 'tạo'} log: ${error.message}`)
     }
   }
+
+  if (loading) return <Loader />
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tạo Vehicle Log cho Rental #{rentalId}</CardTitle>
+        <CardTitle>
+          {isEditMode
+            ? `Chỉnh sửa Vehicle Log #${logId}`
+            : `Tạo Vehicle Log cho Rental #${rentalId}`}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -198,6 +277,7 @@ export default function RentalLogPage() {
                       variant='destructive'
                       size='icon'
                       onClick={() => remove(index)}
+                      disabled={fields.length === 1}
                     >
                       <Trash2 className='h-4 w-4' />
                     </Button>
@@ -266,16 +346,21 @@ export default function RentalLogPage() {
                       >
                         <X className='h-4 w-4' />
                       </Button>
+                      {preview.isExisting && (
+                        <div className='absolute bottom-1 left-1 rounded bg-green-500 px-1 text-xs text-white'>
+                          ✓
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Uploaded Images Display */}
+              {/* Upload Status */}
               {form.watch('imgs')?.length > 0 && (
                 <div className='mt-4'>
                   <p className='mb-2 text-sm text-green-600'>
-                    ✓ Đã upload {form.watch('imgs').length} hình ảnh thành công
+                    ✓ Có {form.watch('imgs').length} hình ảnh đã lưu
                   </p>
                 </div>
               )}
@@ -296,7 +381,7 @@ export default function RentalLogPage() {
                 Hủy
               </Button>
               <Button type='submit' disabled={uploadingImages || imageFiles.length > 0}>
-                Lưu Vehicle Log
+                {isEditMode ? 'Cập nhật' : 'Lưu'}
               </Button>
             </CardFooter>
           </form>

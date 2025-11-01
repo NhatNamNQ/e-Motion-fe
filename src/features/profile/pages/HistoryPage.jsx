@@ -71,8 +71,8 @@ const HistoryPage = () => {
             reservations.map((reservation) => (
               <HistoryCard
                 key={reservation.code}
-                image={reservation.vehicleImage || 'https://placehold.co/400x300'}
-                title={reservation.vehicleName}
+                image={reservation.vehicle.images[0] || 'https://placehold.co/400x300'}
+                title={reservation.vehicle.name}
                 dateRange={`${formatDate(reservation.createdAt)} - ${formatDate(reservation.endTime)}`}
                 price={reservation.totalPrice}
                 status={reservation.status}
@@ -88,8 +88,8 @@ const HistoryPage = () => {
           rentals.map((rental) => (
             <HistoryCard
               key={rental.id}
-              image={rental.vehicleImage || 'https://placehold.co/400x300'}
-              title={rental.vehicleName}
+              image={rental.vehicle.isMain || 'https://placehold.co/400x300'}
+              title={rental.vehicle.name}
               dateRange={`${formatDate(rental.startTime)} - ${formatDate(rental.endTime)}`}
               price={rental.totalPrice}
               status={rental.status}
