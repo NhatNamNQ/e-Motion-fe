@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { User, Mail, Phone, Calendar, Shield, Edit2, Save, X, LockKeyhole } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectUser, selectAuthLoading } from '@/store/selectors/authSelectors'
+import { formatVNDate } from '@/lib/utils'
 import { toast } from 'sonner'
 import { updateProfile, getCurrentUser } from '@/store/actions/authActions'
 import Loader from '@/components/Loader'
 import ChangePasswordPage from '@/features/profile/components/ChangePassword'
 import Document from '../components/Document'
-import { formatProfileDate } from '@/lib/utils'
 
 export default function UserProfile() {
   const dispatch = useDispatch()
@@ -59,8 +59,8 @@ export default function UserProfile() {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12'>
-      <div className='mx-auto max-w-4xl'>
+    <div className='w-full bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12'>
+      <div>
         {/* Header Card */}
         <div className='mb-6 overflow-hidden rounded-2xl bg-white shadow-xl'>
           <div className='h-32 bg-gradient-to-r from-blue-600 to-indigo-600'></div>
@@ -173,7 +173,7 @@ export default function UserProfile() {
               </div>
               <div className='flex-1'>
                 <label className='text-sm font-medium text-gray-500'>Created At</label>
-                <p className='mt-1 text-lg text-gray-800'>{formatProfileDate(user.createdAt)}</p>
+                <p className='mt-1 text-lg text-gray-800'>{formatVNDate(user.createdAt)}</p>
               </div>
             </div>
           </div>

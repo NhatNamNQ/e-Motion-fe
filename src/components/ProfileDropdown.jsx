@@ -76,15 +76,15 @@ const ProfileDropdown = () => {
 
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link to='/profile'>
+            <Link to='/account/profile'>
               <User />
-              Profile
+              Hồ sơ
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to='/setting'>
+            <Link to='/account/history'>
               <Settings />
-              Setting
+              Lịch sử đặt chỗ
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -92,13 +92,13 @@ const ProfileDropdown = () => {
         <DropdownMenuItem asChild>
           <Link to='/help'>
             <HelpCircle />
-            Support
+            Hỗ trợ
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className='text-red-600'>
           <LogOut />
-          Log out
+          Đăng xuất
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

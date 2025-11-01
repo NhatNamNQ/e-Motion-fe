@@ -10,6 +10,7 @@ import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 import ReservationsPage from '@/features/dashboard/pages/ReservationsPage'
 import ReservationDetailPage from '@/features/dashboard/pages/ReservationDetailPage'
 import RentalDetailPage from '@/features/dashboard/pages/RentalDetailPage'
+import UsersPage from '@/features/dashboard/pages/UsersPage'
 import RentalsPage from '@/features/dashboard/pages/RentalsPage'
 import CheckListPage from '@/features/dashboard/pages/CheckListPage'
 import CheckInPage from '@/features/dashboard/pages/CheckInPage'
@@ -18,6 +19,10 @@ import CheckListDetailPage from '@/features/dashboard/pages/CheckListDetailPage'
 import PaymentResultHandler from '@/components/PaymentResultHandler'
 import SuccessPaymentPage from '@/features/dashboard/pages/SuccessPaymentPage'
 import RentalLogPage from '@/features/dashboard/pages/RentalLogPage'
+import HistoryPage from '@/features/profile/pages/HistoryPage'
+import AccountLayout from '@/layout/AccountLayout'
+import VehicleLogsPage from '@/features/dashboard/pages/VehicleLogsPage'
+import VehicleLogDetailPage from '@/features/dashboard/pages/VehicleLogDetailPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
@@ -128,16 +133,6 @@ export const routes = [
             <BookingPage />
           </Suspense>
         )
-      },
-      {
-        path: '/profile',
-        element: (
-          <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
-            <Suspense fallback={<Loader />}>
-              <ProfilePage />
-            </Suspense>
-          </ProtectedRoute>
-        )
       }
     ]
   },
@@ -192,6 +187,16 @@ export const routes = [
           <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
             <Suspense fallback={<Loader />}>
               <RentalDetailPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/users',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <UsersPage />
             </Suspense>
           </ProtectedRoute>
         )
@@ -255,11 +260,69 @@ export const routes = [
             </Suspense>
           </ProtectedRoute>
         )
+      },
+      {
+        path: '/dashboard/vehicle-logs',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <VehicleLogsPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/vehicle-logs/:id',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <VehicleLogDetailPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/dashboard/users',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+            <Suspense fallback={<Loader />}>
+              <UsersPage />
+            </Suspense>
+          </ProtectedRoute>
+        )
       }
     ]
   },
   {
     path: '/payments/payment-result',
     element: <PaymentResultHandler />
+  },
+  {
+    path: '/account',
+    element: (
+      <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+        <AccountLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: '/account/history',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+            <HistoryPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/account/profile',
+        element: (
+          <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+            <Suspense fallback={<Loader />}>
+              <ProfilePage />
+            </Suspense>
+          </ProtectedRoute>
+        )
+      }
+    ]
   }
 ]

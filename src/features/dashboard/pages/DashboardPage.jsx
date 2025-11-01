@@ -15,7 +15,7 @@ const DashboardPage = () => {
 
   const fetchStats = async () => {
     try {
-      const data = await adminService.geDataDashboard()
+      const data = await adminService.getDataDashboard()
       const dataSummary = data.totalStats
       const dataStationDetail = data.stationStats
       const dataRevenue = data.revenueInYear

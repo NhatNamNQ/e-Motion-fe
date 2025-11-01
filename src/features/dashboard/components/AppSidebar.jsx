@@ -18,7 +18,15 @@ import {
   SidebarMenuSubButton
 } from '@/components/ui/sidebar'
 
-import { LayoutDashboard, User2, ChevronUp, SquarePen, BookOpen, Package } from 'lucide-react'
+import {
+  LayoutDashboard,
+  User2,
+  ChevronUp,
+  SquarePen,
+  BookOpen,
+  Package,
+  ClipboardPenLine
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const staffMenuItems = [
@@ -41,6 +49,16 @@ const staffMenuItems = [
     title: 'Check List',
     url: '/dashboard/check-list',
     icon: SquarePen
+  },
+  {
+    title: 'Vehicle logs',
+    url: '/dashboard/vehicle-logs',
+    icon: ClipboardPenLine
+  },
+  {
+    title: 'Users',
+    url: '/dashboard/users',
+    icon: User2
   }
 ]
 export function AppSidebar() {

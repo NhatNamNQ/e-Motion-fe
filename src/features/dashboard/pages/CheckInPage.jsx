@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -26,8 +26,8 @@ const CheckInPage = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { staffId, email } = useSelector(selectUser)
-  const [imageFile, setImageFile] = useState(null)
-  const [imagePreview, setImagePreview] = useState(null)
+  const [imageFiles, setImageFiles] = useState([])
+  const [imagePreviews, setImagePreviews] = useState([])
   const [uploadingImage, setUploadingImage] = useState(false)
 
   const form = useForm({
@@ -40,48 +40,50 @@ const CheckInPage = () => {
     }
   })
 
+  // Handle file input change (single image for check-in)
   const handleImageChange = (event) => {
     const file = event.target.files[0]
     if (file) {
-      // Validate file type
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+      const maxSize = 5 * 1024 * 1024
       if (!validTypes.includes(file.type)) {
         toast.error('Please select a valid image file (JPEG, PNG, or WebP)')
         return
       }
-
-      // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024
       if (file.size > maxSize) {
         toast.error('Image size should be less than 5MB')
         return
       }
-      setImageFile(file)
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setImagePreview(e.target.result)
-      }
-      reader.readAsDataURL(file)
+      setImageFiles([file])
+      setImagePreviews([
+        {
+          url: URL.createObjectURL(file),
+          name: file.name
+        }
+      ])
     }
   }
 
   const handleRemoveImage = () => {
-    setImageFile(null)
-    setImagePreview(null)
+    setImageFiles([])
+    setImagePreviews((prev) => {
+      if (prev[0]) URL.revokeObjectURL(prev[0].url)
+      return []
+    })
     form.setValue('img', '')
   }
 
   const handleUploadImage = async () => {
-    if (!imageFile) {
+    if (imageFiles.length === 0) {
       toast.error('Please select an image first')
       return
     }
-
     try {
       setUploadingImage(true)
-      const imageUrl = await uploadImage(imageFile, 'check-in')
+      const imageUrl = await uploadImage(imageFiles[0], 'check-in')
       form.setValue('img', imageUrl)
       toast.success('Image uploaded successfully')
+      setImageFiles([])
     } catch (error) {
       console.error('Upload error:', error)
       toast.error(`Failed to upload image: ${error.message}`)
@@ -89,6 +91,13 @@ const CheckInPage = () => {
       setUploadingImage(false)
     }
   }
+
+  // Clean up object URLs on unmount
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview.url))
+    }
+  }, [imagePreviews])
 
   const onSubmit = async (data) => {
     try {
@@ -183,7 +192,7 @@ const CheckInPage = () => {
                 <FormField
                   control={form.control}
                   name='img'
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Vehicle Image</FormLabel>
                       <FormControl>
@@ -195,9 +204,8 @@ const CheckInPage = () => {
                               accept='image/*'
                               onChange={handleImageChange}
                               className='file:bg-secondary hover:file:bg-secondary/90 file:mr-4 file:rounded-md file:border-0 file:px-4 file:text-sm file:font-medium file:text-white'
-                              {...field}
                             />
-                            {imageFile && (
+                            {imageFiles.length > 0 && (
                               <Button
                                 type='button'
                                 variant='outline'
@@ -218,10 +226,10 @@ const CheckInPage = () => {
                           </div>
 
                           {/* Image Preview */}
-                          {imagePreview && (
+                          {imagePreviews.length > 0 && (
                             <div className='relative inline-block'>
                               <img
-                                src={imagePreview}
+                                src={imagePreviews[0].url}
                                 alt='Preview'
                                 className='h-32 w-32 rounded-lg border object-cover'
                               />
@@ -230,10 +238,19 @@ const CheckInPage = () => {
                                 variant='destructive'
                                 size='sm'
                                 className='absolute -top-2 -right-2 h-6 w-6 rounded-full p-0'
-                                onClick={handleRemoveImage}
+                                onClick={() => handleRemoveImage(0)}
                               >
                                 <X className='h-4 w-4' />
                               </Button>
+                            </div>
+                          )}
+
+                          {/* Uploaded Image Display */}
+                          {form.watch('img') && (
+                            <div className='mt-2'>
+                              <p className='text-sm text-green-600'>
+                                ✓ Image uploaded successfully
+                              </p>
                             </div>
                           )}
                         </div>
