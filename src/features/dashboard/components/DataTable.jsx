@@ -35,7 +35,7 @@ const DataTable = ({ table, columns, globalFilter, isLoading, onRowClick }) => {
               <TableRow
                 key={row.id}
                 className='cursor-pointer transition-colors hover:bg-gray-50'
-                onClick={() => onRowClick(row.original.code || row.original.id)}
+                onClick={() => onRowClick(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

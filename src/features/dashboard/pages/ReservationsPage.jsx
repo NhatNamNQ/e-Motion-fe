@@ -54,8 +54,8 @@ const ReservationsPage = () => {
     getCoreRowModel: getCoreRowModel()
   })
 
-  const handleRowClick = (code) => {
-    navigate(`/dashboard/reservations/${code}`)
+  const handleRowClick = (row) => {
+    navigate(`/dashboard/reservations/${row.code}`)
   }
 
   useEffect(() => {

@@ -154,9 +154,9 @@ const RentalDetailPage = () => {
                       </Button>
                     </div>
                     <div className='bg-muted/40 space-y-3 rounded-lg p-4'>
-                      {rental.vehicleLog.repairCost && rental.vehicleLog.repairCost.length > 0 ? (
+                      {rental.vehicleLog.repairItems && rental.vehicleLog.repairItems.length > 0 ? (
                         <>
-                          {rental.vehicleLog.repairCost.map((item, idx) => (
+                          {rental.vehicleLog.repairItems.map((item, idx) => (
                             <div key={idx} className='flex justify-between text-sm'>
                               <span className='text-muted-foreground'>{item.description}</span>
                               <span className='font-medium text-red-600'>

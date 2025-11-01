@@ -57,8 +57,8 @@ const VehicleLogsPage = () => {
     fetchLogs()
   }, [debouncedFilter])
 
-  const handleRowClick = (id) => {
-    navigate(`/dashboard/vehicle-logs/${id}`)
+  const handleRowClick = (row) => {
+    navigate(`/dashboard/vehicle-logs/${row.id}`)
   }
 
   return (

@@ -62,8 +62,8 @@ export default function RentalLogPage() {
 
         // Populate form with existing data
         const repairItems =
-          logData.repairCost && logData.repairCost.length > 0
-            ? logData.repairCost
+          logData.repairItems && logData.repairItems.length > 0
+            ? logData.repairItems
             : [{ description: '', cost: 0 }]
 
         form.reset({

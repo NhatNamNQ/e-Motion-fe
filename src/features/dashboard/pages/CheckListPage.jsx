@@ -66,8 +66,9 @@ const CheckListPage = () => {
     getCoreRowModel: getCoreRowModel()
   })
 
-  const handleRowClick = (id) => {
-    navigate(`/dashboard/check-list/${id}`)
+  const handleRowClick = (row) => {
+    const rentalId = row.rentalId
+    navigate(`/dashboard/check-list/${rentalId}`)
   }
 
   useEffect(() => {

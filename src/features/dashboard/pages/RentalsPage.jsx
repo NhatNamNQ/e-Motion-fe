@@ -53,8 +53,8 @@ const RentalsPage = () => {
     getCoreRowModel: getCoreRowModel()
   })
 
-  const handleRowClick = (id) => {
-    navigate(`/dashboard/rentals/${id}`)
+  const handleRowClick = (row) => {
+    navigate(`/dashboard/rentals/${row.id}`)
   }
 
   useEffect(() => {
