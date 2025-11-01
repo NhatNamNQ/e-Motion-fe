@@ -11,11 +11,9 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSubButton
+  SidebarMenuItem
 } from '@/components/ui/sidebar'
 
 import {
@@ -25,7 +23,11 @@ import {
   SquarePen,
   BookOpen,
   Package,
+<<<<<<< Updated upstream
   ClipboardPenLine
+=======
+  MapPin
+>>>>>>> Stashed changes
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -34,6 +36,11 @@ const staffMenuItems = [
     title: 'Dashboard',
     url: '/dashboard',
     icon: LayoutDashboard
+  },
+  {
+    title: 'Stations',
+    url: '/dashboard/stations',
+    icon: MapPin
   },
   {
     title: 'Reservations',

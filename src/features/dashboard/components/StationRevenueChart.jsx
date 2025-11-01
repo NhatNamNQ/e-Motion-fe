@@ -10,7 +10,7 @@ const StationRevenueTable = ({ stationDetail }) => {
             <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Station</th>
             <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Revenue</th>
             <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Cars</th>
-            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Bookings</th>
+            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Total Rentals</th>
             <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>
               Usage Rate (%)
             </th>

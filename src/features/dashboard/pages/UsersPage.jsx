@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { UserPlus, CirclePlus, Check, X } from 'lucide-react'
 import { userService } from '../services/userService'
+import { stationService } from '../services/stationService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
 import UserForm from '../components/UserForm'
@@ -118,8 +119,24 @@ const UsersPage = () => {
   }
 
   useEffect(() => {
+<<<<<<< Updated upstream
     fetchUsers()
   }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter, fetchUsers])
+=======
+    const fetchStationNames = async () => {
+      setIsLoading(true)
+      try {
+        const res = await stationService.getAllStations()
+        setStations(res)
+      } catch (error) {
+        toast.error('Error get users: ' + error.message)
+      } finally {
+        fetchUsers()
+      }
+    }
+    fetchStationNames()
+  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter, selectedStation])
+>>>>>>> Stashed changes
 
   const tableProps = {
     users,
