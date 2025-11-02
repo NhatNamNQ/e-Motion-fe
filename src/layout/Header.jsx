@@ -10,10 +10,10 @@ const Header = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated)
 
   return (
-    <header className='flex h-30 items-center border-b'>
+    <header className='flex items-center border-b py-8'>
       <div className='container mx-auto flex justify-between pr-4'>
         <Link to='/'>
-          <img src='/logo.svg' alt='e-Motion' className='h-[80px] w-[150px] cursor-pointer' />
+          <img src='/logo.svg' alt='e-Motion' className='h-[60px] w-[150px] cursor-pointer' />
         </Link>
         <nav className='flex items-center space-x-4'>
           <Link to='/cars'>Xem danh sách xe</Link>

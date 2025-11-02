@@ -45,19 +45,17 @@ const LoginPage = () => {
   }
 
   return (
-    <main className='bg-secondary flex h-screen items-center justify-center py-12'>
-      <div className='w-full max-w-lg'>
-        <div className='rounded-2xl bg-white p-8 shadow-lg'>
-          <AuthForm
-            isLoading={isLoading}
-            config={loginConfig}
-            formSchema={loginSchema}
-            onSubmit={handleLogin}
-            formType='login'
-          />
-        </div>
+    <div className='w-full max-w-md'>
+      <div className='px-6 py-8'>
+        <AuthForm
+          isLoading={isLoading}
+          config={loginConfig}
+          formSchema={loginSchema}
+          onSubmit={handleLogin}
+          formType='login'
+        />
       </div>
-    </main>
+    </div>
   )
 }
 

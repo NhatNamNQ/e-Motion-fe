@@ -15,6 +15,7 @@ import { otpSchema } from '../schemas/authSchemas'
 import { useEffect, useState } from 'react'
 import { authService } from '../services/authService'
 import { toast } from 'sonner'
+import { Spinner } from '@/components/ui/spinner'
 
 const OtpForm = ({ onSubmit, isLoading, email }) => {
   const [countdown, setCountDown] = useState(30)
@@ -83,7 +84,7 @@ const OtpForm = ({ onSubmit, isLoading, email }) => {
           className='bg-secondary hover:bg-secondary/80 w-full'
           disabled={isLoading}
         >
-          {isLoading ? 'Đang xác thực...' : 'Xác nhận'}
+          {isLoading ? <Spinner /> : 'Xác nhận'}
         </Button>
       </form>
       <div className='my-3 text-center'>
