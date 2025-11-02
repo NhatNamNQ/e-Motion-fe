@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'sonner'
@@ -7,7 +6,7 @@ import AuthForm from '../components/AuthForm'
 import { registerSchema } from '../schemas/authSchemas'
 import { registerConfig } from '../constants'
 import { clearError } from '@/store/slices/authSlice'
-import { selectAuthLoading, selectRegistrationEmail } from '@/store/selectors/authSelectors'
+import { selectAuthLoading } from '@/store/selectors/authSelectors'
 import { registerUser } from '@/store/actions/authActions'
 
 const RegisterPage = () => {
@@ -16,13 +15,6 @@ const RegisterPage = () => {
   const navigate = useNavigate()
 
   const isLoading = useSelector(selectAuthLoading)
-  const registrationEmail = useSelector(selectRegistrationEmail)
-
-  useEffect(() => {
-    if (registrationEmail) {
-      navigate('/auth/verify-otp')
-    }
-  }, [registrationEmail, navigate])
 
   const handleRegister = async (formData) => {
     dispatch(clearError())
@@ -38,25 +30,24 @@ const RegisterPage = () => {
 
     if (registerUser.fulfilled.match(result)) {
       toast.success('Đăng ký thành công! Vui lòng kiểm tra email để xác thực.')
+      navigate('/auth/verify-otp')
     } else {
       toast.error(result.payload || 'Đăng ký thất bại')
     }
   }
 
   return (
-    <main className='bg-secondary flex h-screen items-center justify-center py-12'>
-      <div className='w-full max-w-lg'>
-        <div className='rounded-2xl bg-white p-8 shadow-lg'>
-          <AuthForm
-            config={registerConfig}
-            formSchema={registerSchema}
-            onSubmit={handleRegister}
-            formType='register'
-            isLoading={isLoading}
-          />
-        </div>
+    <div className='w-full max-w-md'>
+      <div className='px-6 py-8'>
+        <AuthForm
+          isLoading={isLoading}
+          config={registerConfig}
+          formSchema={registerSchema}
+          onSubmit={handleRegister}
+          formType='register'
+        />
       </div>
-    </main>
+    </div>
   )
 }
 

@@ -43,19 +43,17 @@ const OtpPage = () => {
   }
 
   return (
-    <main className='bg-secondary flex h-screen items-center justify-center py-12'>
-      <div className='w-full max-w-lg'>
-        <div className='rounded-2xl bg-white p-8 shadow-lg'>
-          <div className='mb-6 text-center'>
-            <h2 className='text-2xl font-bold'>Xác thực OTP</h2>
-            <p className='mt-2 text-gray-600'>
-              Mã xác thực đã được gửi đến email: <strong>{registrationEmail}</strong>
-            </p>
-          </div>
-          <OtpForm onSubmit={handleVerifyOtp} isLoading={isLoading} email={registrationEmail} />
+    <div className='w-full max-w-md'>
+      <div className='px-6 py-8'>
+        <div className='mb-6 text-center'>
+          <h2 className='text-2xl font-bold'>Xác thực OTP</h2>
+          <p className='mt-2 text-gray-600'>
+            Mã xác thực đã được gửi đến email: <strong>{registrationEmail}</strong>
+          </p>
         </div>
+        <OtpForm onSubmit={handleVerifyOtp} isLoading={isLoading} email={registrationEmail} />
       </div>
-    </main>
+    </div>
   )
 }
 
