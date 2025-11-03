@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { History, ArrowDown, Building2, Car, User, Activity, Navigation } from 'lucide-react'
 import CardDashboard from '@/components/CardDashboard'
 import { Button } from '@/components/ui/button'
@@ -148,7 +148,7 @@ const StationsPage = () => {
     }
   }
 
-  const fetchRevenueStation = async () => {
+  const fetchRevenueStation = useCallback(async () => {
     setIsLoading(true)
     try {
       const data = await stationService.getRevenueStation(type, day, month, year)
@@ -158,7 +158,7 @@ const StationsPage = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [day, month, type, year])
 
   useEffect(() => {
     const init = async () => {
@@ -172,7 +172,7 @@ const StationsPage = () => {
     if (stationDataLoaded) {
       fetchRevenueStation()
     }
-  }, [type, day, month, year, stationDataLoaded])
+  }, [type, day, month, year, stationDataLoaded, fetchRevenueStation])
 
   if (isLoading) {
     return <Loader />

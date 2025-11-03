@@ -31,9 +31,9 @@ const StationDetailPage = () => {
   const [activeTab, setActiveTab] = useState('overview')
   const [searchVehicle, setSearchVehicle] = useState('')
   const [searchStaff, setSearchStaff] = useState('')
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showAddVehicleModal, setShowAddVehicleModal] = useState(false)
-  const [showAddStaffModal, setShowAddStaffModal] = useState(false)
+  // const [showEditModal, setShowEditModal] = useState(false)
+  // const [showAddVehicleModal, setShowAddVehicleModal] = useState(false)
+  // const [showAddStaffModal, setShowAddStaffModal] = useState(false)
 
   // Mock station data
   const station = {
