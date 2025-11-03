@@ -119,10 +119,6 @@ const UsersPage = () => {
   }
 
   useEffect(() => {
-<<<<<<< Updated upstream
-    fetchUsers()
-  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter, fetchUsers])
-=======
     const fetchStationNames = async () => {
       setIsLoading(true)
       try {
@@ -135,8 +131,11 @@ const UsersPage = () => {
       }
     }
     fetchStationNames()
-  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter, selectedStation])
->>>>>>> Stashed changes
+  }, [])
+
+  useEffect(() => {
+    fetchUsers()
+  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter])
 
   const tableProps = {
     users,

@@ -26,8 +26,6 @@ export const formatVNDate = (dateString) =>
         year: 'numeric'
       })
     : ''
-<<<<<<< Updated upstream
-=======
 export const formatProfileDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('vi-VN', {
     day: '2-digit',
@@ -35,7 +33,6 @@ export const formatProfileDate = (dateString) => {
     year: 'numeric'
   })
 }
->>>>>>> Stashed changes
 
 export const formatHourDate = (dateString) => {
   const date = new Date(dateString)
