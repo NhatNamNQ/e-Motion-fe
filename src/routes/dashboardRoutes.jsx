@@ -18,6 +18,8 @@ import VehicleLogsPage from '@/features/dashboard/pages/VehicleLogsPage'
 import VehicleLogDetailPage from '@/features/dashboard/pages/VehicleLogDetailPage'
 import SuccessPaymentPage from '@/features/dashboard/pages/SuccessPaymentPage'
 import RentalLogPage from '@/features/dashboard/pages/RentalLogPage'
+import StationsPage from '@/features/dashboard/pages/StationsPage'
+import StationDetailPage from '@/features/dashboard/pages/StationDetailPage'
 
 export const dashboardRoutes = {
   path: '/dashboard',
@@ -180,6 +182,26 @@ export const dashboardRoutes = {
         <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
           <Suspense fallback={<Loader />}>
             <UsersPage />
+          </Suspense>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/dashboard/stations',
+      element: (
+        <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+          <Suspense fallback={<Loader />}>
+            <StationsPage />
+          </Suspense>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/dashboard/stations/:stationId',
+      element: (
+        <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+          <Suspense fallback={<Loader />}>
+            <StationDetailPage />
           </Suspense>
         </ProtectedRoute>
       )

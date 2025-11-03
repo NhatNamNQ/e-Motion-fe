@@ -1,5 +1,6 @@
 import { User, Car, CalendarCheck, ClipboardCheck, CreditCard, PieChart } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
+import CardDashboard from '@/components/CardDashboard'
 
 const SummaryCard = ({ summary }) => {
   const cards = [
@@ -19,7 +20,7 @@ const SummaryCard = ({ summary }) => {
       icon: <CalendarCheck className='h-6 w-6 text-purple-500' />
     },
     {
-      title: 'Total Bookings',
+      title: 'Total Rentals',
       value: summary.totalBookings,
       icon: <ClipboardCheck className='h-6 w-6 text-indigo-500' />
     },
@@ -36,22 +37,10 @@ const SummaryCard = ({ summary }) => {
   ]
 
   return (
-    <div className='overflow-x-auto pb-5'>
-      <h3 className='mb-4 text-xl font-semibold text-gray-700'>Summary</h3>
-      <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-        {cards.map((card) => (
-          <div
-            key={card.title}
-            className='flex items-center gap-4 rounded-xl border bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg'
-          >
-            {card.icon}
-            <div>
-              <h4 className='mb-1 text-sm font-medium text-gray-600'>{card.title}</h4>
-              <p className='text-3xl font-bold text-gray-900'>{card.value}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+      {cards.map((card) => (
+        <CardDashboard card={card} />
+      ))}
     </div>
   )
 }

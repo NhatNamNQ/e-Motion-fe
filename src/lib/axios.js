@@ -17,7 +17,7 @@ const processQueue = (error, token = null) => {
 
 const instance = axios.create({
   baseURL: 'http://localhost:8080/api',
-  timeout: 20000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json'
   },
