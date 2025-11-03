@@ -24,27 +24,10 @@ const CheckListPage = () => {
 
   const navigate = useNavigate()
 
-  const typeOptions = ['CHECK_IN', 'CHECK_OUT']
-
   const columns = [
     columnHelper.accessor('rentalId', {
       header: 'Rental ID',
       cell: (info) => info.getValue()
-    }),
-    columnHelper.accessor('type', {
-      header: 'Type',
-      cell: (info) => {
-        const type = info.getValue()
-        return (
-          <Badge
-            className={
-              type === 'CHECK_IN' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-            }
-          >
-            {type}
-          </Badge>
-        )
-      }
     }),
     columnHelper.accessor('staffEmail', {
       header: 'Staff email',
@@ -112,7 +95,6 @@ const CheckListPage = () => {
         searchPlaceholder='Search by ID, Rental ID, or Type...'
         searchKey={searchKey}
         setSearchKey={setSearchKey}
-        statusOptions={typeOptions}
         statusFilter={typeFilter}
         setStatusFilter={setTypeFilter}
         filterLabel='Type'
