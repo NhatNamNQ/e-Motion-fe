@@ -2,9 +2,14 @@ import instance from '@/lib/axios'
 import { handleError } from '@/lib/handleError'
 
 export const checkListService = {
-  getCheckList: async () => {
+  getCheckLists: async (filterParams = {}) => {
     try {
-      const { data } = await instance.get('/rental-checklists')
+      const { data } = await instance.post('/rental-checklists/filter', {
+        type: filterParams.type || [],
+        page: filterParams.page || 0,
+        limit: filterParams.limit || 0,
+        search: filterParams.search || ''
+      })
       return data.data
     } catch (error) {
       throw handleError(error)

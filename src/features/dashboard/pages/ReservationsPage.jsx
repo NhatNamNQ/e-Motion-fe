@@ -1,6 +1,5 @@
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-
 import DataTableToolbar from '../components/DataTableToolbar'
 import { useDebounce } from 'use-debounce'
 import DataTable from '../components/DataTable'
@@ -9,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { useNavigate } from 'react-router-dom'
 import { reservationService } from '../services/reservationService'
 import { toast } from 'sonner'
+import Pagination from '@/components/Pagination'
 
 const columnHelper = createColumnHelper()
 
@@ -20,38 +20,44 @@ const ReservationsPage = () => {
   const [statusFilter, setStatusFilter] = useState([])
   const navigate = useNavigate()
 
-  const statusOptions = ['FAILED', 'COMPLETED', 'PENDING']
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [limitPerPage, setLimitPerPage] = useState(10)
+
+  const statusOptions = ['FAILED', 'COMPLETED', 'PENDING', 'CANCELED']
 
   const columns = [
     columnHelper.accessor('code', {
-      header: 'Code',
+      header: 'Mã đặt chỗ',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('userEmail', {
-      header: 'User Email',
+      header: 'Email người dùng',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('status', {
-      header: 'Status',
+      header: 'Trạng thái',
       cell: (info) => {
         const status = info.getValue()
         return <Badge className={getStatusColor(status)}>{status}</Badge>
       }
     }),
     columnHelper.accessor('createdAt', {
-      header: 'Created Date',
-      cell: (info) => new Date(info.getValue()).toLocaleDateString()
+      header: 'Ngày tạo',
+      cell: (info) => new Date(info.getValue()).toLocaleDateString('vi-VN')
     }),
     columnHelper.accessor('endTime', {
-      header: 'End Time',
-      cell: (info) => new Date(info.getValue()).toLocaleDateString()
+      header: 'Ngày kết thúc',
+      cell: (info) => new Date(info.getValue()).toLocaleDateString('vi-VN')
     })
   ]
 
   const table = useReactTable({
     data: reservations,
     columns,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    pageCount: totalPages
   })
 
   const handleRowClick = (row) => {
@@ -59,17 +65,18 @@ const ReservationsPage = () => {
   }
 
   useEffect(() => {
-    const searchReservations = async (searchKey) => {
+    const fetchReservations = async () => {
       try {
         setIsLoading(true)
-        const data =
-          !searchKey.trim() && !statusFilter.length > 0
-            ? await reservationService.getAllReservations()
-            : await reservationService.searchReservations({
-                keyword: searchKey,
-                status: statusFilter
-              })
-        setReservations(data)
+        const response = await reservationService.getReservations({
+          keyword: debouncedFilter,
+          status: statusFilter,
+          page: currentPage,
+          limit: limitPerPage
+        })
+
+        setReservations(response.content || response.data || response)
+        setTotalPages(response.totalPages || 1)
       } catch (error) {
         toast.error(error.message)
         setReservations([])
@@ -77,32 +84,48 @@ const ReservationsPage = () => {
         setIsLoading(false)
       }
     }
-    searchReservations(debouncedFilter)
-  }, [debouncedFilter, statusFilter])
+
+    fetchReservations()
+  }, [debouncedFilter, statusFilter, currentPage, limitPerPage])
 
   return (
-    <div className='space-y-4'>
+    <div className='flex h-full flex-col space-y-4'>
       <div>
-        <h2 className='text-2xl font-bold tracking-tight'>Reservations</h2>
-        <p className='text-muted-foreground'>Manage your reservation operations</p>
+        <h2 className='text-2xl font-bold tracking-tight'>Đặt chỗ</h2>
+        <p className='text-muted-foreground'>Quản lý các thao tác đặt chỗ của bạn</p>
       </div>
 
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Search by reservation code...'
+        searchPlaceholder='Tìm kiếm theo mã đặt chỗ...'
         searchKey={searchKey}
         setSearchKey={setSearchKey}
         statusOptions={statusOptions}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
       />
-      <DataTable
-        table={table}
-        columns={columns}
-        searchKey={searchKey}
-        isLoading={isLoading}
-        onRowClick={handleRowClick}
-      />
+
+      <div className='flex flex-1 flex-col'>
+        <div className='min-h-[430px] flex-1'>
+          <DataTable
+            table={table}
+            columns={columns}
+            searchKey={searchKey}
+            isLoading={isLoading}
+            onRowClick={handleRowClick}
+          />
+        </div>
+
+        <div className='pt-4'>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            limitPerPage={limitPerPage}
+            setLimitPerPage={setLimitPerPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+      </div>
     </div>
   )
 }

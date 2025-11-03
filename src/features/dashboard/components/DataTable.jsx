@@ -1,4 +1,5 @@
 import Loader from '@/components/Loader'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -11,8 +12,6 @@ import { cn } from '@/lib/utils'
 import { flexRender } from '@tanstack/react-table'
 
 const DataTable = ({ table, columns, globalFilter, isLoading, onRowClick }) => {
-  if (isLoading) return <Loader />
-
   return (
     <div className='rounded-md border'>
       <Table>
@@ -30,7 +29,18 @@ const DataTable = ({ table, columns, globalFilter, isLoading, onRowClick }) => {
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {isLoading ? (
+            // Render 10 skeleton rows
+            [...Array(10)].map((_, rowIdx) => (
+              <TableRow key={rowIdx}>
+                {columns.map((col, colIdx) => (
+                  <TableCell key={colIdx}>
+                    <Skeleton className='h-4 w-20' />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}

@@ -18,10 +18,13 @@ export const reservationService = {
       throw handleError(error)
     }
   },
-  searchReservations: async (query) => {
+  getReservations: async (filterParams = {}) => {
     try {
-      const { data } = await instance.get('/reservations/search', {
-        params: query
+      const { data } = await instance.post('/reservations/filter', {
+        status: filterParams.status || [],
+        page: filterParams.page || 0,
+        limit: filterParams.limit || 10,
+        search: filterParams.keyword || ''
       })
       return data.data
     } catch (error) {

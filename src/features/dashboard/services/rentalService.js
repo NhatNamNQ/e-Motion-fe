@@ -21,9 +21,14 @@ export const rentalService = {
       throw handleError(error)
     }
   },
-  getRentals: async () => {
+  getRentals: async (filterParams = {}) => {
     try {
-      const { data } = await instance.get('/rentals')
+      const { data } = await instance.post('/rentals/filter', {
+        status: filterParams.status || [],
+        page: filterParams.page || 0,
+        limit: filterParams.limit || 10,
+        search: filterParams.search || ''
+      })
       return data.data
     } catch (error) {
       throw handleError(error)
@@ -45,16 +50,6 @@ export const rentalService = {
       throw handleError(error)
     }
   },
-  searchRentals: async (searchQuery) => {
-    try {
-      const { data } = await instance.get('/rentals/search', {
-        params: searchQuery
-      })
-      return data.data
-    } catch (error) {
-      throw handleError(error)
-    }
-  },
   createVehicleLog: async (formData) => {
     try {
       const { data } = await instance.post('/vehicleLogs', formData)
@@ -63,9 +58,13 @@ export const rentalService = {
       throw handleError(error)
     }
   },
-  getVehicleLogs: async () => {
+  getVehicleLogs: async (filterParams = {}) => {
     try {
-      const { data } = await instance.get('/vehicleLogs')
+      const { data } = await instance.post('/vehicleLogs/filter', {
+        page: filterParams.page || 0,
+        limit: filterParams.limit || 0,
+        search: filterParams.search || ''
+      })
       return data.data
     } catch (error) {
       throw handleError(error)
