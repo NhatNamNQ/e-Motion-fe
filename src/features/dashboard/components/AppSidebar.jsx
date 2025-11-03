@@ -23,11 +23,8 @@ import {
   SquarePen,
   BookOpen,
   Package,
-<<<<<<< Updated upstream
-  ClipboardPenLine
-=======
+  ClipboardPenLine,
   MapPin
->>>>>>> Stashed changes
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 

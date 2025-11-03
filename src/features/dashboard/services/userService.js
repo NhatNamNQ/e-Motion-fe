@@ -57,8 +57,6 @@ export const userService = {
     } catch (error) {
       throw handleError(error)
     }
-<<<<<<< Updated upstream
-=======
   },
   getUserByEmail: async (userEmail) => {
     try {
@@ -75,6 +73,5 @@ export const userService = {
     } catch (error) {
       throw handleError(error)
     }
->>>>>>> Stashed changes
   }
 }
