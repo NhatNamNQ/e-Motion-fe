@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import DataTableToolbar from '../components/DataTableToolbar'
 import { useNavigate } from 'react-router-dom'
 import { useDebounce } from 'use-debounce'
+import Pagination from '@/components/Pagination'
 
 const columnHelper = createColumnHelper()
 
@@ -16,6 +17,11 @@ const CheckListPage = () => {
   const [searchKey, setSearchKey] = useState('')
   const [debouncedFilter] = useDebounce(searchKey, 500)
   const [typeFilter, setTypeFilter] = useState([])
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [limitPerPage, setLimitPerPage] = useState(10)
+
   const navigate = useNavigate()
 
   const typeOptions = ['CHECK_IN', 'CHECK_OUT']
@@ -40,7 +46,6 @@ const CheckListPage = () => {
         )
       }
     }),
-
     columnHelper.accessor('staffEmail', {
       header: 'Staff email',
       cell: (info) => info.getValue()
@@ -66,33 +71,24 @@ const CheckListPage = () => {
     getCoreRowModel: getCoreRowModel()
   })
 
-  const handleRowClick = (id) => {
-    navigate(`/dashboard/check-list/${id}`)
+  const handleRowClick = (row) => {
+    const rentalId = row.rentalId
+    navigate(`/dashboard/check-list/${rentalId}`)
   }
 
   useEffect(() => {
-    const searchCheckLists = async (searchKey) => {
+    const fetchCheckLists = async () => {
       try {
         setIsLoading(true)
-        const data = await checkListService.getCheckList()
+        const response = await checkListService.getCheckLists({
+          type: typeFilter,
+          page: currentPage,
+          limit: limitPerPage,
+          search: debouncedFilter
+        })
 
-        // Filter data based on search and type filter
-        let filteredData = data
-
-        if (searchKey.trim()) {
-          filteredData = filteredData.filter(
-            (item) =>
-              item.id.toString().includes(searchKey) ||
-              item.rentalId.toString().includes(searchKey) ||
-              item.type.toLowerCase().includes(searchKey.toLowerCase())
-          )
-        }
-
-        if (typeFilter.length > 0) {
-          filteredData = filteredData.filter((item) => typeFilter.includes(item.type))
-        }
-
-        setCheckLists(filteredData)
+        setCheckLists(response.content || response.data || response)
+        setTotalPages(response.totalPages || 1)
       } catch (error) {
         toast.error(error.message)
         setCheckLists([])
@@ -101,11 +97,11 @@ const CheckListPage = () => {
       }
     }
 
-    searchCheckLists(debouncedFilter)
-  }, [debouncedFilter, typeFilter])
+    fetchCheckLists()
+  }, [debouncedFilter, typeFilter, currentPage, limitPerPage])
 
   return (
-    <div className='space-y-4'>
+    <div className='flex h-full flex-col space-y-4'>
       <div>
         <h2 className='text-2xl font-bold tracking-tight'>Check Lists</h2>
         <p className='text-muted-foreground'>Manage vehicle check-in and check-out records</p>
@@ -122,13 +118,27 @@ const CheckListPage = () => {
         filterLabel='Type'
       />
 
-      <DataTable
-        table={table}
-        columns={columns}
-        searchKey={searchKey}
-        isLoading={isLoading}
-        onRowClick={handleRowClick}
-      />
+      <div className='flex flex-1 flex-col'>
+        <div className='min-h-[430px] flex-1'>
+          <DataTable
+            table={table}
+            columns={columns}
+            searchKey={searchKey}
+            isLoading={isLoading}
+            onRowClick={handleRowClick}
+          />
+        </div>
+
+        <div className='mt-auto pt-4'>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            limitPerPage={limitPerPage}
+            setLimitPerPage={setLimitPerPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+      </div>
     </div>
   )
 }

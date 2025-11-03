@@ -1,14 +1,118 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { checkListService } from '../services/checkListService'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
 import Loader from '@/components/Loader'
+import { ArrowLeft, Battery } from 'lucide-react'
+import { formatCurrency } from '@/lib/utils'
+import { format } from 'date-fns'
+
+const InfoRow = ({ label, children }) => (
+  <div className='space-y-1'>
+    <p className='text-muted-foreground text-sm font-medium'>{label}</p>
+    <p className='text-sm font-semibold'>{children || 'N/A'}</p>
+  </div>
+)
+
+const CheckListCard = ({ checklist, typeLabel, badgeColor }) => {
+  const getBatteryStatus = (battery) => {
+    if (battery >= 80) return { label: 'Tốt', variant: 'default', color: 'text-green-600' }
+    if (battery >= 50)
+      return { label: 'Trung bình', variant: 'secondary', color: 'text-yellow-600' }
+    return { label: 'Thấp', variant: 'destructive', color: 'text-red-600' }
+  }
+  const formatDateTime = (dateTimeString) => {
+    if (!dateTimeString) return 'N/A'
+    return format(new Date(dateTimeString), 'dd/MM/yyyy HH:mm')
+  }
+  return (
+    <Card className='mb-8'>
+      <CardHeader>
+        <div className='flex flex-col gap-2 md:flex-row md:items-start md:justify-between'>
+          <div>
+            <CardTitle className='text-2xl'>{typeLabel}</CardTitle>
+            <CardDescription>
+              {checklist && `Tạo lúc: ${formatDateTime(checklist.createdAt)}`}
+            </CardDescription>
+          </div>
+          <Badge className={badgeColor}>{typeLabel.toUpperCase()}</Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Separator className='my-4' />
+        <div className='grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2'>
+          <InfoRow label='ID Biên bản'>#{checklist.id}</InfoRow>
+          <InfoRow label='Mã hợp đồng thuê'>#{checklist.rentalId}</InfoRow>
+          <InfoRow label='Nhân viên xử lý'>{checklist.staffEmail}</InfoRow>
+          <InfoRow label='Thời gian tạo'>{formatDateTime(checklist.createdAt)}</InfoRow>
+          <InfoRow label='Phí phát sinh'>
+            <span className={checklist.fee > 0 ? 'text-red-600' : ''}>
+              {checklist.fee > 0 ? formatCurrency(checklist.fee) : '0 VND'}
+            </span>
+          </InfoRow>
+          <InfoRow label='Mức pin xe'>
+            <div className='flex items-center gap-2'>
+              <span
+                className={`text-lg font-bold ${getBatteryStatus(checklist.currentBattery).color}`}
+              >
+                {checklist.currentBattery?.toFixed(0)}%
+              </span>
+              <Badge variant={getBatteryStatus(checklist.currentBattery).variant}>
+                {getBatteryStatus(checklist.currentBattery).label}
+              </Badge>
+            </div>
+          </InfoRow>
+        </div>
+        <Separator className='my-4' />
+        <div className='mb-6'>
+          <div className='mb-4 flex items-center gap-2'>
+            <Battery className='text-muted-foreground h-5 w-5' />
+            <p className='font-semibold'>Trạng thái pin:</p>
+          </div>
+          <div className='flex items-center gap-4'>
+            <div className='relative h-8 flex-1 overflow-hidden rounded-full bg-gray-200'>
+              <div
+                className={`h-full transition-all ${
+                  checklist.currentBattery >= 80
+                    ? 'bg-green-500'
+                    : checklist.currentBattery >= 50
+                      ? 'bg-yellow-500'
+                      : 'bg-red-500'
+                }`}
+                style={{ width: `${checklist.currentBattery}%` }}
+              />
+            </div>
+            <span className='text-2xl font-bold'>{checklist.currentBattery?.toFixed(0)}%</span>
+          </div>
+        </div>
+        <Separator className='my-4' />
+        <div>
+          <p className='mb-2 font-semibold'>Hình ảnh xe:</p>
+          {checklist.img ? (
+            <div className='flex flex-wrap gap-3'>
+              <img
+                src={checklist.img}
+                alt={`Vehicle ${typeLabel}`}
+                className='h-auto max-w-md rounded border object-cover'
+                onError={(e) => (e.target.style.display = 'none')}
+              />
+            </div>
+          ) : (
+            <p className='text-muted-foreground'>Không có hình ảnh</p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 const CheckListDetailPage = () => {
   const { id } = useParams()
-  const [checkList, setCheckList] = useState(null)
+  const navigate = useNavigate()
+  const [checkLists, setCheckLists] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -17,7 +121,7 @@ const CheckListDetailPage = () => {
       try {
         setLoading(true)
         const data = await checkListService.getCheckListDetail(id)
-        setCheckList(data)
+        setCheckLists(Array.isArray(data) ? data : [data])
       } catch (error) {
         console.error(error)
         setError('Failed to load checklist details')
@@ -31,139 +135,92 @@ const CheckListDetailPage = () => {
     }
   }, [id])
 
-  if (loading) {
+  if (loading) return <Loader />
+
+  if (error) return <div>Error</div>
+
+  if (!checkLists || checkLists.length === 0) {
     return (
-      <div className='flex min-h-[400px] items-center justify-center'>
-        <Loader />
+      <div className='flex h-64 flex-col items-center justify-center space-y-4'>
+        <p>Không tìm thấy checklist</p>
+        <Button onClick={() => navigate('/dashboard/check-list')}>Quay lại danh sách</Button>
       </div>
     )
   }
 
-  if (error) {
-    return (
-      <div className='flex min-h-[400px] items-center justify-center'>
-        <Card className='w-full max-w-md'>
-          <CardContent className='pt-6'>
-            <p className='text-center text-red-500'>{error}</p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+  const checkInList = checkLists.find((item) => item.type === 'CHECK_IN')
+  const checkOutList = checkLists.find((item) => item.type === 'CHECK_OUT')
+  const rentalId = checkLists[0]?.rentalId
 
-  if (!checkList) {
-    return (
-      <div className='flex min-h-[400px] items-center justify-center'>
-        <Card className='w-full max-w-md'>
-          <CardContent className='pt-6'>
-            <p className='text-center text-gray-500'>Checklist not found</p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+  const batteryDifference =
+    checkInList && checkOutList
+      ? (checkOutList.currentBattery - checkInList.currentBattery).toFixed(1)
+      : null
 
   return (
-    <div className='container mx-auto px-4 py-6'>
-      <Card className='mx-auto w-full max-w-4xl'>
-        <CardHeader>
-          <CardTitle className='text-2xl font-bold'>Checklist Details</CardTitle>
-          <CardDescription>Complete vehicle inspection checklist</CardDescription>
-        </CardHeader>
-        <CardContent className='space-y-6'>
-          {/* Basic Information */}
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-500'>ID</label>
-              <p className='text-lg font-semibold'>{checkList.id || 'N/A'}</p>
-            </div>
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-500'>Type</label>
-              <Badge variant='secondary' className='text-sm'>
-                {checkList.type || 'N/A'}
-              </Badge>
-            </div>
-          </div>
+    <div className='container mx-auto p-4 md:p-6'>
+      <div className='mb-6 flex items-center justify-between'>
+        <div className='flex items-center gap-2'>
+          <Button variant='outline' size='sm' onClick={() => navigate('/dashboard/check-list')}>
+            <ArrowLeft className='mr-2 h-4 w-4' />
+            Quay lại danh sách
+          </Button>
+        </div>
+        <div>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() => navigate(`/dashboard/rentals/${rentalId}`)}
+          >
+            Xem hợp đồng thuê
+          </Button>
+        </div>
+      </div>
 
-          <Separator />
+      {/* Card Check In */}
+      {checkInList && (
+        <CheckListCard
+          checklist={checkInList}
+          typeLabel='Check In'
+          badgeColor='bg-green-100 text-green-800 hover:bg-green-100'
+        />
+      )}
 
-          {/* Financial Information */}
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-500'>Fee</label>
-              <p className='text-lg font-semibold text-green-600'>
-                ${checkList.fee?.toFixed(2) || '0.00'}
-              </p>
-            </div>
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-500'>Current Battery</label>
-              <div className='flex items-center space-x-2'>
-                <p className='text-lg font-semibold'>
-                  {checkList.currentBattery?.toFixed(1) || '0.0'}%
-                </p>
-                <Badge
-                  variant={
-                    checkList.currentBattery >= 80
-                      ? 'default'
-                      : checkList.currentBattery >= 50
-                        ? 'secondary'
-                        : 'destructive'
-                  }
+      {/* Card Check Out */}
+      {checkOutList && (
+        <CheckListCard
+          checklist={checkOutList}
+          typeLabel='Check Out'
+          badgeColor='bg-blue-100 text-blue-800 hover:bg-blue-100'
+        />
+      )}
+
+      {/* Battery Difference */}
+      {batteryDifference !== null && (
+        <Card>
+          <CardContent>
+            <div className='bg-muted/40 mt-4 rounded-lg p-4'>
+              <p className='mb-2 font-semibold'>Chênh lệch mức pin:</p>
+              <div className='flex items-center gap-2'>
+                <span className='text-muted-foreground'>Pin khi nhận:</span>
+                <span className='font-bold'>{checkInList.currentBattery?.toFixed(0)}%</span>
+                <span className='text-muted-foreground'>→</span>
+                <span className='text-muted-foreground'>Pin khi trả:</span>
+                <span className='font-bold'>{checkOutList.currentBattery?.toFixed(0)}%</span>
+                <span className='text-muted-foreground'>=</span>
+                <span
+                  className={`text-lg font-bold ${
+                    Number(batteryDifference) < 0 ? 'text-red-600' : 'text-green-600'
+                  }`}
                 >
-                  {checkList.currentBattery >= 80
-                    ? 'Good'
-                    : checkList.currentBattery >= 50
-                      ? 'Medium'
-                      : 'Low'}
-                </Badge>
+                  {batteryDifference > 0 ? '+' : ''}
+                  {batteryDifference}%
+                </span>
               </div>
             </div>
-          </div>
-
-          <Separator />
-
-          {/* Vehicle Information */}
-          <div className='space-y-4'>
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-500'>Vehicle Image</label>
-              {checkList.img ? (
-                <div className='w-full max-w-md'>
-                  <img
-                    src={checkList.img}
-                    alt='Vehicle'
-                    className='h-auto w-full rounded-lg border shadow-sm'
-                    onError={(e) => {
-                      e.target.style.display = 'none'
-                    }}
-                  />
-                </div>
-              ) : (
-                <p className='text-gray-400 italic'>No image available</p>
-              )}
-            </div>
-
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-500'>Rental ID</label>
-              <p className='text-lg font-semibold'>{checkList.rentalId || 'N/A'}</p>
-            </div>
-
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-500'>Staff Email</label>
-              <p className='text-lg'>{checkList.staffEmail || 'N/A'}</p>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Timestamp */}
-          <div className='space-y-2'>
-            <label className='text-sm font-medium text-gray-500'>Created At</label>
-            <p className='text-lg'>
-              {checkList.createdAt ? new Date(checkList.createdAt).toLocaleString() : 'N/A'}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

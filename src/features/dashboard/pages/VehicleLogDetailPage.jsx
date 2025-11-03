@@ -66,6 +66,17 @@ const VehicleLogDetailPage = () => {
             Quay lại danh sách
           </Button>
         </div>
+        <div>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() =>
+              navigate(`/dashboard/rentals/${log.rentalId}/vehicle-log/edit/${log.id}`)
+            }
+          >
+            Chỉnh sửa nhật ký xe
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -88,9 +99,9 @@ const VehicleLogDetailPage = () => {
           <Separator className='my-4' />
           <div>
             <p className='mb-2 font-semibold'>Chi tiết chi phí sửa chữa:</p>
-            {log.repairCost && log.repairCost.length > 0 ? (
+            {log.repairItems && log.repairItems.length > 0 ? (
               <ul className='space-y-2'>
-                {log.repairCost.map((item, idx) => (
+                {log.repairItems.map((item, idx) => (
                   <li key={idx} className='flex justify-between'>
                     <span>{item.description}</span>
                     <span>{formatCurrency(item.cost)}</span>

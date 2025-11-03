@@ -14,7 +14,6 @@ import { toast } from 'sonner'
 import { getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 
-// Helper component để hiển thị một dòng thông tin, giúp code gọn hơn
 const InfoRow = ({ label, children }) => (
   <div>
     <p className='text-muted-foreground text-sm font-medium'>{label}</p>
@@ -86,7 +85,6 @@ const ReservationDetailPage = () => {
       </div>
 
       <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
-        {/* Cột thông tin chính */}
         <div className='lg:col-span-2'>
           <Card>
             <CardHeader>
@@ -115,18 +113,16 @@ const ReservationDetailPage = () => {
                   <h3 className='flex items-center gap-2 font-semibold'>
                     <Car size={18} /> Thông tin xe
                   </h3>
-                  <InfoRow label='Tên xe'>{reservation.vehicleName}</InfoRow>
-                  <InfoRow label='Biển số'>{reservation.plateNumber}</InfoRow>
-                  <InfoRow label='Mã xe'>{reservation.vehicleId}</InfoRow>
+                  <InfoRow label='Mã xe'>{reservation.vehicle.id}</InfoRow>
+                  <InfoRow label='Tên xe'>{reservation.vehicle.name}</InfoRow>
+                  <InfoRow label='Biển số'>{reservation.vehicle.plateNumber}</InfoRow>
                 </div>
                 <div className='space-y-4'>
                   <h3 className='flex items-center gap-2 font-semibold'>
                     <MapPin size={18} /> Thông tin trạm
                   </h3>
-                  <InfoRow label='Mã trạm'>{reservation.stationId}</InfoRow>
-                  <InfoRow label='Thời gian kết thúc'>
-                    {formatDateTime(reservation.endTime)}
-                  </InfoRow>
+                  <InfoRow label='Mã trạm'>{reservation.vehicle.station.id}</InfoRow>
+                  <InfoRow label='Địa điểm'>{reservation.vehicle.station.name}</InfoRow>
                 </div>
                 <div className='space-y-4'>
                   <h3 className='flex items-center gap-2 font-semibold'>

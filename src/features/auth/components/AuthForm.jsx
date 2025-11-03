@@ -7,6 +7,7 @@ import FormFieldCheckbox from '@/components/FormFieldCheckbox'
 import { Link } from 'react-router-dom'
 import FormFieldInput from '@/components/FormFieldInput'
 import { useEffect } from 'react'
+import { Spinner } from '@/components/ui/spinner'
 
 const AuthForm = ({ config, formSchema, onSubmit, formType, isLoading }) => {
   const form = useForm({
@@ -45,20 +46,6 @@ const AuthForm = ({ config, formSchema, onSubmit, formType, isLoading }) => {
             type={field.type}
           />
         ))}
-        {/* Remember me (Login) */}
-        {formType === 'login' && (
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center'>
-              <FormFieldCheckbox control={form.control} name='rememberMe' label='Remember Me' />
-            </div>
-            <Link
-              to='/auth/forgot-password'
-              className='text-secondary/80 hover:text-secondary text-sm font-medium transition-colors'
-            >
-              Forgot password ?
-            </Link>
-          </div>
-        )}
         {/* Agree to Terms (Register) */}
         {formType === 'register' && (
           <FormFieldCheckbox
@@ -81,7 +68,7 @@ const AuthForm = ({ config, formSchema, onSubmit, formType, isLoading }) => {
           disabled={isLoading}
         >
           {isLoading ? (
-            'Đang xác thực...'
+            <Spinner />
           ) : (
             <div className='flex items-center gap-1'>
               {config.buttonText}
@@ -89,9 +76,20 @@ const AuthForm = ({ config, formSchema, onSubmit, formType, isLoading }) => {
             </div>
           )}
         </Button>
+        {/* Remember me (Login) */}
+        {formType === 'login' && (
+          <div className='flex items-center justify-center'>
+            <Link
+              to='/auth/forgot-password'
+              className='text-secondary/80 hover:text-secondary text-sm font-medium transition-colors'
+            >
+              Quên mật khẩu ?
+            </Link>
+          </div>
+        )}
         {/* Dont have account (Login)*/}
         {formType === 'login' && (
-          <p className='mt-8 text-center text-sm text-gray-600'>
+          <p className='mt-4 text-center text-sm text-gray-600'>
             Không có tài khoản?{' '}
             <Link
               to='/auth/register'
