@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import DataTableToolbar from '../components/DataTableToolbar'
 import { useNavigate } from 'react-router-dom'
 import { useDebounce } from 'use-debounce'
+import Pagination from '@/components/Pagination'
 
 const columnHelper = createColumnHelper()
 
@@ -17,6 +18,11 @@ const RentalsPage = () => {
   const [searchKey, setSearchKey] = useState('')
   const [debouncedFilter] = useDebounce(searchKey, 500)
   const [statusFilter, setStatusFilter] = useState([])
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [limitPerPage, setLimitPerPage] = useState(10)
+
   const navigate = useNavigate()
 
   const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING', 'CONFIRM']
@@ -58,17 +64,18 @@ const RentalsPage = () => {
   }
 
   useEffect(() => {
-    const searchRentals = async (searchKey) => {
+    const fetchRentals = async () => {
       try {
         setIsLoading(true)
-        const data =
-          !searchKey.trim() && !statusFilter.length > 0
-            ? await rentalService.getRentals()
-            : await rentalService.searchRentals({
-                email: searchKey,
-                status: statusFilter
-              })
-        setRentals(data)
+        const response = await rentalService.getRentals({
+          search: debouncedFilter,
+          status: statusFilter,
+          page: currentPage,
+          limit: limitPerPage
+        })
+
+        setRentals(response.content || response.data || response)
+        setTotalPages(response.totalPages || 1)
       } catch (error) {
         toast.error(error.message)
         setRentals([])
@@ -76,11 +83,11 @@ const RentalsPage = () => {
         setIsLoading(false)
       }
     }
-    searchRentals(debouncedFilter)
-  }, [debouncedFilter, statusFilter])
+    fetchRentals()
+  }, [debouncedFilter, statusFilter, currentPage, limitPerPage])
 
   return (
-    <div className='space-y-4'>
+    <div className='flex h-full flex-col space-y-4'>
       <div>
         <h2 className='text-2xl font-bold tracking-tight'>Rentals</h2>
         <p className='text-muted-foreground'>Manage your rental operations</p>
@@ -95,13 +102,28 @@ const RentalsPage = () => {
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
       />
-      <DataTable
-        table={table}
-        columns={columns}
-        searchKey={searchKey}
-        isLoading={isLoading}
-        onRowClick={handleRowClick}
-      />
+
+      <div className='flex flex-1 flex-col'>
+        <div className='min-h-[430px] flex-1'>
+          <DataTable
+            table={table}
+            columns={columns}
+            searchKey={searchKey}
+            isLoading={isLoading}
+            onRowClick={handleRowClick}
+          />
+        </div>
+
+        <div className='mt-auto pt-4'>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            limitPerPage={limitPerPage}
+            setLimitPerPage={setLimitPerPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+      </div>
     </div>
   )
 }
