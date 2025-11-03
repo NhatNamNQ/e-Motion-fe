@@ -218,14 +218,18 @@ const RentalDetailPage = () => {
                     <Separator />
                     <div className='flex items-start justify-between gap-2'>
                       <span className='text-muted-foreground flex-1 text-sm'>Phí phạt:</span>
-                      <span className='flex-shrink-0 text-right text-sm font-semibold text-red-600'>
+                      <span
+                        className={`flex-shrink-0 text-right text-sm font-semibold ${checkOutFee > 0 && 'text-red-600'}`}
+                      >
                         - {formatCurrency(checkOutFee)}
                       </span>
                     </div>
                     {vehicleLogFee && (
                       <div className='flex items-start justify-between gap-2'>
                         <span className='text-muted-foreground flex-1 text-sm'>Phí sửa chữa:</span>
-                        <span className='flex-shrink-0 text-right text-sm font-semibold text-red-600'>
+                        <span
+                          className={`flex-shrink-0 text-right text-sm font-semibold ${vehicleLogFee > 0 && 'text-red-600'}`}
+                        >
                           -{formatCurrency(vehicleLogFee)}
                         </span>
                       </div>
