@@ -17,9 +17,6 @@ const Header = () => {
         </Link>
         <nav className='flex items-center space-x-4'>
           <Link to='/cars'>Xem danh sách xe</Link>
-          <div className='flex'>
-            <SelectItems children={<MapPin color='#3B82F6' />} />
-          </div>
           {isAuthenticated ? (
             <ProfileDropdown />
           ) : (

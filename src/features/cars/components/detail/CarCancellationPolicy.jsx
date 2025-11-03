@@ -2,7 +2,7 @@ const CarCancellationPolicy = () => {
   return (
     <section>
       <h2 className='text-2xl text-gray-700'>Chính sách hủy chuyến </h2>
-      <div className='bg-secondary mt-2 h-1 w-10 rounded-full' />
+      <div className='bg-secondary my-2 h-1 w-10 rounded-full' />
       <div className='overflow-hidden rounded-lg border border-gray-200'>
         <table className='w-full'>
           <thead className='bg-gray-100'>

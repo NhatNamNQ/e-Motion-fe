@@ -16,25 +16,13 @@ const AccountSidebar = ({ classname }) => {
       label: 'Lịch sử thuê xe',
       path: '/account/history',
       active: location.pathname === '/account/history'
-    },
-    {
-      icon: Lock,
-      label: 'Đổi mật khẩu',
-      path: '/profile/change-password',
-      active: location.pathname === '/profile/change-password'
-    },
-    {
-      icon: Trash2,
-      label: 'Yêu cầu xoá tài khoản',
-      path: '/profile/delete-account',
-      active: location.pathname === '/profile/delete-account'
     }
   ]
 
   return (
     <div className={`${classname} mb-8 md:mb-0`}>
-      <h1 className='mb-8 text-2xl font-bold'>Xin chào bạn!</h1>
       <nav className='space-y-2'>
+        <h1 className='text-center text-2xl'>Chào mừng bạn</h1>
         {menuItems.map((item, index) => {
           const IconComponent = item.icon
           return (
@@ -55,18 +43,6 @@ const AccountSidebar = ({ classname }) => {
             </Link>
           )
         })}
-
-        {/* Logout Button */}
-        <button
-          className='mt-6 flex w-full items-center space-x-3 rounded-lg border-t px-4 py-3 pt-6 text-left text-red-600 transition-colors duration-200 hover:bg-red-50 hover:text-red-700'
-          onClick={() => {
-            // Add logout logic here
-            console.log('Logout clicked')
-          }}
-        >
-          <LogOut size={20} />
-          <span className='font-medium'>Đăng xuất</span>
-        </button>
       </nav>
     </div>
   )

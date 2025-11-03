@@ -25,6 +25,12 @@ const RentalDetailPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  const rentFee = rental?.rentFee || 0
+  const reservationFee = rental?.reservationDeposit.amount || 0
+  const rentalFee = rental?.rentalDeposit.amount || 0
+  const checkOutFee = rental?.rentalCheckLists[1].fee || 0
+  const vehicleLogFee = rental?.vehicleLog.cost || 0
+
   const fetchRentalDetail = useCallback(async () => {
     if (!id) return
     try {
@@ -100,13 +106,6 @@ const RentalDetailPage = () => {
   const isPendingFee = rental.status === 'PENDING_FEE'
   const hasVehicleLog = !!rental.vehicleLog
 
-  // Calculate penalty fee and total
-  const penaltyFee = rental.vehicleLog?.cost || 0
-  const depositAmount = rental.reservationDeposit?.amount || 0
-  const rentFee = rental.rentFee || 0
-  const totalBeforePenalty = rentFee + depositAmount
-  const finalTotal = totalBeforePenalty - penaltyFee
-
   return (
     <div className='container mx-auto p-4 md:p-6'>
       <div className='mb-6'>
@@ -139,7 +138,7 @@ const RentalDetailPage = () => {
                 <InfoRow label='Kết thúc thuê'>{formatDateTime(rental.endTime)}</InfoRow>
                 <InfoRow label='Tên xe'>{rental.vehicle.name}</InfoRow>
                 <InfoRow label='Mã nhân viên'>{rental.staffId}</InfoRow>
-                <InfoRow label='Mã trạm'>{rental.stationId}</InfoRow>
+                <InfoRow label='Tên trạm'>{rental.vehicle.station.name}</InfoRow>
               </div>
 
               {/* Vehicle Log Details */}
@@ -195,40 +194,54 @@ const RentalDetailPage = () => {
             <CardContent className='space-y-6'>
               {/* Payment Details */}
               <div className='bg-muted/40 space-y-4 rounded-lg p-4'>
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground'>Phí thuê xe:</span>
-                  <span className='font-semibold'>{formatCurrency(rentFee)}</span>
+                <div className='flex items-start justify-between gap-2'>
+                  <span className='text-muted-foreground flex-1 text-sm'>Phí thuê xe:</span>
+                  <span className='flex-shrink-0 text-right text-sm font-semibold'>
+                    {formatCurrency(rentFee + 500000)}
+                  </span>
                 </div>
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground'>Phí cọc giữ xe:</span>
-                  <span className='font-semibold'>{formatCurrency(depositAmount)}</span>
+                <div className='flex items-start justify-between gap-2'>
+                  <span className='text-muted-foreground flex-1 text-sm'>Phí cọc giữ xe:</span>
+                  <span className='flex-shrink-0 text-right text-sm font-semibold'>
+                    {formatCurrency(reservationFee)}
+                  </span>
+                </div>
+                <div className='flex items-start justify-between gap-2'>
+                  <span className='text-muted-foreground flex-1 text-sm'>Phí cọc cuốc xe:</span>
+                  <span className='flex-shrink-0 text-right text-sm font-semibold'>
+                    {formatCurrency(rentalFee)}
+                  </span>
                 </div>
 
-                {penaltyFee > 0 && (
+                {checkOutFee > 0 && (
                   <>
                     <Separator />
-                    <div className='flex justify-between'>
-                      <span className='text-muted-foreground'>Phí phạt hư hỏng:</span>
-                      <span className='font-semibold text-red-600'>
-                        -{formatCurrency(penaltyFee)}
+                    <div className='flex items-start justify-between gap-2'>
+                      <span className='text-muted-foreground flex-1 text-sm'>Phí phạt:</span>
+                      <span className='flex-shrink-0 text-right text-sm font-semibold text-red-600'>
+                        - {formatCurrency(checkOutFee)}
                       </span>
                     </div>
+                    {vehicleLogFee && (
+                      <div className='flex items-start justify-between gap-2'>
+                        <span className='text-muted-foreground flex-1 text-sm'>Phí sửa chữa:</span>
+                        <span className='flex-shrink-0 text-right text-sm font-semibold text-red-600'>
+                          -{formatCurrency(vehicleLogFee)}
+                        </span>
+                      </div>
+                    )}
                   </>
                 )}
 
                 <Separator />
-                <div className='flex items-baseline justify-between'>
-                  <span className='text-base font-bold'>Tổng cộng:</span>
-                  <span className='text-primary text-xl font-bold'>
-                    {formatCurrency(finalTotal)}
+                <div className='flex items-start justify-between gap-2'>
+                  <span className='flex-1 text-base font-bold'>Tổng cộng:</span>
+                  <span className='text-primary flex-shrink-0 text-right text-lg font-bold sm:text-xl'>
+                    {formatCurrency(
+                      rental.rentalDeposit.amount + rental.rentFee - checkOutFee - vehicleLogFee
+                    )}
                   </span>
                 </div>
-
-                {penaltyFee > 0 && (
-                  <p className='text-muted-foreground text-xs'>
-                    * Phí phạt sẽ được trừ vào tiền cọc khi hoàn trả
-                  </p>
-                )}
               </div>
 
               {/* Action Buttons */}
@@ -236,21 +249,21 @@ const RentalDetailPage = () => {
                 <Button
                   onClick={handleCreateCheckInPayment}
                   disabled={!isPending}
-                  className='bg-secondary hover:bg-secondary/90'
+                  className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                 >
                   Thanh toán nhận xe
                 </Button>
                 <Button
                   onClick={handleCreateCheckIn}
                   disabled={!isConfirm}
-                  className='bg-secondary hover:bg-secondary/90'
+                  className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                 >
                   Tạo biên bản nhận xe
                 </Button>
                 <Button
                   onClick={handleCreateCheckOut}
                   disabled={!isOngoing}
-                  className='bg-secondary hover:bg-secondary/90'
+                  className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                 >
                   Tạo biên bản trả xe
                 </Button>
@@ -258,7 +271,7 @@ const RentalDetailPage = () => {
                   <Button
                     onClick={handleCreateVehicleLog}
                     disabled={!isPendingFee}
-                    className='bg-secondary hover:bg-secondary/90'
+                    className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                   >
                     Tạo biên bản nhật ký xe
                   </Button>
@@ -266,7 +279,7 @@ const RentalDetailPage = () => {
                   <Button
                     onClick={handleUpdateVehicleLog}
                     disabled={!isPendingFee}
-                    className='bg-secondary hover:bg-secondary/90'
+                    className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                   >
                     Cập nhật biên bản nhật ký xe
                   </Button>
@@ -274,9 +287,9 @@ const RentalDetailPage = () => {
                 <Button
                   onClick={handleCreateCheckOutPayment}
                   disabled={!isPendingFee || !hasVehicleLog}
-                  className='bg-secondary hover:bg-secondary/90'
+                  className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                 >
-                  Thanh toán trả xe & Hoàn cọc
+                  <span className='text-center leading-tight'>Thanh toán trả xe & Hoàn cọc</span>
                 </Button>
               </div>
             </CardContent>

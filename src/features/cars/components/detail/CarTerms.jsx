@@ -2,8 +2,8 @@ const CarTerms = () => {
   return (
     <section>
       <h2 className='text-2xl text-gray-700'>Điều khoản</h2>
-      <div className='bg-secondary mt-2 h-1 w-10 rounded-full' />
-      <div className='space-y-4'>
+      <div className='bg-secondary my-2 h-1 w-10 rounded-full' />
+      <div className='space-y-2'>
         <p className='font-medium text-gray-700'>Quy định khác:</p>
         <ul className='space-y-2 text-gray-700'>
           <li>- Sử dụng xe đúng mục đích.</li>

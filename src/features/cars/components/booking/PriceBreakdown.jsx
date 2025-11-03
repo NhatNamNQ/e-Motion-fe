@@ -1,16 +1,12 @@
 import { formatCurrency } from '@/lib/utils'
 
 const PriceBreakdown = ({ bookingFees }) => {
-  const { deposit, vat, booking, total } = bookingFees
+  const { deposit, booking, total } = bookingFees
   return (
     <div className='space-y-4 border-t pt-4'>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-bold text-gray-600'>Phí thuê xe</span>
         <span className='text-sm font-bold text-gray-600'>{formatCurrency(booking)}</span>
-      </div>
-      <div className='flex items-center justify-between'>
-        <span className='text-sm font-bold text-gray-600'>Thuế VAT</span>
-        <span className='text-sm font-bold text-gray-600'>{formatCurrency(vat)}</span>
       </div>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-bold text-gray-600'>Cọc xe</span>

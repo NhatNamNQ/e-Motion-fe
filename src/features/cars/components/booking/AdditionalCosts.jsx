@@ -13,7 +13,6 @@ const AdditionalCosts = () => {
               <span className='text-sm font-bold text-gray-500'>Phụ phí điện và pin</span>
               <span className='text-sm font-bold text-gray-500'>2.000đ / km di chuyển</span>
             </div>
-            <p className='text-xs text-gray-400'>Bonbon chỉ áp dụng phí này cho xe điện.</p>
           </div>
           <hr />
           <div>

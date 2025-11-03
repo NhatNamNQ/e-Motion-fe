@@ -5,7 +5,7 @@ const CarImageGallery = ({ car }) => {
         {car.images.slice(0, 4).map((image, index) => (
           <div key={index} className={index === 0 ? 'col-span-3 row-span-2' : ''}>
             <img
-              src={image}
+              src={image.url}
               alt={`image ${index}`}
               className='h-full w-full cursor-pointer rounded-md object-cover'
             />

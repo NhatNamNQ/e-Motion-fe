@@ -2,6 +2,7 @@ import { Form } from '../ui/form'
 import { Button } from '../ui/button'
 import DatePicker from '../DatePicker'
 import Combobox from '../Combobox'
+import TimePicker from '../TimePicker'
 import { format } from 'date-fns'
 
 const locations = [
@@ -10,29 +11,10 @@ const locations = [
   },
   {
     value: 'Hà Nội'
-  },
-  {
-    value: 'Đà Nẵng'
-  },
-  {
-    value: 'Cần Thơ'
   }
 ]
 
-const generateHours = () => {
-  const hours = []
-  for (let i = 0; i < 24; i++) {
-    const hourString = i.toString().padStart(2, '0')
-    hours.push({
-      value: `${hourString}:00`,
-      label: `${hourString}:00`
-    })
-  }
-  return hours
-}
-
 const SearchForm = ({ form, onSubmit }) => {
-  const hours = generateHours()
   const { startDate, endDate, location, startHour, endHour } = form.watch()
 
   const handleLocationSelect = (location) => {
@@ -42,6 +24,7 @@ const SearchForm = ({ form, onSubmit }) => {
   const handleStartHourSelect = (time) => {
     form.setValue('startHour', time)
   }
+
   const handleEndHourSelect = (time) => {
     form.setValue('endHour', time)
   }
@@ -49,6 +32,7 @@ const SearchForm = ({ form, onSubmit }) => {
   const handleStartDateSelect = (date) => {
     form.setValue('startDate', format(date, 'dd/MM/yyyy'))
   }
+
   const handleEndDateSelect = (date) => {
     form.setValue('endDate', format(date, 'dd/MM/yyyy'))
   }
@@ -77,12 +61,13 @@ const SearchForm = ({ form, onSubmit }) => {
               title={startDate || 'Ngày nhận xe'}
               name='startDate'
             />
-            <Combobox
+            <TimePicker
               form={form}
               name='startHour'
               title={startHour ? startHour : 'Giờ nhận xe'}
-              list={hours}
+              type='startHour'
               handleSelect={handleStartHourSelect}
+              selectedDate={startDate}
             />
           </div>
         </div>
@@ -96,12 +81,13 @@ const SearchForm = ({ form, onSubmit }) => {
               title={endDate || 'Ngày trả xe'}
               name='endDate'
             />
-            <Combobox
+            <TimePicker
               form={form}
               name='endHour'
               title={endHour ? endHour : 'Giờ trả xe'}
-              list={hours}
+              type='endHour'
               handleSelect={handleEndHourSelect}
+              selectedDate={endDate}
             />
           </div>
         </div>
@@ -111,7 +97,7 @@ const SearchForm = ({ form, onSubmit }) => {
             type='submit'
             className='bg-secondary hover:bg-secondary/80 h-11 w-full font-medium text-white'
           >
-            TÌM XE
+            XÁC NHẬN
           </Button>
         </div>
       </form>

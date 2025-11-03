@@ -44,7 +44,7 @@ const HistoryPage = () => {
     )
 
   return (
-    <div className='min-h-screen w-full bg-gray-50 px-4 py-8'>
+    <div className='min-h-screen w-full bg-gray-50 py-8'>
       <h1 className='mb-8 text-3xl font-bold'>Lịch sử</h1>
       <div className='mb-6 flex gap-4'>
         <button
