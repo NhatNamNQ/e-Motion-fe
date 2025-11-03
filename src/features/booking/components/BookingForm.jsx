@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 
 const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) => {
   const { startDate, startHour, endDate, endHour } = searchForm
-  const { vat, deposit, total, holdCar, booking } = bookingFees
+  const { deposit, total, holdCar, booking } = bookingFees
+  console.log(car)
   return (
     <Card className='shadow-lg'>
       <CardContent className='p-8'>
@@ -15,7 +16,7 @@ const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) 
           <div className='flex items-center gap-4'>
             {car.images && car.images[0] && (
               <img
-                src={car.images[0]}
+                src={car.images[0].url}
                 alt={car.name}
                 className='h-16 w-24 rounded-lg object-cover'
               />
@@ -53,27 +54,6 @@ const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) 
           </div>
         </div>
 
-        <hr className='my-6' />
-
-        {/* Pricing Section */}
-        <div className='mb-8 space-y-4'>
-          <div className='flex justify-between'>
-            <span className='text-gray-600'>Phí thuê xe</span>
-            <span className='font-medium'>{formatCurrency(booking)}</span>
-          </div>
-          <div className='flex justify-between'>
-            <span className='text-gray-600'>Thuế VAT</span>
-            <span className='font-medium'>{formatCurrency(vat)}</span>
-          </div>
-          <hr />
-          <div className='flex justify-between text-lg font-semibold'>
-            <span>Tổng cộng tiền thuê</span>
-            <span>{formatCurrency(booking + vat)}</span>
-          </div>
-        </div>
-
-        <hr className='my-6' />
-
         {/* Payment Steps */}
         <div className='mb-8'>
           <h3 className='mb-4 font-semibold text-gray-800'>Các bước thanh toán</h3>
@@ -107,7 +87,7 @@ const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) 
               <div className='mt-2 space-y-1 text-sm text-gray-600'>
                 <div className='flex justify-between'>
                   <span>Tiền thuê</span>
-                  <span>{formatCurrency(booking + vat)}</span>
+                  <span>{formatCurrency(booking)}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Tiền cọc xe</span>
