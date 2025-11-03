@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { UserPlus, CirclePlus, Check, X } from 'lucide-react'
+import { UserPlus, CirclePlus, X } from 'lucide-react'
 import { userService } from '../services/userService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
@@ -16,6 +16,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '@/components/ui/select'
 
 import UsersTable from '../components/UsersTable'
 import { useDebounce } from 'use-debounce'
@@ -35,6 +42,8 @@ const UsersPage = () => {
   const [showUserForm, setShowUserForm] = useState(false)
   const [searchKey, setSearchKey] = useState('')
   const [debouncedFilter] = useDebounce(searchKey, 500)
+  const [stations, setStations] = useState([])
+  const [selectedStation, setSelectedStation] = useState(null)
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true)
@@ -44,7 +53,8 @@ const UsersPage = () => {
         limitPerPage,
         selectedStatuses,
         selectedRoles,
-        debouncedFilter
+        debouncedFilter,
+        selectedStation?.id
       )
       const userData = res.content.map((user) => ({
         fullname: user.fullName,
@@ -61,8 +71,14 @@ const UsersPage = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter])
-
+  }, [
+    currentPage,
+    debouncedFilter,
+    limitPerPage,
+    selectedRoles,
+    selectedStation?.id,
+    selectedStatuses
+  ])
   const handleClickFilterStatus = (status) => {
     if (selectedStatuses.includes(status)) {
       setSelectedStatuses(selectedStatuses.filter((s) => s !== status))
@@ -117,9 +133,33 @@ const UsersPage = () => {
     }
   }
 
+  const handleFilterStation = (station) => {
+    setSelectedRoles(['ROLE_STAFF'])
+    setSelectedStation(station)
+  }
+
   useEffect(() => {
-    fetchUsers()
-  }, [currentPage, limitPerPage, selectedStatuses, selectedRoles, debouncedFilter, fetchUsers])
+    const fetchStationNames = async () => {
+      setIsLoading(true)
+      try {
+        const res = await userService.getAllStations()
+        setStations(res)
+      } catch (error) {
+        toast.error('Error get users: ' + error.message)
+      } finally {
+        fetchUsers()
+      }
+    }
+    fetchStationNames()
+  }, [
+    currentPage,
+    limitPerPage,
+    fetchUsers,
+    selectedStatuses,
+    selectedRoles,
+    debouncedFilter,
+    selectedStation
+  ])
 
   const tableProps = {
     users,
@@ -268,6 +308,25 @@ const UsersPage = () => {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              <Select
+                onValueChange={(stationId) => {
+                  const station = stations.find((s) => s.id === stationId)
+                  handleFilterStation(station)
+                }}
+                value={selectedStation?.id || ''}
+              >
+                <SelectTrigger className='w-60'>
+                  <SelectValue placeholder='Select Station' />
+                </SelectTrigger>
+                <SelectContent>
+                  {stations.map((station) => (
+                    <SelectItem key={station.id} value={station.id}>
+                      {station.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
               {(selectedRoles.length > 0 || selectedStatuses.length > 0) && (
                 <button

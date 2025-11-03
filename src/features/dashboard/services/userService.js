@@ -57,5 +57,21 @@ export const userService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getUserByEmail: async (userEmail) => {
+    try {
+      const { data } = await instance.get(`users/${userEmail}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getStaffTransactions: async (staffId) => {
+    try {
+      const { data } = await instance.get(`users/transactions/${staffId}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }
