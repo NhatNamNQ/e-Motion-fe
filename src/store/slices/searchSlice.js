@@ -6,11 +6,12 @@ import { formatDate } from '@/lib/utils'
 const createDefaultTimes = () => {
   const now = new Date()
   const currentHour = now.getHours()
+  const currentMinutes = now.getMinutes()
 
-  const roundedUpHour = currentHour + 1
+  const addHour = currentMinutes === 0 ? 3 : 4
   const startTime = new Date(now)
-  startTime.setHours(roundedUpHour, 0, 0, 0)
-
+  startTime.setMinutes(0, 0, 0)
+  startTime.setHours(currentHour + addHour)
   const endTime = addHours(startTime, 4)
 
   return {
