@@ -48,11 +48,8 @@ const carsSlice = createSlice({
         state.loading.carDetail = false
         state.error = action.payload
       })
-      .addCase(calculateBookingFees.pending, (state) => {
-        state.loading.carDetail = true
-      })
+      .addCase(calculateBookingFees.pending, () => {})
       .addCase(calculateBookingFees.fulfilled, (state, action) => {
-        state.loading.carDetail = false
         const feesData = action.payload
 
         feesData.forEach((fee) => {
@@ -75,9 +72,7 @@ const carsSlice = createSlice({
           }
         })
       })
-      .addCase(calculateBookingFees.rejected, (state) => {
-        state.loading.carDetail = false
-      })
+      .addCase(calculateBookingFees.rejected, () => {})
   }
 })
 

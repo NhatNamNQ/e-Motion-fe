@@ -1,28 +1,23 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatCurrency } from '@/lib/utils'
 
 const AdditionalCosts = () => {
   return (
     <Card>
-      <CardHeader className='bg-secondary/20'>
-        <CardTitle className='text-base font-bold text-blue-500'>Các chi phí khác</CardTitle>
+      <CardHeader>
+        <CardTitle className='text-secondary text-base font-bold'>Các chi phí khác</CardTitle>
       </CardHeader>
-      <CardContent className='p-6'>
+      <CardContent className='px-6'>
         <div className='space-y-4'>
           <div>
             <div className='mb-1 flex items-center justify-between'>
               <span className='text-sm font-bold text-gray-500'>Phụ phí điện và pin</span>
-              <span className='text-sm font-bold text-gray-500'>2.000đ / km di chuyển</span>
+              <span className='text-sm font-bold text-gray-500'>{formatCurrency(12000)} / 1%</span>
             </div>
-          </div>
-          <hr />
-          <div>
             <div className='mb-1 flex items-center justify-between'>
-              <span className='text-sm font-bold text-gray-500'>Phí vệ sinh</span>
-              <span className='text-sm font-bold text-gray-500'>120,000₫ - 150,000₫</span>
+              <span className='text-sm font-bold text-gray-500'>Phụ phí trễ</span>
+              <span className='text-sm font-bold text-gray-500'>6% giá thuê ngày / 1 giờ</span>
             </div>
-            <p className='text-xs text-gray-400'>
-              Vui lòng trả lại hiện trạng xe được vệ sinh như lúc nhận để không mất phí này.
-            </p>
           </div>
         </div>
       </CardContent>
