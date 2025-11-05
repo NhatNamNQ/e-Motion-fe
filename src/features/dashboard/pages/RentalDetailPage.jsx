@@ -26,10 +26,10 @@ const RentalDetailPage = () => {
   const [error, setError] = useState(null)
 
   const rentFee = rental?.rentFee || 0
-  const reservationFee = rental?.reservationDeposit.amount || 0
-  const rentalFee = rental?.rentalDeposit.amount || 0
-  const checkOutFee = rental?.rentalCheckLists[1].fee || 0
-  const vehicleLogFee = rental?.vehicleLog.cost || 0
+  const reservationFee = rental?.reservationDeposit?.amount || 0
+  const rentalFee = rental?.rentalDeposit?.amount || 0
+  const checkOutFee = rental?.rentalCheckLists[1]?.fee || 0
+  const vehicleLogFee = rental?.vehicleLog?.cost || 0
 
   const fetchRentalDetail = useCallback(async () => {
     if (!id) return
@@ -224,7 +224,7 @@ const RentalDetailPage = () => {
                         - {formatCurrency(checkOutFee)}
                       </span>
                     </div>
-                    {vehicleLogFee && (
+                    {vehicleLogFee > 0 && (
                       <div className='flex items-start justify-between gap-2'>
                         <span className='text-muted-foreground flex-1 text-sm'>Phí sửa chữa:</span>
                         <span

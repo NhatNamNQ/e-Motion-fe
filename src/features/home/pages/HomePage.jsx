@@ -9,6 +9,7 @@ import { FaqSection } from '../components/FaqSection'
 import { HowItWorksSection } from '../components/HowItWorksSection'
 import { carService } from '@/features/cars/services/carService'
 import SearchDialog from '@/components/Search/SearchDialog'
+import SearchBar from '@/components/Search/SearchBar'
 
 const features = [
   {
@@ -68,7 +69,9 @@ function HomePage() {
           className={`z-10 container ${isFixed ? 'fixed top-0 left-1/2 -translate-x-1/2' : 'absolute top-4 left-1/2 -translate-x-1/2'}`}
         >
           {/*-translate-x-1/2 shift back half by its own */}
-          <SearchDialog />
+          <SearchDialog
+            triggerChildren={({ form, onSubmit }) => <SearchBar form={form} onSubmit={onSubmit} />}
+          />
         </div>
       </section>
 
