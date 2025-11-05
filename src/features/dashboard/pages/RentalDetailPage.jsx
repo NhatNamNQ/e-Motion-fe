@@ -10,6 +10,7 @@ import { rentalService } from '../services/rentalService'
 import { formatCurrency, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 import { Separator } from '@/components/ui/separator'
+import PaymentQRDialog from '../components/PaymentQRDialog'
 
 const InfoRow = ({ label, children }) => (
   <div className='space-y-1'>
@@ -24,6 +25,8 @@ const RentalDetailPage = () => {
   const [rental, setRental] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false)
+  const [qrCode, setQrCode] = useState(null)
 
   const rentFee = rental?.rentFee || 0
   const reservationFee = rental?.reservationDeposit?.amount || 0
@@ -52,11 +55,22 @@ const RentalDetailPage = () => {
 
   const handleCreateCheckInPayment = async () => {
     try {
-      const data = await rentalService.checkInRental(id)
-      window.location.href = data
+      setLoading(true)
+      const { url, qrCode } = await rentalService.checkInRental(id)
+      setQrCode(qrCode)
+      setShowPaymentDialog(true)
+      // Không redirect nữa, hiển thị popup thay vì
+      // window.location.href = url
     } catch (error) {
       toast.error(error.message)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const handlePaymentSuccess = () => {
+    // Reload lại thông tin rental sau khi thanh toán thành công
+    fetchRentalDetail()
   }
 
   const handleCreateCheckOutPayment = async () => {
@@ -196,68 +210,59 @@ const RentalDetailPage = () => {
             </CardHeader>
             <CardContent className='space-y-6'>
               {/* Payment Details */}
-              <div className='bg-muted/40 space-y-4 rounded-lg p-4'>
-                <div className='flex items-start justify-between gap-2'>
-                  <span className='text-muted-foreground flex-1 text-sm'>Phí thuê xe:</span>
-                  <span className='flex-shrink-0 text-right text-sm font-semibold'>
-                    {formatCurrency(rentFee)}
+              <div className='space-y-4'>
+                {/* Check-in Section - Blue background */}
+                <div className='space-y-3 rounded-lg bg-blue-100 p-4'>
+                  <div className='flex items-start justify-between gap-2'>
+                    <span className='flex-1 text-sm text-gray-700'>Phí thuê xe:</span>
+                    <span className='flex-shrink-0 text-right text-sm font-semibold text-gray-900'>
+                      {formatCurrency(rentFee)}
+                    </span>
+                  </div>
+                  <div className='flex items-start justify-between gap-2'>
+                    <span className='flex-1 text-sm text-gray-700'>Phí cọc giữ xe:</span>
+                    <span className='flex-shrink-0 text-right text-sm font-semibold text-green-900'>
+                      {formatCurrency(reservationFee)}
+                    </span>
+                  </div>
+                  <div className='flex items-start justify-between gap-2'>
+                    <span className='flex-1 text-sm text-gray-700'>Phí cọc cuốc xe:</span>
+                    <span className='flex-shrink-0 text-right text-sm font-semibold text-gray-900'>
+                      {formatCurrency(rentalFee)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Total Check-in */}
+                <div className='flex items-start justify-between gap-2 px-2'>
+                  <span className='flex-1 text-base font-bold'>Tổng Tiền Check-in:</span>
+                  <span className='flex-shrink-0 text-right text-lg font-bold'>
+                    {formatCurrency(rentalFee + rentFee)}
                   </span>
                 </div>
-                <div className='flex items-start justify-between gap-2'>
-                  <span className='text-muted-foreground flex-1 text-sm'>Phí cọc giữ xe:</span>
-                  <span className='flex-shrink-0 text-right text-sm font-semibold'>
-                    {formatCurrency(reservationFee)}
-                  </span>
+
+                {/* Check-out Section - Red/Pink background */}
+                <div className='space-y-3 rounded-lg bg-red-100 p-4'>
+                  <div className='flex items-start justify-between gap-2'>
+                    <span className='flex-1 text-sm text-gray-700'>Phí Phạt:</span>
+                    <span className='flex-shrink-0 text-right text-sm font-semibold text-red-600'>
+                      {formatCurrency(checkOutFee)}
+                    </span>
+                  </div>
+                  <div className='flex items-start justify-between gap-2'>
+                    <span className='flex-1 text-sm text-gray-700'>Phí sửa chữa:</span>
+                    <span className='flex-shrink-0 text-right text-sm font-semibold text-gray-900'>
+                      {formatCurrency(vehicleLogFee)}
+                    </span>
+                  </div>
                 </div>
 
-                <div className='flex items-start justify-between gap-2'>
-                  <span className='text-muted-foreground flex-1 text-sm'>Phí cọc cuốc xe:</span>
-                  <span className='flex-shrink-0 text-right text-sm font-semibold'>
-                    {formatCurrency(rentalFee)}
-                  </span>
-                </div>
-
-                {/* <div className='flex items-start justify-between gap-2'>
-                  <span className='flex-1 text-base font-bold'>Tổng cộng check in</span>
-                  <span className='text-primary flex-shrink-0 text-right text-lg font-bold sm:text-xl'>
-                    {formatCurrency(rentalFee + rentFee - reservationFee)}
-                  </span>
-                </div> */}
-
-                {checkOutFee > 0 && (
-                  <>
-                    <Separator />
-                    <div className='flex items-start justify-between gap-2'>
-                      <span className='text-muted-foreground flex-1 text-sm'>Phí phạt:</span>
-                      <span
-                        className={`flex-shrink-0 text-right text-sm font-semibold ${checkOutFee > 0 && 'text-red-600'}`}
-                      >
-                        - {formatCurrency(checkOutFee)}
-                      </span>
-                    </div>
-                    {vehicleLogFee > 0 && (
-                      <div className='flex items-start justify-between gap-2'>
-                        <span className='text-muted-foreground flex-1 text-sm'>Phí sửa chữa:</span>
-                        <span
-                          className={`flex-shrink-0 text-right text-sm font-semibold ${vehicleLogFee > 0 && 'text-red-600'}`}
-                        >
-                          -{formatCurrency(vehicleLogFee)}
-                        </span>
-                      </div>
-                    )}
-                  </>
-                )}
-
-                <Separator />
-                <div className='flex items-start justify-between gap-2'>
-                  <span className='flex-1 text-base font-bold'>Tổng cộng:</span>
-                  <span className='text-primary flex-shrink-0 text-right text-lg font-bold sm:text-xl'>
+                {/* Total Check-out */}
+                <div className='flex items-start justify-between gap-2 px-2'>
+                  <span className='flex-1 text-base font-bold'>Tổng Tiền Check-out:</span>
+                  <span className='flex-shrink-0 text-right text-lg font-bold'>
                     {formatCurrency(
-                      rental.rentalDeposit.amount +
-                        rental.rentFee -
-                        checkOutFee -
-                        vehicleLogFee -
-                        reservationFee
+                      rental.rentalDeposit.amount + reservationFee - checkOutFee - vehicleLogFee
                     )}
                   </span>
                 </div>
@@ -321,6 +326,15 @@ const RentalDetailPage = () => {
           </Card>
         </div>
       </div>
+
+      {/* Payment QR Dialog */}
+      <PaymentQRDialog
+        open={showPaymentDialog}
+        onOpenChange={setShowPaymentDialog}
+        qrCode={qrCode}
+        rentalId={id}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </div>
   )
 }
