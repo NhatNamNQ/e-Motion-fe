@@ -9,10 +9,10 @@ const PaymentResultHandler = () => {
 
   const txnRef = searchParams.get('txnRef')
   const type = searchParams.get('type')
+  const status = searchParams.get('status')
 
   useEffect(() => {
-    if (!txnRef) return
-
+    if (status === 'failed' && type === 'RENTAL') navigate('/dashboard/payment-result')
     const getPaymentAndNavigate = async () => {
       try {
         const { data } = await instance.get(`/payment/vnpay/${txnRef}`)

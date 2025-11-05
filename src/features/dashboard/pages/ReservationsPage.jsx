@@ -24,7 +24,7 @@ const ReservationsPage = () => {
   const [totalPages, setTotalPages] = useState(1)
   const [limitPerPage, setLimitPerPage] = useState(10)
 
-  const statusOptions = ['FAILED', 'COMPLETED', 'PENDING', 'CANCELED']
+  const statusOptions = ['FAILED', 'COMPLETED', 'PENDING', 'CANCELLED']
 
   const columns = [
     columnHelper.accessor('code', {

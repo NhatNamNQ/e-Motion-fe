@@ -74,7 +74,12 @@ const RentalDetailPage = () => {
     }
   }
 
-  const handleCreateCheckIn = () => navigate(`/dashboard/rentals/${id}/check-in`)
+  const handleCreateCheckIn = () =>
+    navigate(`/dashboard/rentals/${id}/check-in`, {
+      state: {
+        currentBattery: rental.vehicle.batteryLevel
+      }
+    })
   const handleCreateCheckOut = () => navigate(`/dashboard/rentals/${id}/check-out`)
 
   const handleCreateVehicleLog = () =>
@@ -105,6 +110,7 @@ const RentalDetailPage = () => {
   const isOngoing = rental.status === 'ONGOING'
   const isPendingFee = rental.status === 'PENDING_FEE'
   const hasVehicleLog = !!rental.vehicleLog
+  const isCompleted = rental.status === 'COMPLETED'
 
   return (
     <div className='container mx-auto p-4 md:p-6'>
@@ -137,7 +143,7 @@ const RentalDetailPage = () => {
                 <InfoRow label='Bắt đầu thuê'>{formatDateTime(rental.startTime)}</InfoRow>
                 <InfoRow label='Kết thúc thuê'>{formatDateTime(rental.endTime)}</InfoRow>
                 <InfoRow label='Tên xe'>{rental.vehicle.name}</InfoRow>
-                <InfoRow label='Mã nhân viên'>{rental.staffId}</InfoRow>
+                <InfoRow label='Tên nhân viên'>{rental.staff.fullName}</InfoRow>
                 <InfoRow label='Tên trạm'>{rental.vehicle.station.name}</InfoRow>
               </div>
 
@@ -148,9 +154,6 @@ const RentalDetailPage = () => {
                   <div>
                     <div className='mb-4 flex items-center justify-between'>
                       <h3 className='text-lg font-semibold'>Chi tiết nhật ký xe</h3>
-                      <Button variant='outline' size='sm' onClick={handleUpdateVehicleLog}>
-                        Chỉnh sửa
-                      </Button>
                     </div>
                     <div className='bg-muted/40 space-y-3 rounded-lg p-4'>
                       {rental.vehicleLog.repairItems && rental.vehicleLog.repairItems.length > 0 ? (
@@ -197,7 +200,7 @@ const RentalDetailPage = () => {
                 <div className='flex items-start justify-between gap-2'>
                   <span className='text-muted-foreground flex-1 text-sm'>Phí thuê xe:</span>
                   <span className='flex-shrink-0 text-right text-sm font-semibold'>
-                    {formatCurrency(rentFee + 500000)}
+                    {formatCurrency(rentFee)}
                   </span>
                 </div>
                 <div className='flex items-start justify-between gap-2'>
@@ -206,12 +209,20 @@ const RentalDetailPage = () => {
                     {formatCurrency(reservationFee)}
                   </span>
                 </div>
+
                 <div className='flex items-start justify-between gap-2'>
                   <span className='text-muted-foreground flex-1 text-sm'>Phí cọc cuốc xe:</span>
                   <span className='flex-shrink-0 text-right text-sm font-semibold'>
                     {formatCurrency(rentalFee)}
                   </span>
                 </div>
+
+                {/* <div className='flex items-start justify-between gap-2'>
+                  <span className='flex-1 text-base font-bold'>Tổng cộng check in</span>
+                  <span className='text-primary flex-shrink-0 text-right text-lg font-bold sm:text-xl'>
+                    {formatCurrency(rentalFee + rentFee - reservationFee)}
+                  </span>
+                </div> */}
 
                 {checkOutFee > 0 && (
                   <>
@@ -242,60 +253,70 @@ const RentalDetailPage = () => {
                   <span className='flex-1 text-base font-bold'>Tổng cộng:</span>
                   <span className='text-primary flex-shrink-0 text-right text-lg font-bold sm:text-xl'>
                     {formatCurrency(
-                      rental.rentalDeposit.amount + rental.rentFee - checkOutFee - vehicleLogFee
+                      rental.rentalDeposit.amount +
+                        rental.rentFee -
+                        checkOutFee -
+                        vehicleLogFee -
+                        reservationFee
                     )}
                   </span>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className='grid grid-cols-1 gap-3'>
-                <Button
-                  onClick={handleCreateCheckInPayment}
-                  disabled={!isPending}
-                  className='bg-secondary hover:bg-secondary/90 w-full text-sm'
-                >
-                  Thanh toán nhận xe
-                </Button>
-                <Button
-                  onClick={handleCreateCheckIn}
-                  disabled={!isConfirm}
-                  className='bg-secondary hover:bg-secondary/90 w-full text-sm'
-                >
-                  Tạo biên bản nhận xe
-                </Button>
-                <Button
-                  onClick={handleCreateCheckOut}
-                  disabled={!isOngoing}
-                  className='bg-secondary hover:bg-secondary/90 w-full text-sm'
-                >
-                  Tạo biên bản trả xe
-                </Button>
-                {!hasVehicleLog ? (
+              {/* Action Buttons or Completed Message */}
+              {isCompleted ? (
+                <div className='flex justify-center'>
+                  <Badge className='mb-4 bg-green-600 text-base'>Hoàn thành hợp đồng</Badge>
+                </div>
+              ) : (
+                <div className='grid grid-cols-1 gap-3'>
                   <Button
-                    onClick={handleCreateVehicleLog}
+                    onClick={handleCreateCheckInPayment}
+                    disabled={!isPending}
+                    className='bg-secondary hover:bg-secondary/90 w-full text-sm'
+                  >
+                    Thanh toán nhận xe
+                  </Button>
+                  <Button
+                    onClick={handleCreateCheckIn}
+                    disabled={!isConfirm}
+                    className='bg-secondary hover:bg-secondary/90 w-full text-sm'
+                  >
+                    Tạo biên bản nhận xe
+                  </Button>
+                  <Button
+                    onClick={handleCreateCheckOut}
+                    disabled={!isOngoing}
+                    className='bg-secondary hover:bg-secondary/90 w-full text-sm'
+                  >
+                    Tạo biên bản trả xe
+                  </Button>
+                  {!hasVehicleLog ? (
+                    <Button
+                      onClick={handleCreateVehicleLog}
+                      disabled={!isPendingFee}
+                      className='bg-secondary hover:bg-secondary/90 w-full text-sm'
+                    >
+                      Tạo biên bản nhật ký xe
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleUpdateVehicleLog}
+                      disabled={!isPendingFee}
+                      className='bg-secondary hover:bg-secondary/90 w-full text-sm'
+                    >
+                      Cập nhật biên bản nhật ký xe
+                    </Button>
+                  )}
+                  <Button
+                    onClick={handleCreateCheckOutPayment}
                     disabled={!isPendingFee}
                     className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                   >
-                    Tạo biên bản nhật ký xe
+                    <span className='text-center leading-tight'>Thanh toán trả xe & Hoàn cọc</span>
                   </Button>
-                ) : (
-                  <Button
-                    onClick={handleUpdateVehicleLog}
-                    disabled={!isPendingFee}
-                    className='bg-secondary hover:bg-secondary/90 w-full text-sm'
-                  >
-                    Cập nhật biên bản nhật ký xe
-                  </Button>
-                )}
-                <Button
-                  onClick={handleCreateCheckOutPayment}
-                  disabled={!isPendingFee || !hasVehicleLog}
-                  className='bg-secondary hover:bg-secondary/90 w-full text-sm'
-                >
-                  <span className='text-center leading-tight'>Thanh toán trả xe & Hoàn cọc</span>
-                </Button>
-              </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
