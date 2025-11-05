@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, ScrollRestoration } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
 import { Toaster } from '@/components/ui/sonner'
@@ -10,6 +10,7 @@ const MainLayout = () => {
       <Outlet />
       <Footer />
       <Toaster expand={true} richColors />
+      <ScrollRestoration />
     </div>
   )
 }

@@ -45,6 +45,11 @@ const SearchDialog = ({ triggerChildren }) => {
     navigate('/cars')
     await dispatch(
       searchCars({
+        brands: [],
+        categories: [],
+        page: 1,
+        limit: 8,
+        search: '',
         city: values.location,
         startTime: `${formatDate(values.startDate)}T${values.startHour}:00`,
         endTime: `${formatDate(values.endDate)}T${values.endHour}:00`
