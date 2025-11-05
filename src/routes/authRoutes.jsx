@@ -1,13 +1,10 @@
-import { lazy, Suspense } from 'react'
 import PublicRoute from './PublicRoute'
-import Loader from '@/components/Loader'
 import AuthLayout from '@/layout/AuthLayout'
-
-const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
-const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage'))
-const OtpPage = lazy(() => import('@/features/auth/pages/OtpPage'))
-const ForgotPasswordPage = lazy(() => import('@/features/auth/pages/ForgotPasswordPage'))
-const ResetPasswordPage = lazy(() => import('@/features/auth/pages/ResetPasswordPage'))
+import LoginPage from '@/features/auth/pages/LoginPage'
+import RegisterPage from '@/features/auth/pages/RegisterPage'
+import OtpPage from '@/features/auth/pages/OtpPage'
+import ForgotPasswordPage from '@/features/auth/pages/ForgotPasswordPage'
+import ResetPasswordPage from '@/features/auth/pages/ResetPasswordPage'
 
 const authRoutes = {
   path: '/auth',
@@ -17,9 +14,7 @@ const authRoutes = {
       path: 'login',
       element: (
         <PublicRoute>
-          <Suspense fallback={<Loader />}>
-            <LoginPage />
-          </Suspense>
+          <LoginPage />
         </PublicRoute>
       )
     },
@@ -27,9 +22,7 @@ const authRoutes = {
       path: 'register',
       element: (
         <PublicRoute>
-          <Suspense fallback={<Loader />}>
-            <RegisterPage />
-          </Suspense>
+          <RegisterPage />
         </PublicRoute>
       )
     },
@@ -37,9 +30,7 @@ const authRoutes = {
       path: 'verify-otp',
       element: (
         <PublicRoute>
-          <Suspense fallback={<Loader />}>
-            <OtpPage />
-          </Suspense>
+          <OtpPage />
         </PublicRoute>
       )
     },
@@ -47,9 +38,7 @@ const authRoutes = {
       path: 'forgot-password',
       element: (
         <PublicRoute>
-          <Suspense fallback={<Loader />}>
-            <ForgotPasswordPage />
-          </Suspense>
+          <ForgotPasswordPage />
         </PublicRoute>
       )
     },
@@ -57,9 +46,7 @@ const authRoutes = {
       path: 'reset-password',
       element: (
         <PublicRoute>
-          <Suspense fallback={<Loader />}>
-            <ResetPasswordPage />
-          </Suspense>
+          <ResetPasswordPage />
         </PublicRoute>
       )
     }
