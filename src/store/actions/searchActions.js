@@ -6,6 +6,11 @@ export const searchCars = createAsyncThunk(
   async (searchValues, { rejectWithValue }) => {
     try {
       const res = await carService.searchCars({
+        brands: searchValues.brands,
+        categories: searchValues.categories,
+        page: searchValues.page,
+        limit: searchValues.limit,
+        search: searchValues.search,
         city: searchValues.city,
         startTime: searchValues.startTime,
         endTime: searchValues.endTime
