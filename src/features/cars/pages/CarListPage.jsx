@@ -7,6 +7,7 @@ import { getCars } from '@/store/actions/carsActions'
 import { selectSearchResults, selectSearchLoading } from '@/store/selectors/searchSelectors'
 import { toast } from 'sonner'
 import SearchDialog from '@/components/Search/SearchDialog'
+import SearchBar from '@/components/Search/SearchBar'
 
 const CarListPage = () => {
   const dispatch = useDispatch()
@@ -33,11 +34,12 @@ const CarListPage = () => {
 
   return (
     <div className='relative container mx-auto p-4'>
-      <SearchDialog />
+      <SearchDialog
+        triggerChildren={({ form, onSubmit }) => <SearchBar form={form} onSubmit={onSubmit} />}
+      />
       <h1 className='mb-4 text-3xl font-bold'>
         {searchResults.length > 0 ? 'Kết quả tìm kiếm' : 'Danh sách xe điện'}
       </h1>
-
       {loading ? (
         <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
           {Array.from({ length: 8 }).map((_, index) => (

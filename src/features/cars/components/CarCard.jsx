@@ -1,3 +1,4 @@
+import { formatCurrency } from '@/lib/utils'
 import { BatteryCharging, BatteryFull, CarFront, UsersRound } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -21,10 +22,7 @@ const CarCard = ({ car }) => {
           <div className='text-end'>
             <p className='text-xl'>
               <span className='text-secondary'>
-                {new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'VND'
-                }).format(car.priceRate)}
+                {formatCurrency(car.priceRate)}
                 <span className='text-secondary text-base font-bold'> / {car.hourRate} giờ</span>
               </span>
             </p>

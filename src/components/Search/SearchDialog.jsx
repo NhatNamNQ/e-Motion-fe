@@ -18,7 +18,7 @@ import { formatDate } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const SearchDialog = () => {
+const SearchDialog = ({ triggerChildren }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const searchForm = useSelector(selectSearchForm)
@@ -28,7 +28,15 @@ const SearchDialog = () => {
   })
 
   useEffect(() => {
-    if (!searchForm.startDate || !searchForm.startHour) dispatch(setDefaultTime())
+    const now = new Date()
+    if (
+      !searchForm.startDate ||
+      !searchForm.startHour ||
+      new Date(searchForm.startDate?.split('/').reverse().join('-') + 'T' + searchForm.startHour) <
+        now
+    ) {
+      dispatch(setDefaultTime())
+    }
   }, [dispatch, searchForm])
 
   const onSubmit = async (values) => {
@@ -46,10 +54,8 @@ const SearchDialog = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <SearchBar form={form} onSubmit={onSubmit} />
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogTrigger asChild>{triggerChildren({ form, onSubmit })}</DialogTrigger>
+      <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>Tìm xe</DialogTitle>
           <DialogDescription>Nhập thông tin để tìm chiếc xe phù hợp với bạn.</DialogDescription>

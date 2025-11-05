@@ -66,21 +66,21 @@ const CarDetailPage = () => {
     }
   }
 
-  if (isLoading && !car) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <Loader />
-      </div>
-    )
-  }
-
-  if (!car || error) {
+  if (error) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <div className='text-center'>
           <h1 className='mb-2 text-2xl font-bold text-gray-700'>Không tìm thấy xe</h1>
           <p className='text-gray-500'>{error}</p>
         </div>
+      </div>
+    )
+  }
+
+  if (isLoading || !car) {
+    return (
+      <div className='flex min-h-screen items-center justify-center'>
+        <Loader />
       </div>
     )
   }
