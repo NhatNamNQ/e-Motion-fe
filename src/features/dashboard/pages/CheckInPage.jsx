@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useEffect } from 'react'
@@ -25,6 +25,7 @@ import { checkInSchema } from '../schemas/checkListSchema'
 const CheckInPage = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { staffId, email } = useSelector(selectUser)
   const [imageFiles, setImageFiles] = useState([])
   const [imagePreviews, setImagePreviews] = useState([])
@@ -34,7 +35,7 @@ const CheckInPage = () => {
     resolver: zodResolver(checkInSchema),
     defaultValues: {
       type: 'CHECK_IN',
-      currentBattery: 100,
+      currentBattery: location?.state?.currentBattery || 100,
       img: '',
       maintain: true
     }
