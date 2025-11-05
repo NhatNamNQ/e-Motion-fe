@@ -18,7 +18,7 @@ export const stationService = {
       throw handleError(error)
     }
   },
-  getRevenueStation: async (type, day, month, year) => {
+  getRevenueAllStation: async (type, day, month, year) => {
     try {
       const params = { type }
       if (day) params.day = day
@@ -33,7 +33,23 @@ export const stationService = {
   },
   getRentalOfStation: async (stationId) => {
     try {
-      const { data } = await instance.get(`stations/manage/rentals?stationId=${stationId}`)
+      const { data } = await instance.get(`rentals/station/${stationId}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getStationById: async (stationId) => {
+    try {
+      const { data } = await instance.get(`stations/${stationId}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getRevenueOfStation: async (stationId) => {
+    try {
+      const { data } = await instance.get(`stations/revenue/${stationId}`)
       return data.data
     } catch (error) {
       throw handleError(error)

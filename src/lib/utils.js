@@ -18,16 +18,11 @@ export const formatDate = (date, inputFormat = 'dd/MM/yyyy', outputFormat = 'yyy
   return format(dateObject, outputFormat)
 }
 
-export const formatVNDate = (dateString) =>
-  dateString
-    ? new Date(dateString).toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-      })
-    : ''
-export const formatProfileDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('vi-VN', {
+export const formatDateResponse = (dateString) => {
+  if (!dateString) return ''
+  // Loại bỏ đuôi 'h' hoặc ký tự không hợp lệ ở cuối
+  const cleanDate = dateString.trim().replace(/h$/i, '')
+  return new Date(cleanDate).toLocaleDateString('vi-VN', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'

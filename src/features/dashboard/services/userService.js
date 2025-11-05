@@ -23,7 +23,8 @@ export const userService = {
         phone: userData.phone,
         email: userData.email,
         password: userData.password,
-        role: userData.role
+        role: userData.role,
+        stationId: userData.stationId
       })
       return data.data
     } catch (error) {
@@ -47,11 +48,9 @@ export const userService = {
   editUser: async (userData) => {
     try {
       const { data } = await instance.post('users/admin/update-user', {
-        fullName: userData.fullName,
-        phone: userData.phone,
         email: userData.email,
-        password: userData.password,
-        role: userData.role
+        role: userData.role,
+        stationId: userData.stationId
       })
       return data.data
     } catch (error) {

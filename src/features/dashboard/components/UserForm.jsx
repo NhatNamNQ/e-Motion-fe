@@ -22,8 +22,8 @@ import {
   SelectItem
 } from '@/components/ui/select'
 
-const UserForm = ({ mode, handleSubmitUser, setShowUserForm }) => {
-  const isEdit = mode.type === 'edit'
+const UserForm = ({ mode, handleSubmitUser, setShowUserForm, stations }) => {
+  const isAdd = mode.type === 'add'
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     confirm: false
@@ -51,7 +51,8 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm }) => {
       email: mode.user?.email || '',
       password: '',
       confirmPassword: '',
-      role: mode.user?.role || 'ROLE_STAFF'
+      role: mode.user?.role || 'ROLE_STAFF',
+      stationId: mode.user?.station?.id || 1
     }
   })
 
@@ -59,9 +60,9 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm }) => {
     <Dialog open onOpenChange={setShowUserForm}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit User' : 'Add New User'}</DialogTitle>
+          <DialogTitle>{isAdd ? 'Add New User' : 'Edit Role User'}</DialogTitle>
           <DialogDescription>
-            {isEdit ? 'Update user information' : 'Fill in the details to add a new user'}
+            {isAdd ? 'Fill in the details to add a new user' : 'Update role of user'}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(handleSubmitUser)} className='px-6 py-4'>
@@ -71,7 +72,12 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm }) => {
                 Full Name
               </Label>
               <div className='flex-1 flex-col'>
-                <Input id='fullName' placeholder='John Doe' {...register('fullName')} />
+                <Input
+                  disabled={mode.user}
+                  id='fullName'
+                  placeholder='John Doe'
+                  {...register('fullName')}
+                />
                 {errors.fullName && (
                   <p className='mt-2 ml-2 text-xs font-medium text-red-500'>
                     {errors.fullName.message}
@@ -104,7 +110,12 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm }) => {
                 Phone Number
               </Label>
               <div className='flex-1 flex-col'>
-                <Input id='phone' {...register('phone')} placeholder='+123456789' />
+                <Input
+                  disabled={mode.user}
+                  id='phone'
+                  {...register('phone')}
+                  placeholder='+123456789'
+                />
                 {errors.phone && (
                   <p className='mt-2 ml-2 text-xs font-medium text-red-500'>
                     {errors.phone.message}
@@ -137,70 +148,101 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm }) => {
               </Select>
             </div>
 
-            <div className='flex items-start gap-4'>
-              <Label className='mt-3 w-32' htmlFor='password'>
-                Password
-              </Label>
-              <div className='flex-1'>
-                <div className='relative'>
-                  <Input
-                    id='password'
-                    {...register('password')}
-                    placeholder='e.g., S3cur3P@ssw0rd'
-                    type={showPasswords.current ? 'text' : 'password'}
-                  />
-                  <Button
-                    type='button'
-                    onClick={() => togglePasswordVisibility('current')}
-                    className='absolute top-1/2 right-0 -translate-y-1/2 bg-transparent text-gray-400 shadow-none transition hover:bg-transparent hover:text-gray-600'
-                  >
-                    {showPasswords.current ? (
-                      <Eye className='h-4 w-4' />
-                    ) : (
-                      <EyeOff className='h-4 w-4' />
-                    )}
-                  </Button>
-                </div>
-                {errors.password && (
-                  <p className='mt-2 ml-2 text-xs font-medium text-red-500'>
-                    {errors.password.message}
-                  </p>
-                )}
+            {watch('role') === 'ROLE_STAFF' && (
+              <div className='flex items-start gap-4'>
+                <Label className='mt-3 w-32' htmlFor='stationId'>
+                  Station
+                </Label>
+                <Select
+                  id='stationId'
+                  value={String(watch('stationId'))}
+                  onValueChange={(value) => setValue('stationId', Number(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue>
+                      {stations.find((s) => s.id === watch('stationId'))?.name ||
+                        'Select a station'}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {stations.map((station) => (
+                      <SelectItem key={station.id} value={String(station.id)}>
+                        {station.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
+            )}
 
-            <div className='flex items-start gap-4'>
-              <Label className='mt-3 w-32' htmlFor='confirm'>
-                Confirm Password
-              </Label>
-              <div className='flex-1'>
-                <div className='relative'>
-                  <Input
-                    id='confirm'
-                    {...register('confirmPassword')}
-                    placeholder='e.g., S3cur3P@ssw0rd'
-                    type={showPasswords.confirm ? 'text' : 'password'}
-                    disabled={!watch('password')}
-                  />
-                  <Button
-                    type='button'
-                    onClick={() => togglePasswordVisibility('confirm')}
-                    className='absolute top-1/2 right-0 -translate-y-1/2 bg-transparent text-gray-400 shadow-none transition hover:bg-transparent hover:text-gray-600'
-                  >
-                    {showPasswords.confirm ? (
-                      <Eye className='h-4 w-4' />
-                    ) : (
-                      <EyeOff className='h-4 w-4' />
-                    )}
-                  </Button>
+            {isAdd && (
+              <div className='flex items-start gap-4'>
+                <Label className='mt-3 w-32' htmlFor='password'>
+                  Password
+                </Label>
+                <div className='flex-1'>
+                  <div className='relative'>
+                    <Input
+                      id='password'
+                      {...register('password')}
+                      placeholder='e.g., S3cur3P@ssw0rd'
+                      type={showPasswords.current ? 'text' : 'password'}
+                    />
+                    <Button
+                      type='button'
+                      onClick={() => togglePasswordVisibility('current')}
+                      className='absolute top-1/2 right-0 -translate-y-1/2 bg-transparent text-gray-400 shadow-none transition hover:bg-transparent hover:text-gray-600'
+                    >
+                      {showPasswords.current ? (
+                        <Eye className='h-4 w-4' />
+                      ) : (
+                        <EyeOff className='h-4 w-4' />
+                      )}
+                    </Button>
+                  </div>
+                  {errors.password && (
+                    <p className='mt-2 ml-2 text-xs font-medium text-red-500'>
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
-                {errors.confirmPassword && (
-                  <p className='mt-2 ml-2 text-xs font-medium text-red-500'>
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
               </div>
-            </div>
+            )}
+
+            {isAdd && (
+              <div className='flex items-start gap-4'>
+                <Label className='mt-3 w-32' htmlFor='confirm'>
+                  Confirm Password
+                </Label>
+                <div className='flex-1'>
+                  <div className='relative'>
+                    <Input
+                      id='confirm'
+                      {...register('confirmPassword')}
+                      placeholder='e.g., S3cur3P@ssw0rd'
+                      type={showPasswords.confirm ? 'text' : 'password'}
+                      disabled={!watch('password')}
+                    />
+                    <Button
+                      type='button'
+                      onClick={() => togglePasswordVisibility('confirm')}
+                      className='absolute top-1/2 right-0 -translate-y-1/2 bg-transparent text-gray-400 shadow-none transition hover:bg-transparent hover:text-gray-600'
+                    >
+                      {showPasswords.confirm ? (
+                        <Eye className='h-4 w-4' />
+                      ) : (
+                        <EyeOff className='h-4 w-4' />
+                      )}
+                    </Button>
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className='mt-2 ml-2 text-xs font-medium text-red-500'>
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Submit Button */}

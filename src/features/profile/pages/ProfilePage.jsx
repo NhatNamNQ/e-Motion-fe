@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import { User, Mail, Phone, Calendar, Shield, Edit2, Save, X, LockKeyhole } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
+import { User, Edit2, Save, X, LockKeyhole } from 'lucide-react'
 import { selectUser, selectAuthLoading } from '@/store/selectors/authSelectors'
-import { formatVNDate } from '@/lib/utils'
+import { formatDateResponse } from '@/lib/utils'
 import { toast } from 'sonner'
 import { updateProfile, getCurrentUser } from '@/store/actions/authActions'
 import Loader from '@/components/Loader'
-import ChangePasswordPage from '@/features/profile/components/ChangePassword'
 import Document from '../components/Document'
 
-export default function UserProfile() {
+export default function ProfilePage({ user }) {
   const dispatch = useDispatch()
-  const user = useSelector(selectUser)
+  const currentUser = useSelector(selectUser)
+  const canEdit = user == null
+  if (user == null) {
+    user = currentUser
+  }
   const isLoading = useSelector(selectAuthLoading)
 
   const [isEditing, setIsEditing] = useState(false)
   const [editedUser, setEditedUser] = useState({ ...user })
-  const [showPasswordModal, setShowPasswordModal] = useState(false)
 
   useEffect(() => {
-    dispatch(getCurrentUser()) // gọi API lấy user từ token trong localStorage
+    dispatch(getCurrentUser())
   }, [dispatch])
 
   const handleEdit = () => {
@@ -33,14 +35,13 @@ export default function UserProfile() {
   }
 
   const handleSave = async () => {
-    // Gọi API để cập nhật thông tin
     try {
       await dispatch(
         updateProfile({ fullName: editedUser.fullName, phone: editedUser.phone })
       ).unwrap()
-      toast.success('Update profile successful')
+      toast.success('Cập nhật hồ sơ thành công')
     } catch (error) {
-      toast.error('Update profile failed: ' + error)
+      toast.error('Cập nhật thất bại: ' + error)
     } finally {
       setIsEditing(false)
     }
@@ -54,155 +55,101 @@ export default function UserProfile() {
     }))
   }
 
-  if (isLoading) {
-    return <Loader />
-  }
+  if (isLoading) return <Loader />
 
   return (
-    <div className='w-full bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12'>
-      <div>
-        {/* Header Card */}
-        <div className='mb-6 overflow-hidden rounded-2xl bg-white shadow-xl'>
-          <div className='h-32 bg-gradient-to-r from-blue-600 to-indigo-600'></div>
-          <div className='px-8 pb-8'>
-            <div className='-mt-16 mb-6 flex items-end justify-between'>
-              <div className='flex items-end gap-4'>
-                <div className='flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-white shadow-lg'>
-                  <User className='h-16 w-16 text-blue-600' />
-                </div>
-                <div className='pb-2'>
-                  <h1 className='text-3xl font-bold text-gray-800'>{user.fullName}</h1>
-                  <p className='text-gray-500'>{user.role}</p>
-                </div>
-              </div>
-              <div className='flex gap-3'>
-                {!isEditing && (
+    <div>
+      <div className='p-8'>
+        <div className='mb-8 flex items-start gap-10'>
+          {/* Avatar */}
+          <div className='text-center'>
+            <div className='mb-4 flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-600'>
+              <User size={80} className='text-white' />
+            </div>
+            <h2 className='mb-2 text-2xl font-bold'>{user?.fullName}</h2>
+            <p className='text-sm text-gray-500'>Tham gia: {formatDateResponse(user?.createdAt)}</p>
+          </div>
+
+          {/* Account Information */}
+          <div className='flex-1 space-y-6'>
+            <div className='flex items-center justify-between'>
+              <h3 className='text-xl font-bold'>Thông tin tài khoản</h3>
+              {canEdit &&
+                (!isEditing ? (
                   <button
                     onClick={handleEdit}
-                    className='mb-2 flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2 text-white transition hover:cursor-pointer hover:bg-blue-700'
+                    className='flex items-center gap-1 text-blue-600 hover:underline'
                   >
-                    <Edit2 className='h-4 w-4' />
-                    Edit
+                    <Edit2 size={16} /> Chỉnh sửa
                   </button>
-                )}
-                <button
-                  onClick={() => setShowPasswordModal(true)}
-                  className='mb-2 flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2 text-white transition hover:cursor-pointer hover:bg-blue-700'
-                >
-                  <LockKeyhole className='h-4 w-4' />
-                  Change Password
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Info Card */}
-        <div className='rounded-2xl bg-white p-8 shadow-xl'>
-          <h2 className='mb-6 text-2xl font-bold text-gray-800'>Personal information</h2>
-
-          <div className='space-y-6'>
-            {/* Full Name */}
-            <div className='flex items-start gap-4'>
-              <div className='mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100'>
-                <User className='h-5 w-5 text-blue-600' />
-              </div>
-              <div className='flex-1'>
-                <label className='text-sm font-medium text-gray-500'>Full Name</label>
-                {isEditing ? (
-                  <input
-                    type='text'
-                    name='fullName'
-                    value={editedUser.fullName}
-                    onChange={handleInputChange}
-                    className='mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
-                  />
                 ) : (
-                  <p className='mt-1 text-lg text-gray-800'>{user?.fullName}</p>
-                )}
-              </div>
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={handleSave}
+                      className='flex items-center gap-1 rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-700'
+                    >
+                      <Save size={16} /> Lưu
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className='flex items-center gap-1 rounded bg-gray-200 px-3 py-1 text-gray-700 hover:bg-gray-300'
+                    >
+                      <X size={16} /> Hủy
+                    </button>
+                  </div>
+                ))}
             </div>
 
-            {/* Email */}
-            <div className='flex items-start gap-4'>
-              <div className='mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-green-100'>
-                <Mail className='h-5 w-5 text-green-600' />
-              </div>
-              <div className='flex-1'>
-                <label className='text-sm font-medium text-gray-500'>Email</label>
-                <p className='mt-1 text-lg text-gray-800'>{user.email}</p>
-              </div>
+            {/* Full Name */}
+            <div>
+              <label className='mb-2 block text-sm font-medium text-gray-600'>Họ và tên:</label>
+              {isEditing ? (
+                <input
+                  type='text'
+                  name='fullName'
+                  value={editedUser.fullName || ''}
+                  onChange={handleInputChange}
+                  className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
+                />
+              ) : (
+                <p className='text-gray-800'>{user?.fullName}</p>
+              )}
             </div>
 
             {/* Phone */}
-            <div className='flex items-start gap-4'>
-              <div className='mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100'>
-                <Phone className='h-5 w-5 text-purple-600' />
-              </div>
-              <div className='flex-1'>
-                <label className='text-sm font-medium text-gray-500'>Phone</label>
-                {isEditing ? (
-                  <input
-                    type='tel'
-                    name='phone'
-                    value={editedUser.phone}
-                    onChange={handleInputChange}
-                    className='mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
-                  />
-                ) : (
-                  <p className='mt-1 text-lg text-gray-800'>{user.phone}</p>
-                )}
+            <div>
+              <label className='mb-2 block text-sm font-medium text-gray-600'>Số điện thoại:</label>
+              {isEditing ? (
+                <input
+                  type='text'
+                  name='phone'
+                  value={editedUser.phone || ''}
+                  onChange={handleInputChange}
+                  className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
+                />
+              ) : (
+                <span className='text-gray-800'>{user.phone}</span>
+              )}
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className='mb-2 block text-sm font-medium text-gray-600'>Email:</label>
+              <div className='flex items-center gap-2'>
+                <span className='text-gray-800'>{user.email}</span>
               </div>
             </div>
 
             {/* Role */}
-            <div className='flex items-start gap-4'>
-              <div className='mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-orange-100'>
-                <Shield className='h-5 w-5 text-orange-600' />
-              </div>
-              <div className='flex-1'>
-                <label className='text-sm font-medium text-gray-500'>Role</label>
-                <p className='mt-1 text-lg text-gray-800'>{user.role}</p>
-              </div>
-            </div>
-
-            {/* Created At */}
-            <div className='flex items-start gap-4'>
-              <div className='mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-100'>
-                <Calendar className='h-5 w-5 text-indigo-600' />
-              </div>
-              <div className='flex-1'>
-                <label className='text-sm font-medium text-gray-500'>Created At</label>
-                <p className='mt-1 text-lg text-gray-800'>{formatVNDate(user.createdAt)}</p>
-              </div>
+            <div>
+              <label className='mb-2 block text-sm font-medium text-gray-600'>Vai trò:</label>
+              <p className='text-gray-800'>{user.role}</p>
             </div>
           </div>
-
-          {/* Action Buttons */}
-          {isEditing && (
-            <div className='mt-8 flex gap-3 border-t border-gray-200 pt-6'>
-              <button
-                onClick={handleSave}
-                className='flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700'
-              >
-                <Save className='h-5 w-5' />
-                Save
-              </button>
-              <button
-                onClick={handleCancel}
-                className='flex flex-1 items-center justify-center gap-2 rounded-lg bg-gray-200 px-6 py-3 font-medium text-gray-700 transition hover:bg-gray-300'
-              >
-                <X className='h-5 w-5' />
-                Cancel
-              </button>
-            </div>
-          )}
-
-          <Document />
         </div>
       </div>
 
-      {showPasswordModal && <ChangePasswordPage setShowPasswordModal={setShowPasswordModal} />}
+      {user.role === 'ROLE_USER' && <Document />}
     </div>
   )
 }

@@ -96,8 +96,16 @@ const Document = () => {
   }
 
   return (
-    <div className='mt-6'>
-      <h3 className='mb-6 text-xl font-bold'>ID Documents</h3>
+    <div className='p-8'>
+      <h3 className='mb-6 text-2xl font-bold'>ID Documents</h3>
+
+      <div className='mb-6 rounded border-l-4 border-red-400 bg-red-50 p-4'>
+        <p className='text-sm text-red-800'>
+          <span className='font-semibold'>Lưu ý:</span> để tránh phát sinh vấn đề trong quá trình
+          thuê xe, người đặt xe trên E-Motion <span className='font-bold'>ĐỒNG THỜI</span> phải là
+          người nhận xe.
+        </p>
+      </div>
       <div className='grid gap-6 md:grid-cols-2'>
         {documentConfigs.map((config) => {
           const doc = user.documents?.find((d) => d.type === config.type)

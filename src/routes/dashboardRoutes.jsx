@@ -20,6 +20,7 @@ import SuccessPaymentPage from '@/features/dashboard/pages/SuccessPaymentPage'
 import RentalLogPage from '@/features/dashboard/pages/RentalLogPage'
 import StationsPage from '@/features/dashboard/pages/StationsPage'
 import StationDetailPage from '@/features/dashboard/pages/StationDetailPage'
+import UserDetailPage from '@/features/dashboard/pages/UserDetailPage'
 
 export const dashboardRoutes = {
   path: '/dashboard',
@@ -29,7 +30,7 @@ export const dashboardRoutes = {
     {
       path: '/dashboard',
       element: (
-        <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+        <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
           <Suspense fallback={<Loader />}>
             <DashboardPage />
           </Suspense>
@@ -82,6 +83,16 @@ export const dashboardRoutes = {
         <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
           <Suspense fallback={<Loader />}>
             <UsersPage />
+          </Suspense>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/dashboard/users/:email',
+      element: (
+        <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+          <Suspense fallback={<Loader />}>
+            <UserDetailPage />
           </Suspense>
         </ProtectedRoute>
       )
@@ -199,7 +210,7 @@ export const dashboardRoutes = {
     {
       path: '/dashboard/stations/:stationId',
       element: (
-        <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+        <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']} allowOwnStationOnly={true}>
           <Suspense fallback={<Loader />}>
             <StationDetailPage />
           </Suspense>

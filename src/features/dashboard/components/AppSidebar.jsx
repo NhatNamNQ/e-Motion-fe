@@ -27,45 +27,51 @@ import {
   MapPin
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@/store/selectors/authSelectors'
 
-const staffMenuItems = [
-  {
-    title: 'Dashboard',
-    url: '/dashboard',
-    icon: LayoutDashboard
-  },
-  {
-    title: 'Stations',
-    url: '/dashboard/stations',
-    icon: MapPin
-  },
-  {
-    title: 'Reservations',
-    url: '/dashboard/reservations',
-    icon: BookOpen
-  },
-  {
-    title: 'Rentals',
-    url: '/dashboard/rentals',
-    icon: Package
-  },
-  {
-    title: 'Check List',
-    url: '/dashboard/check-list',
-    icon: SquarePen
-  },
-  {
-    title: 'Vehicle logs',
-    url: '/dashboard/vehicle-logs',
-    icon: ClipboardPenLine
-  },
-  {
-    title: 'Users',
-    url: '/dashboard/users',
-    icon: User2
-  }
-]
 export function AppSidebar() {
+  const user = useSelector(selectUser)
+  const menuItems = [
+    {
+      title: 'Dashboard',
+      url: user?.role === 'ROLE_STAFF' ? `/dashboard/stations/${user.station?.id}` : '/dashboard',
+      icon: LayoutDashboard
+    },
+    {
+      title: 'Stations',
+      url: '/dashboard/stations',
+      icon: MapPin,
+      role: 'ROLE_ADMIN'
+    },
+    {
+      title: 'Reservations',
+      url: '/dashboard/reservations',
+      icon: BookOpen
+    },
+    {
+      title: 'Rentals',
+      url: '/dashboard/rentals',
+      icon: Package
+    },
+    {
+      title: 'Check List',
+      url: '/dashboard/check-list',
+      icon: SquarePen
+    },
+    {
+      title: 'Vehicle logs',
+      url: '/dashboard/vehicle-logs',
+      icon: ClipboardPenLine
+    },
+    {
+      title: 'Users',
+      url: '/dashboard/users',
+      icon: User2
+    }
+  ]
+
+  const filteredMenuItems = menuItems.filter((item) => !item.role || item.role === user?.role)
   return (
     <Sidebar variant='inset' collapsible='icon'>
       <SidebarContent>
@@ -73,7 +79,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>e-Motion</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {staffMenuItems.map((item) => (
+              {filteredMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link to={item.url}>
