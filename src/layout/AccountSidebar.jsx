@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { User, Car, Heart, Store, Calendar, Gift, MapPin, Lock, Trash2, LogOut } from 'lucide-react'
+import { User, Car, LockKeyhole } from 'lucide-react'
 
 const AccountSidebar = ({ classname }) => {
   const location = useLocation()
@@ -16,6 +16,12 @@ const AccountSidebar = ({ classname }) => {
       label: 'Lịch sử thuê xe',
       path: '/account/history',
       active: location.pathname === '/account/history'
+    },
+    {
+      icon: LockKeyhole,
+      label: 'Đổi mật khẩu',
+      path: '/account/changePassword',
+      active: location.pathname === '/account/changePassword'
     }
   ]
 

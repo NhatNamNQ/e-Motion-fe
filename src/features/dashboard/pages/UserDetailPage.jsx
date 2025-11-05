@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Edit2 } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import StaffDetail from '../components/StaffDetail'
+import UserDetail from '../components/UserDetail'
 import { useNavigate, useParams } from 'react-router-dom'
 import { userService } from '../services/userService'
 import Loader from '@/components/Loader'
 import { toast } from 'sonner'
 
-export default function UserDetail() {
+export default function UserDetailPage() {
   const { email } = useParams()
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
@@ -38,9 +39,9 @@ export default function UserDetail() {
   if (loading) return <Loader />
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div>
       {/* Header */}
-      <div className='mx-auto max-w-6xl px-6 py-4'>
+      <div className='mb-6'>
         <div className='flex items-center gap-4'>
           <button
             onClick={() => navigate('/dashboard/users')}
@@ -55,11 +56,12 @@ export default function UserDetail() {
         </div>
       </div>
 
-      <div className='mx-auto max-w-6xl px-6 py-6'>
-        {/* Renter */}
-
-        {/* Staff */}
-        <StaffDetail user={user} transaction={transaction} />
+      <div>
+        {user.role === 'ROLE_USER' ? (
+          <UserDetail user={user} />
+        ) : (
+          <StaffDetail user={user} transaction={transaction} />
+        )}
       </div>
     </div>
   )

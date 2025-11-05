@@ -21,16 +21,17 @@ import {
 import { stationService } from '../services/stationService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
-import { formatCurrency, formatProfileDate, formatHourDate } from '@/lib/utils'
+import { formatCurrency, formatDateResponse, formatHourDate } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
 
 const StationsPage = () => {
-  const [stationDataLoaded, setStationDataLoaded] = useState(false)
   const [stations, setStations] = useState([])
   const [showHistoryModal, setShowHistoryModal] = useState(false)
   const [showDispatchModal, setShowDispatchModal] = useState(false)
   const [selectedStation, setSelectedStation] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [loadingRevenue, setLoadingRevenue] = useState(false)
+  const [loadingHistory, setLoadingHistory] = useState(false)
   const [type, setType] = useState('day')
   const [day, setDay] = useState(new Date().getDate())
   const [month, setMonth] = useState(new Date().getMonth() + 1)
@@ -73,22 +74,22 @@ const StationsPage = () => {
     {
       title: 'Total Stations',
       value: stations.length,
-      icon: <Building2 className='h-6 w-6 text-blue-500' />
+      icon: <Building2 className='h-12 w-12 text-blue-500' />
     },
     {
       title: 'Total Cars',
       value: totalVehicles,
-      icon: <Car className='h-6 w-6 text-green-500' />
+      icon: <Car className='h-12 w-12 text-green-500' />
     },
     {
       title: 'Total Staffs',
       value: totalStaff,
-      icon: <User className='h-6 w-6 text-purple-500' />
+      icon: <User className='h-12 w-12 text-purple-500' />
     },
     {
       title: 'Active Stations',
       value: activeStations,
-      icon: <Activity className='h-6 w-6 text-indigo-500' />
+      icon: <Activity className='h-12 w-12 text-indigo-500' />
     }
   ]
 
@@ -104,16 +105,16 @@ const StationsPage = () => {
   }
 
   const handleViewHistory = async (station) => {
-    setIsLoading(true)
+    setShowHistoryModal(true)
+    setLoadingHistory(true)
     try {
       const res = await stationService.getRentalOfStation(station.id)
       setRentals(res)
       setSelectedStation(station)
-      setShowHistoryModal(true)
     } catch (error) {
       toast.error('Failed: ' + error.message)
     } finally {
-      setIsLoading(false)
+      setLoadingHistory(false)
     }
   }
 
@@ -149,30 +150,24 @@ const StationsPage = () => {
   }
 
   const fetchRevenueStation = useCallback(async () => {
-    setIsLoading(true)
+    setLoadingRevenue(true)
     try {
-      const data = await stationService.getRevenueStation(type, day, month, year)
+      const data = await stationService.getRevenueAllStation(type, day, month, year)
       setRevenue(data)
     } catch (error) {
       toast.error('Failed: ' + error.message)
     } finally {
-      setIsLoading(false)
+      setLoadingRevenue(false)
     }
   }, [day, month, type, year])
 
   useEffect(() => {
-    const init = async () => {
-      await fetchStationData()
-      setStationDataLoaded(true)
-    }
-    init()
+    fetchStationData()
   }, [])
 
   useEffect(() => {
-    if (stationDataLoaded) {
-      fetchRevenueStation()
-    }
-  }, [type, day, month, year, stationDataLoaded, fetchRevenueStation])
+    fetchRevenueStation()
+  }, [type, day, month, year, fetchRevenueStation])
 
   if (isLoading) {
     return <Loader />
@@ -231,7 +226,7 @@ const StationsPage = () => {
                 <tr
                   key={station.id}
                   onClick={() => handleNavigateToStationDetail(station.id)}
-                  className='border-b border-gray-100 transition hover:bg-gray-50'
+                  className='border-b border-gray-100 transition hover:cursor-pointer hover:bg-gray-50'
                 >
                   <td className='px-6 py-4 text-sm font-medium text-gray-900'>{station.name}</td>
                   <td className='px-6 py-4 text-sm text-gray-600'>{station.address}</td>
@@ -261,6 +256,54 @@ const StationsPage = () => {
           </table>
         </div>
 
+        <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-2'>
+          <div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>Phân bố Xe theo Trạm</h3>
+            <div className='space-y-3'>
+              {stations.map((s) => (
+                <div key={s.id} className='flex items-center justify-between'>
+                  <span className='text-sm text-gray-600'>{s.name}</span>
+                  <div className='flex items-center gap-2'>
+                    <div className='h-2 w-45 rounded bg-gray-200'>
+                      <div
+                        className='h-2 rounded bg-blue-500'
+                        style={{
+                          width: `${(s.quantityCar / totalVehicles) * 100}%`
+                        }}
+                      ></div>
+                    </div>
+                    <span className='w-8 text-sm font-medium text-gray-900'>{s.quantityCar}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              Phân bố Nhân viên theo Trạm
+            </h3>
+            <div className='space-y-3'>
+              {stations.map((s) => (
+                <div key={s.id} className='flex items-center justify-between'>
+                  <span className='text-sm text-gray-600'>{s.name}</span>
+                  <div className='flex items-center gap-2'>
+                    <div className='h-2 w-45 rounded bg-gray-200'>
+                      <div
+                        className='h-2 rounded bg-green-500'
+                        style={{
+                          width: `${(s.quantityStaff / totalStaff) * 100}%`
+                        }}
+                      ></div>
+                    </div>
+                    <span className='w-8 text-sm font-medium text-gray-900'>{s.quantityStaff}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <h2 className='mb-6 text-2xl font-bold text-gray-900'>Phân tích</h2>
         <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
           <div className='col-span-2 rounded-2xl bg-white p-8 shadow-sm'>
@@ -268,7 +311,6 @@ const StationsPage = () => {
               <h1 className='text-3xl font-bold text-gray-900'>Revenue</h1>
 
               <div className='flex items-center gap-3'>
-                {/* Chọn loại thống kê */}
                 <Select onValueChange={(value) => setType(value)} value={type}>
                   <SelectTrigger className='w-30'>
                     <SelectValue />
@@ -335,91 +377,49 @@ const StationsPage = () => {
             </div>
 
             {/* Biểu đồ */}
-            <ResponsiveContainer width='100%' height={400}>
-              <BarChart data={revenue} margin={{ top: 20, right: 0, left: 60, bottom: 5 }}>
-                <CartesianGrid strokeDasharray='0' stroke='#f0f0f0' vertical={false} />
-                <XAxis
-                  dataKey='stationName'
-                  axisLine={false}
-                  tickLine={false}
-                  tick={({ x, y, payload }) => {
-                    const lines = payload.value.match(/.{1,9}/g)
-                    return (
-                      <text x={x} y={y + 10} fill='#9ca3af' fontSize={14} textAnchor='middle'>
-                        {lines.map((line, index) => (
-                          <tspan x={x} dy={index === 0 ? 0 : 14} key={index}>
-                            {line}
-                          </tspan>
-                        ))}
-                      </text>
-                    )
-                  }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#9ca3af', fontSize: 14 }}
-                  tickFormatter={(revenue) => `${formatCurrency(revenue)}`}
-                />
-                <Tooltip
-                  cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
-                  contentStyle={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    padding: '8px 12px'
-                  }}
-                  formatter={(revenue) => [`${formatCurrency(revenue)}`, 'Revenue']}
-                />
-                <Bar dataKey='revenue' fill='#1e293b' radius={[4, 4, 0, 0]} maxBarSize={60} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
-            <h3 className='mb-4 text-lg font-semibold text-gray-900'>Phân bố Xe theo Trạm</h3>
-            <div className='space-y-3'>
-              {stations.map((s) => (
-                <div key={s.id} className='flex items-center justify-between'>
-                  <span className='text-sm text-gray-600'>{s.name}</span>
-                  <div className='flex items-center gap-2'>
-                    <div className='h-2 w-45 rounded bg-gray-200'>
-                      <div
-                        className='h-2 rounded bg-blue-500'
-                        style={{
-                          width: `${(s.quantityCar / totalVehicles) * 100}%`
-                        }}
-                      ></div>
-                    </div>
-                    <span className='w-8 text-sm font-medium text-gray-900'>{s.quantityCar}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
-            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
-              Phân bố Nhân viên theo Trạm
-            </h3>
-            <div className='space-y-3'>
-              {stations.map((s) => (
-                <div key={s.id} className='flex items-center justify-between'>
-                  <span className='text-sm text-gray-600'>{s.name}</span>
-                  <div className='flex items-center gap-2'>
-                    <div className='h-2 w-45 rounded bg-gray-200'>
-                      <div
-                        className='h-2 rounded bg-green-500'
-                        style={{
-                          width: `${(s.quantityStaff / totalStaff) * 100}%`
-                        }}
-                      ></div>
-                    </div>
-                    <span className='w-8 text-sm font-medium text-gray-900'>{s.quantityStaff}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {loadingRevenue ? (
+              <Loader />
+            ) : (
+              <ResponsiveContainer width='100%' height={600}>
+                <BarChart data={revenue} margin={{ top: 20, right: 0, left: 60, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray='0' stroke='#f0f0f0' vertical={false} />
+                  <XAxis
+                    dataKey='name'
+                    axisLine={false}
+                    tickLine={false}
+                    tick={({ x, y, payload }) => {
+                      const lines = payload.value.match(/.{1,9}/g)
+                      return (
+                        <text x={x} y={y + 10} fill='#9ca3af' fontSize={14} textAnchor='middle'>
+                          {lines.map((line, index) => (
+                            <tspan x={x} dy={index === 0 ? 0 : 14} key={index}>
+                              {line}
+                            </tspan>
+                          ))}
+                        </text>
+                      )
+                    }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#9ca3af', fontSize: 14 }}
+                    tickFormatter={(data) => `${formatCurrency(data)}`}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
+                    contentStyle={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      padding: '8px 12px'
+                    }}
+                    formatter={(data) => [`${formatCurrency(data)}`, 'Revenue']}
+                  />
+                  <Bar dataKey='data' fill='#1e293b' radius={[4, 4, 0, 0]} maxBarSize={60} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
       </div>
@@ -431,34 +431,44 @@ const StationsPage = () => {
             <DialogTitle>History - {selectedStation?.name}</DialogTitle>
           </DialogHeader>
 
-          <div className='mt-4 max-h-[500px] overflow-y-auto'>
-            <table className='min-w-full border border-gray-200 text-sm'>
-              <thead className='sticky top-0 bg-gray-50'>
-                <tr>
-                  <th className='border-b px-4 py-2 text-left'>Date</th>
-                  <th className='border-b px-4 py-2 text-left'>User</th>
-                  <th className='border-b px-4 py-2 text-left'>Vehicle</th>
-                  <th className='border-b px-4 py-2 text-left'>Start</th>
-                  <th className='border-b px-4 py-2 text-left'>End</th>
-                  <th className='border-b px-4 py-2 text-left'>Fee</th>
-                  <th className='border-b px-4 py-2 text-left'>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rentals.map((history, idx) => (
-                  <tr key={idx} className='hover:bg-gray-50'>
-                    <td className='border-b px-4 py-2'>{formatProfileDate(history.createdAt)}</td>
-                    <td className='border-b px-4 py-2 font-medium'>{history.userEmail}</td>
-                    <td className='border-b px-4 py-2'>{history.vehicle.name}</td>
-                    <td className='border-b px-4 py-2'>{formatHourDate(history.startTime)}</td>
-                    <td className='border-b px-4 py-2'>{formatHourDate(history.endTime)}</td>
-                    <td className='border-b px-4 py-2'>{formatCurrency(history.rentFee)}</td>
-                    <td className='border-b px-4 py-2'>{history.status}</td>
+          {loadingHistory ? (
+            <Loader />
+          ) : (
+            <div className='mt-4 max-h-[500px] overflow-y-auto'>
+              <table className='min-w-full border border-gray-200 text-sm'>
+                <thead className='sticky top-0 bg-gray-50'>
+                  <tr>
+                    <th className='border-b px-4 py-2 text-left'>Date</th>
+                    <th className='border-b px-4 py-2 text-left'>User</th>
+                    <th className='border-b px-4 py-2 text-left'>Vehicle</th>
+                    <th className='border-b px-4 py-2 text-left'>Start</th>
+                    <th className='border-b px-4 py-2 text-left'>End</th>
+                    <th className='border-b px-4 py-2 text-left'>Fee</th>
+                    <th className='border-b px-4 py-2 text-left'>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {rentals.map((history, idx) => (
+                    <tr
+                      key={idx}
+                      className='hover:cursor-pointer hover:bg-gray-50'
+                      onClick={() => navigate(`/dashboard/rentals/${history.id}`)}
+                    >
+                      <td className='border-b px-4 py-2'>
+                        {formatDateResponse(history.createdAt)}
+                      </td>
+                      <td className='border-b px-4 py-2 font-medium'>{history.userEmail}</td>
+                      <td className='border-b px-4 py-2'>{history.vehicle.name}</td>
+                      <td className='border-b px-4 py-2'>{formatHourDate(history.startTime)}</td>
+                      <td className='border-b px-4 py-2'>{formatHourDate(history.endTime)}</td>
+                      <td className='border-b px-4 py-2'>{formatCurrency(history.rentFee)}</td>
+                      <td className='border-b px-4 py-2'>{history.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           <DialogFooter>
             <DialogClose>Cancel</DialogClose>

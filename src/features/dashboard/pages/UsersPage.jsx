@@ -26,6 +26,7 @@ import {
 
 import UsersTable from '../components/UsersTable'
 import { useDebounce } from 'use-debounce'
+import { stationService } from '../services/stationService'
 
 const UsersPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -62,8 +63,10 @@ const UsersPage = () => {
         phone: user.phone,
         createdAt: user.createdAt,
         blocked: user.blocked,
-        role: user.role
+        role: user.role,
+        station: user?.station
       }))
+
       setUsers(userData)
       setTotalPages(res.totalPages)
     } catch (error) {
@@ -106,13 +109,14 @@ const UsersPage = () => {
   }
 
   const handleSubmitAddUser = async (userData) => {
+    setShowUserForm(false)
     setIsLoading(true)
     try {
       await userService.addUser(userData)
       toast.success('User added successfully!')
-      setShowUserForm(false)
       fetchUsers()
     } catch (error) {
+      setShowUserForm(true)
       toast.error('Error adding user: ' + error.message)
     } finally {
       setIsLoading(false)
@@ -120,13 +124,14 @@ const UsersPage = () => {
   }
 
   const handleSubmitEditUser = async (userData) => {
+    setShowUserForm(false)
     setIsLoading(true)
     try {
       await userService.editUser(userData)
       toast.success('Edit user successfully!')
-      setShowUserForm(false)
       fetchUsers()
     } catch (error) {
+      setShowUserForm(true)
       toast.error('Error adding user: ' + error.message)
     } finally {
       setIsLoading(false)
@@ -142,7 +147,7 @@ const UsersPage = () => {
     const fetchStationNames = async () => {
       setIsLoading(true)
       try {
-        const res = await userService.getAllStations()
+        const res = await stationService.getAllStations()
         setStations(res)
       } catch (error) {
         toast.error('Error get users: ' + error.message)
@@ -173,10 +178,6 @@ const UsersPage = () => {
     setShowUserForm,
     setIsLoading,
     fetchUsers
-  }
-
-  if (isLoading) {
-    return <Loader />
   }
 
   return (
@@ -342,7 +343,7 @@ const UsersPage = () => {
         </div>
 
         {/* Table */}
-        <UsersTable {...tableProps} />
+        {isLoading ? <Loader /> : <UsersTable {...tableProps} />}
 
         {/* Add User Modal */}
         {showUserForm && (
@@ -350,6 +351,7 @@ const UsersPage = () => {
             mode={mode}
             handleSubmitUser={mode.type === 'add' ? handleSubmitAddUser : handleSubmitEditUser}
             setShowUserForm={setShowUserForm}
+            stations={stations}
           />
         )}
       </div>

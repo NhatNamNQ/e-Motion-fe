@@ -3,13 +3,20 @@ import { profileService } from '../service/profileService'
 import { getStatusColor } from '@/lib/utils'
 import Loader from '@/components/Loader'
 import HistoryCard from '../components/HistoryCard'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@/store/selectors/authSelectors'
 
-const HistoryPage = () => {
+const HistoryPage = ({ user }) => {
   const [reservations, setReservations] = useState([])
   const [rentals, setRentals] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [tab, setTab] = useState('reservations')
+
+  const currentUser = useSelector(selectUser)
+  if (user == null) {
+    user = currentUser
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,8 +24,8 @@ const HistoryPage = () => {
         setLoading(true)
         setError(null)
         const [reservationsData, rentalsData] = await Promise.all([
-          profileService.viewReservationsHistory(),
-          profileService.viewRentalsHistory()
+          profileService.viewReservationsHistory(user.email),
+          profileService.viewRentalsHistory(user.email)
         ])
         setReservations(reservationsData)
         setRentals(rentalsData)

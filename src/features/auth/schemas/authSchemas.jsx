@@ -82,7 +82,8 @@ export const addUserSchema = z
     email: emailValidation,
     password: passwordValidation,
     confirmPassword: z.string().optional(),
-    role: z.string()
+    role: z.string(),
+    stationId: z.number()
   })
   .refine(
     (data) => {
