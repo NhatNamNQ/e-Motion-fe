@@ -56,7 +56,7 @@ const RentalDetailPage = () => {
   const handleCreateCheckInPayment = async () => {
     try {
       setLoading(true)
-      const { url, qrCode } = await rentalService.checkInRental(id)
+      const { qrCode } = await rentalService.checkInRental(id)
       setQrCode(qrCode)
       setShowPaymentDialog(true)
       // Không redirect nữa, hiển thị popup thay vì
@@ -169,7 +169,7 @@ const RentalDetailPage = () => {
                     <div className='mb-4 flex items-center justify-between'>
                       <h3 className='text-lg font-semibold'>Chi tiết nhật ký xe</h3>
                     </div>
-                    <div className='bg-muted/40 space-y-3 rounded-lg p-4'>
+                    <div className='bg-muted/40 space-y-3 rounded-lg'>
                       {rental.vehicleLog.repairItems && rental.vehicleLog.repairItems.length > 0 ? (
                         <>
                           {rental.vehicleLog.repairItems.map((item, idx) => (
@@ -244,14 +244,14 @@ const RentalDetailPage = () => {
                 {/* Check-out Section - Red/Pink background */}
                 <div className='space-y-3 rounded-lg bg-red-100 p-4'>
                   <div className='flex items-start justify-between gap-2'>
-                    <span className='flex-1 text-sm text-gray-700'>Phí Phạt:</span>
+                    <span className='flex-1 text-sm text-gray-700'>Phí Phạt trễ Và pin:</span>
                     <span className='flex-shrink-0 text-right text-sm font-semibold text-red-600'>
                       {formatCurrency(checkOutFee)}
                     </span>
                   </div>
                   <div className='flex items-start justify-between gap-2'>
                     <span className='flex-1 text-sm text-gray-700'>Phí sửa chữa:</span>
-                    <span className='flex-shrink-0 text-right text-sm font-semibold text-gray-900'>
+                    <span className='flex-shrink-0 text-right text-sm font-semibold text-red-600'>
                       {formatCurrency(vehicleLogFee)}
                     </span>
                   </div>
