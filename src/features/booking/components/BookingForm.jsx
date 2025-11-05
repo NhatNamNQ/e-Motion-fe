@@ -4,6 +4,7 @@ import { formatCurrency } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
 const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) => {
+  console.log(car)
   const { startDate, startHour, endDate, endHour } = searchForm
   const { deposit, total, holdCar, booking } = bookingFees
   console.log(car)
@@ -48,7 +49,7 @@ const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) 
             <div>
               <div className='text-sm text-gray-600'>Nhận xe tại địa chỉ cửa hàng</div>
               <div className='font-medium text-gray-800'>
-                {car.address || 'Địa chỉ sẽ được cập nhật'}
+                {car.station.address || 'Địa chỉ sẽ được cập nhật'}
               </div>
             </div>
           </div>

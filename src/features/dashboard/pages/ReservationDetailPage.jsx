@@ -85,8 +85,9 @@ const ReservationDetailPage = () => {
       </div>
 
       <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
+        {/* LEFT COLUMN: Info */}
         <div className='lg:col-span-2'>
-          <Card>
+          <Card className='h-full'>
             <CardHeader>
               <div className='flex flex-col gap-2 md:flex-row md:items-start md:justify-between'>
                 <div>
@@ -102,7 +103,7 @@ const ReservationDetailPage = () => {
             </CardHeader>
             <CardContent>
               <Separator className='my-4' />
-              <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
+              <div className='grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2'>
                 <div className='space-y-4'>
                   <h3 className='flex items-center gap-2 font-semibold'>
                     <User size={18} /> Thông tin người thuê
@@ -121,8 +122,8 @@ const ReservationDetailPage = () => {
                   <h3 className='flex items-center gap-2 font-semibold'>
                     <MapPin size={18} /> Thông tin trạm
                   </h3>
-                  <InfoRow label='Mã trạm'>{reservation.vehicle.station.id}</InfoRow>
-                  <InfoRow label='Địa điểm'>{reservation.vehicle.station.name}</InfoRow>
+                  <InfoRow label='Tên trạm'>{reservation.vehicle.station.name}</InfoRow>
+                  <InfoRow label='Địa điểm'>{reservation.vehicle.station.address}</InfoRow>
                 </div>
                 <div className='space-y-4'>
                   <h3 className='flex items-center gap-2 font-semibold'>
@@ -146,6 +147,7 @@ const ReservationDetailPage = () => {
           </Card>
         </div>
 
+        {/* RIGHT COLUMN: Actions */}
         <div className='lg:col-span-1'>
           <Card>
             <CardHeader>
@@ -162,6 +164,8 @@ const ReservationDetailPage = () => {
                   <Plus className='mr-2 h-4 w-4' />
                   {submitLoading ? 'Đang xử lý...' : 'Tạo hợp đồng thuê'}
                 </Button>
+              ) : reservation.status === 'COMPLETED' ? (
+                <Badge className={getStatusColor(reservation.status)}>Đã tạo hợp đồng</Badge>
               ) : (
                 <div className='bg-muted rounded-lg border p-4 text-center'>
                   <p className='text-muted-foreground text-sm'>

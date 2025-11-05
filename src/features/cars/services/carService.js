@@ -20,7 +20,7 @@ export const carService = {
   },
   searchCars: async (searchValues) => {
     try {
-      const { data } = await instance.post('/vehicles/search', searchValues)
+      const { data } = await instance.post('/vehicles/filter', searchValues)
       return data
     } catch (error) {
       throw handleError(error)
