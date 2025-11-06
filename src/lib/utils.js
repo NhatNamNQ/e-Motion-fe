@@ -82,6 +82,8 @@ export const getStatusColor = (status) => {
       return 'bg-blue-100 text-blue-800'
     case 'PENDING':
       return 'bg-yellow-100 text-yellow-800'
+    case 'PENDING_FEE':
+      return 'bg-orange-200 text-orange-800'
     case 'FAILED':
       return 'bg-red-100 text-red-800'
     default:
