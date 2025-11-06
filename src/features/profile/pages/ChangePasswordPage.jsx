@@ -66,12 +66,7 @@ const ChangePasswordPage = () => {
         </p>
 
         {/* Form */}
-        <form
-          onSubmit={handleSubmit(handleChangePassword)}
-          className='rounded-2xl bg-white p-10 shadow-sm'
-        >
-          <h2 className='mb-6 text-xl font-semibold text-gray-800'>Nhập mật khẩu</h2>
-
+        <form onSubmit={handleSubmit(handleChangePassword)} className='rounded-2xl bg-white'>
           <div className='space-y-6'>
             {/* Mật khẩu hiện tại */}
             <div>

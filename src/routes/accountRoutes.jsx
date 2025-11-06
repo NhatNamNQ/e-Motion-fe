@@ -5,9 +5,13 @@ import AccountLayout from '@/layout/AccountLayout'
 import HistoryPage from '@/features/profile/pages/HistoryPage'
 import ChangePasswordPage from '@/features/profile/pages/ChangePasswordPage'
 import ProfilePage from '@/features/profile/pages/ProfilePage'
+import ErrorPage from '@/features/error/pages/ErrorPage'
+import ReservationDetailPage from '@/features/profile/pages/ReservationDetailPage'
+import RentalDetailPage from '@/features/profile/pages/RentalDetailPage'
 
 const accountRoutes = {
   path: '/account',
+  errorElement: <ErrorPage />,
   element: (
     <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
       <AccountLayout />
@@ -39,6 +43,22 @@ const accountRoutes = {
           <Suspense fallback={<Loader />}>
             <ChangePasswordPage />
           </Suspense>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/account/reservations/:code',
+      element: (
+        <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+          <ReservationDetailPage />
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/account/rentals/:id',
+      element: (
+        <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+          <RentalDetailPage />
         </ProtectedRoute>
       )
     }

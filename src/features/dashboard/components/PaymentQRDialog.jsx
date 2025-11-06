@@ -22,12 +22,10 @@ const PaymentQRDialog = ({ open, onOpenChange, qrCode, rentalId, onPaymentSucces
     try {
       setChecking(true)
       const payment = await rentalService.getPaymentByRentalId(rentalId)
-      console.log('Payment response:', payment)
       setPaymentData(payment)
 
       // Kiểm tra status từ payment response
       const status = payment?.status
-      console.log('Payment status:', status)
 
       if (status === 'SUCCESS') {
         toast.success('Thanh toán thành công!')
