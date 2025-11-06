@@ -26,8 +26,14 @@ import {
 
 import UsersTable from '../components/UsersTable'
 import { useDebounce } from 'use-debounce'
+import { stationService } from '../services/stationService'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@/store/selectors/authSelectors'
 
 const UsersPage = () => {
+  const currentUser = useSelector(selectUser)
+  const isAdmin = currentUser.role === 'ROLE_ADMIN'
+
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [limitPerPage, setLimitPerPage] = useState(10)
@@ -35,6 +41,7 @@ const UsersPage = () => {
   const [users, setUsers] = useState([])
   const [selectedStatuses, setSelectedStatuses] = useState([])
   const [selectedRoles, setSelectedRoles] = useState([])
+  const [selectedStation, setSelectedStation] = useState(null)
   const [mode, setMode] = useState({
     type: 'add',
     user: null
@@ -43,7 +50,6 @@ const UsersPage = () => {
   const [searchKey, setSearchKey] = useState('')
   const [debouncedFilter] = useDebounce(searchKey, 500)
   const [stations, setStations] = useState([])
-  const [selectedStation, setSelectedStation] = useState(null)
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true)
@@ -62,8 +68,10 @@ const UsersPage = () => {
         phone: user.phone,
         createdAt: user.createdAt,
         blocked: user.blocked,
-        role: user.role
+        role: user.role,
+        station: user?.station
       }))
+
       setUsers(userData)
       setTotalPages(res.totalPages)
     } catch (error) {
@@ -106,13 +114,14 @@ const UsersPage = () => {
   }
 
   const handleSubmitAddUser = async (userData) => {
+    setShowUserForm(false)
     setIsLoading(true)
     try {
       await userService.addUser(userData)
       toast.success('User added successfully!')
-      setShowUserForm(false)
       fetchUsers()
     } catch (error) {
+      setShowUserForm(true)
       toast.error('Error adding user: ' + error.message)
     } finally {
       setIsLoading(false)
@@ -120,13 +129,14 @@ const UsersPage = () => {
   }
 
   const handleSubmitEditUser = async (userData) => {
+    setShowUserForm(false)
     setIsLoading(true)
     try {
       await userService.editUser(userData)
       toast.success('Edit user successfully!')
-      setShowUserForm(false)
       fetchUsers()
     } catch (error) {
+      setShowUserForm(true)
       toast.error('Error adding user: ' + error.message)
     } finally {
       setIsLoading(false)
@@ -142,7 +152,7 @@ const UsersPage = () => {
     const fetchStationNames = async () => {
       setIsLoading(true)
       try {
-        const res = await userService.getAllStations()
+        const res = await stationService.getAllStations()
         setStations(res)
       } catch (error) {
         toast.error('Error get users: ' + error.message)
@@ -173,10 +183,6 @@ const UsersPage = () => {
     setShowUserForm,
     setIsLoading,
     fetchUsers
-  }
-
-  if (isLoading) {
-    return <Loader />
   }
 
   return (
@@ -289,46 +295,52 @@ const UsersPage = () => {
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
-                  {roleOptions.map((role) => (
-                    <Label>
-                      <DropdownMenuItem className='w-full'>
-                        <Checkbox
-                          checked={selectedRoles.includes(role.value)}
-                          onCheckedChange={() => handleClickFilterRole(role.value)}
-                          className='data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 [&_svg]:!text-white'
-                        />
-                        <div className='flex w-full justify-between px-3'>
-                          <span className='text-sm text-gray-700'>{role.label}</span>
-                          <role.icon
-                            className={`h-4 w-4 ${role.value === 'ROLE_ADMIN' ? 'text-red-500' : 'text-gray-600'}`}
+                  {roleOptions
+                    .filter((role) => !isAdmin && role.value !== 'ROLE_ADMIN')
+                    .map((role) => (
+                      <Label>
+                        <DropdownMenuItem className='w-full'>
+                          <Checkbox
+                            checked={selectedRoles.includes(role.value)}
+                            onCheckedChange={() => handleClickFilterRole(role.value)}
+                            className='data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 [&_svg]:!text-white'
                           />
-                        </div>
-                      </DropdownMenuItem>
-                    </Label>
-                  ))}
+                          <div className='flex w-full justify-between px-3'>
+                            <span className='text-sm text-gray-700'>{role.label}</span>
+                            <role.icon
+                              className={`h-4 w-4 ${role.value === 'ROLE_ADMIN' ? 'text-red-500' : 'text-gray-600'}`}
+                            />
+                          </div>
+                        </DropdownMenuItem>
+                      </Label>
+                    ))}
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Select
-                onValueChange={(stationId) => {
-                  const station = stations.find((s) => s.id === stationId)
-                  handleFilterStation(station)
-                }}
-                value={selectedStation?.id || ''}
-              >
-                <SelectTrigger className='w-60'>
-                  <SelectValue placeholder='Select Station' />
-                </SelectTrigger>
-                <SelectContent>
-                  {stations.map((station) => (
-                    <SelectItem key={station.id} value={station.id}>
-                      {station.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {isAdmin && (
+                <Select
+                  onValueChange={(stationId) => {
+                    const station = stations.find((s) => s.id === stationId)
+                    handleFilterStation(station)
+                  }}
+                  value={selectedStation?.id || ''}
+                >
+                  <SelectTrigger className='w-60'>
+                    <SelectValue placeholder='Select Station' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {stations.map((station) => (
+                      <SelectItem key={station.id} value={station.id}>
+                        {station.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
 
-              {(selectedRoles.length > 0 || selectedStatuses.length > 0) && (
+              {(selectedRoles.length > 0 ||
+                selectedStatuses.length > 0 ||
+                selectedStation != null) && (
                 <button
                   onClick={clearFilters}
                   className='flex items-center gap-2 rounded-lg p-3 px-4 py-2 hover:cursor-pointer hover:bg-gray-200'
@@ -342,7 +354,7 @@ const UsersPage = () => {
         </div>
 
         {/* Table */}
-        <UsersTable {...tableProps} />
+        {isLoading ? <Loader /> : <UsersTable {...tableProps} />}
 
         {/* Add User Modal */}
         {showUserForm && (
@@ -350,6 +362,7 @@ const UsersPage = () => {
             mode={mode}
             handleSubmitUser={mode.type === 'add' ? handleSubmitAddUser : handleSubmitEditUser}
             setShowUserForm={setShowUserForm}
+            stations={stations}
           />
         )}
       </div>

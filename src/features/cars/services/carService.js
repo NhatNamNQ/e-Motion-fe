@@ -39,5 +39,13 @@ export const carService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getCarQuantityEachStatusOfStation: async (stationId) => {
+    try {
+      const { data } = await instance.get(`/vehicles/status/${stationId}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

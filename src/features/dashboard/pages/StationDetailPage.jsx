@@ -1,18 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ArrowLeft,
-  Building2,
+  Clock,
   Car,
   User,
-  Phone,
-  Mail,
   MapPin,
-  Edit2,
-  Trash2,
-  Plus,
-  Search,
-  MoreVertical,
-  AlertCircle
+  Truck,
+  Building2,
+  Calendar,
+  Eye,
+  DollarSign,
+  Zap
 } from 'lucide-react'
 import {
   LineChart,
@@ -24,496 +22,335 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  Legend
 } from 'recharts'
+import CardDashboard from '@/components/CardDashboard'
+import { stationService } from '../services/stationService'
+import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
+import Loader from '@/components/Loader'
+import { Button } from '@/components/ui/button'
+import { formatDateResponse, formatHourDate, formatCurrency } from '@/lib/utils'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@/store/selectors/authSelectors'
+import { carService } from '@/features/cars/services/carService'
 
 const StationDetailPage = () => {
-  const [activeTab, setActiveTab] = useState('overview')
-  const [searchVehicle, setSearchVehicle] = useState('')
-  const [searchStaff, setSearchStaff] = useState('')
-  // const [showEditModal, setShowEditModal] = useState(false)
-  // const [showAddVehicleModal, setShowAddVehicleModal] = useState(false)
-  // const [showAddStaffModal, setShowAddStaffModal] = useState(false)
+  const { stationId } = useParams()
+  const navigate = useNavigate()
+  const [station, setStation] = useState([])
+  const [revenue, setRevenue] = useState([])
+  const [carQuantity, setCarQuantity] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [loadingRevenue, setLoadingRevenue] = useState(false)
+  const [loadingCar, setLoadingCar] = useState(false)
+  const user = useSelector(selectUser)
 
-  // Mock station data
-  const station = {
-    id: 1,
-    name: 'Trạm Quản Lý Số 1',
-    address: '123 Đường Lê Lợi, Quận 1',
-    city: 'Hồ Chí Minh',
-    phone: '028 3838 1234',
-    email: 'station1@rentalcar.com',
-    manager: 'Nguyễn Văn A',
-    status: 'ACTIVE',
-    establishedDate: '2020-01-15',
-    revenue: 450000000,
-    description: 'Trạm quản lý lớn nhất với 50 xe và 20 nhân viên'
+  const cards = [
+    {
+      title: 'Số xe',
+      value: station.quantityCar,
+      icon: <Car className='h-12 w-12 text-blue-500' />
+    },
+    {
+      title: 'Số nhân viên',
+      value: station.quantityStaff,
+      icon: <User className='h-12 w-12 text-green-500' />
+    },
+    {
+      title: 'Xe đang thuê',
+      value: station.carRental,
+      icon: <Truck className='h-12 w-12 text-yellow-500' />
+    },
+    {
+      title: 'Giờ cao điểm',
+      peakHours: station.peakHours,
+      icon: <Clock className='h-12 w-12 text-red-500' />
+    }
+  ]
+
+  const totalRevenue = revenue.reduce((sum, r) => sum + r.data, 0)
+  const averageRevenue = revenue.length > 0 ? totalRevenue / revenue.length : 0
+  const maxRevenue = revenue.length > 0 ? Math.max(...revenue.map((r) => r.data)) : 0
+
+  const statusColors = {
+    'Sẵn sàng': '#10b981',
+    'Đang thuê': '#3b82f6',
+    'Đang bảo trì': '#ef4444'
   }
 
-  const vehicles = [
-    {
-      id: 1,
-      name: 'Xe tải 01 - BMW',
-      type: 'Truck',
-      status: 'Available',
-      year: 2022,
-      plate: 'BKS-001'
-    },
-    {
-      id: 2,
-      name: 'Xe tải 02 - Mercedes',
-      type: 'Truck',
-      status: 'Rented',
-      year: 2023,
-      plate: 'BKS-002'
-    },
-    {
-      id: 3,
-      name: 'Xe tải 03 - Volvo',
-      type: 'Truck',
-      status: 'Maintenance',
-      year: 2021,
-      plate: 'BKS-003'
-    },
-    {
-      id: 4,
-      name: 'Xe tải 04 - Ford',
-      type: 'Truck',
-      status: 'Available',
-      year: 2022,
-      plate: 'BKS-004'
-    },
-    {
-      id: 5,
-      name: 'Xe tải 05 - Isuzu',
-      type: 'Truck',
-      status: 'Available',
-      year: 2023,
-      plate: 'BKS-005'
+  useEffect(() => {
+    const getStation = async () => {
+      setLoading(true)
+      try {
+        const res = await stationService.getStationById(stationId)
+        setStation(res)
+      } catch (error) {
+        toast.error('Get station failed: ' + error.message)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
 
-  const staff = [
-    {
-      id: 1,
-      name: 'Nguyễn Văn A',
-      position: 'Tài xế',
-      phone: '0987654321',
-      email: 'a@example.com',
-      status: 'Active'
-    },
-    {
-      id: 2,
-      name: 'Trần Thị B',
-      position: 'Kỹ thuật viên',
-      phone: '0987654322',
-      email: 'b@example.com',
-      status: 'Active'
-    },
-    {
-      id: 3,
-      name: 'Lê Văn C',
-      position: 'Phục vụ',
-      phone: '0987654323',
-      email: 'c@example.com',
-      status: 'On Leave'
-    },
-    {
-      id: 4,
-      name: 'Phạm Văn D',
-      position: 'Tài xế',
-      phone: '0987654324',
-      email: 'd@example.com',
-      status: 'Active'
-    },
-    {
-      id: 5,
-      name: 'Hoàng Thị E',
-      position: 'Quản lý',
-      phone: '0987654325',
-      email: 'e@example.com',
-      status: 'Active'
+    const getStationRevenue = async () => {
+      setLoadingRevenue(true)
+      try {
+        const res = await stationService.getRevenueOfStation(stationId)
+        setRevenue(res)
+      } catch (error) {
+        toast.error('Get station revenue failed: ' + error.message)
+      } finally {
+        setLoadingRevenue(false)
+      }
     }
-  ]
 
-  const revenueData = [
-    { month: 'T1', revenue: 35000 },
-    { month: 'T2', revenue: 42000 },
-    { month: 'T3', revenue: 38000 },
-    { month: 'T4', revenue: 50000 },
-    { month: 'T5', revenue: 45000 },
-    { month: 'T6', revenue: 52000 }
-  ]
-
-  const vehicleStats = [
-    { name: 'Available', value: 3, color: '#10b981' },
-    { name: 'Rented', value: 1, color: '#3b82f6' },
-    { name: 'Maintenance', value: 1, color: '#f59e0b' }
-  ]
-
-  const filteredVehicles = vehicles.filter((v) =>
-    v.name.toLowerCase().includes(searchVehicle.toLowerCase())
-  )
-  const filteredStaff = staff.filter((s) =>
-    s.name.toLowerCase().includes(searchStaff.toLowerCase())
-  )
-
-  const getStatusColor = (status) => {
-    const colors = {
-      Available: 'bg-green-100 text-green-800',
-      Rented: 'bg-blue-100 text-blue-800',
-      Maintenance: 'bg-yellow-100 text-yellow-800',
-      Active: 'bg-green-100 text-green-800',
-      'On Leave': 'bg-red-100 text-red-800',
-      ACTIVE: 'bg-green-100 text-green-800'
+    const getCarQuantity = async () => {
+      setLoadingCar(true)
+      try {
+        const res = await carService.getCarQuantityEachStatusOfStation(stationId)
+        console.log(res)
+        setCarQuantity(res)
+      } catch (error) {
+        toast.error('Get station car quantity failed: ' + error.message)
+      } finally {
+        setLoadingCar(false)
+      }
     }
-    return colors[status] || 'bg-gray-100 text-gray-800'
-  }
+
+    getStation()
+    getStationRevenue()
+    getCarQuantity()
+  }, [stationId])
+
+  if (loading) return <Loader />
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div>
       {/* Header */}
       <div className='border-b border-gray-200 bg-white'>
-        <div className='mx-auto max-w-7xl px-4 py-6'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-4'>
-              <button className='rounded-lg p-2 hover:bg-gray-100'>
+        <div className='mx-auto flex max-w-7xl items-center justify-between px-4 py-6'>
+          <div className='flex items-center gap-4'>
+            {user.role === 'ROLE_ADMIN' && (
+              <button
+                className='rounded-lg p-2 hover:bg-gray-100'
+                onClick={() => navigate('/dashboard/stations')}
+              >
                 <ArrowLeft className='h-6 w-6 text-gray-600' />
               </button>
-              <div>
-                <h1 className='text-3xl font-bold text-gray-900'>{station.name}</h1>
-                <p className='mt-1 flex items-center gap-2 text-gray-500'>
-                  <MapPin className='h-4 w-4' />
-                  {station.address}, {station.city}
-                </p>
-              </div>
+            )}
+            <div>
+              <h1 className='text-3xl font-bold text-gray-900'>{station.name}</h1>
+              <p className='mt-1 flex items-center gap-2 text-gray-500'>
+                <MapPin className='h-4 w-4' /> {station.address}, {station.city}
+              </p>
             </div>
-            <button className='rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'>
-              <Edit2 className='inline h-4 w-4' /> Chỉnh sửa
-            </button>
           </div>
+          <span
+            className={`rounded-full px-4 py-2 text-sm font-semibold ${
+              station.status === 'ACTIVE'
+                ? 'bg-green-100 text-green-700'
+                : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {station.status === 'ACTIVE' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+          </span>
         </div>
       </div>
-
-      <div className='mx-auto max-w-7xl px-4 py-8'>
-        {/* Info Cards */}
+      <div className='mx-auto mt-6 max-w-7xl'>
+        {/* KPI Cards */}
         <div className='mb-8 grid grid-cols-1 gap-4 md:grid-cols-4'>
-          <div className='rounded-lg border border-gray-200 bg-white p-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>Tổng xe</p>
-                <p className='text-2xl font-bold text-gray-900'>{vehicles.length}</p>
-              </div>
-              <Car className='h-12 w-12 text-blue-500 opacity-20' />
-            </div>
-          </div>
-
-          <div className='rounded-lg border border-gray-200 bg-white p-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>Tổng nhân viên</p>
-                <p className='text-2xl font-bold text-gray-900'>{staff.length}</p>
-              </div>
-              <User className='h-12 w-12 text-purple-500 opacity-20' />
-            </div>
-          </div>
-
-          <div className='rounded-lg border border-gray-200 bg-white p-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>Doanh thu năm</p>
-                <p className='text-2xl font-bold text-gray-900'>₫450M</p>
-              </div>
-              <Building2 className='h-12 w-12 text-green-500 opacity-20' />
-            </div>
-          </div>
-
-          <div className='rounded-lg border border-gray-200 bg-white p-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-500'>Trạng thái</p>
-                <p
-                  className={`mt-2 inline rounded-full px-3 py-1 text-sm font-semibold ${getStatusColor(station.status)}`}
-                >
-                  {station.status}
-                </p>
-              </div>
-              <AlertCircle className='h-12 w-12 text-indigo-500 opacity-20' />
-            </div>
-          </div>
+          {cards.map((card) => (
+            <CardDashboard key={card.title} card={card} />
+          ))}
         </div>
 
-        {/* Station Info */}
-        <div className='mb-8 rounded-lg border border-gray-200 bg-white p-6'>
-          <h2 className='mb-4 text-lg font-semibold text-gray-900'>Thông tin trạm</h2>
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-            <div className='space-y-4'>
-              <div>
-                <p className='text-sm text-gray-500'>Quản lý trạm</p>
-                <p className='font-medium text-gray-900'>{station.manager}</p>
+        <div className='mb-8 grid grid-cols-1 gap-6 md:grid-cols-2'>
+          {/* Box thông tin trạm */}
+          <div className='rounded-lg border border-gray-200 bg-white p-6'>
+            <h2 className='mb-4 text-lg font-semibold text-gray-900'>Thông tin trạm</h2>
+            <div className='grid grid-cols-1 gap-6'>
+              <div className='space-y-4'>
+                <div>
+                  <p className='text-sm text-gray-500'>Tên trạm</p>
+                  <p className='flex items-center gap-2 font-medium text-gray-900'>
+                    <Building2 className='h-4 w-4' />
+                    {station.name}
+                  </p>
+                </div>
+                <div>
+                  <p className='text-sm text-gray-500'>Địa chỉ</p>
+                  <p className='flex items-center gap-2 font-medium text-gray-900'>
+                    <MapPin className='h-4 w-4' />
+                    {station.address}, {station.city}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className='text-sm text-gray-500'>Điện thoại</p>
-                <p className='flex items-center gap-2 font-medium text-gray-900'>
-                  <Phone className='h-4 w-4' />
-                  {station.phone}
-                </p>
-              </div>
-            </div>
-            <div className='space-y-4'>
-              <div>
-                <p className='text-sm text-gray-500'>Email</p>
-                <p className='flex items-center gap-2 font-medium text-gray-900'>
-                  <Mail className='h-4 w-4' />
-                  {station.email}
-                </p>
-              </div>
-              <div>
-                <p className='text-sm text-gray-500'>Ngày thành lập</p>
-                <p className='font-medium text-gray-900'>15/01/2020</p>
+              <div className='space-y-4'>
+                <div>
+                  <p className='text-sm text-gray-500'>Ngày thành lập</p>
+                  <p className='flex items-center gap-2 font-medium text-gray-900'>
+                    <Calendar className='h-4 w-4' />
+                    {formatDateResponse(station.createdAt)}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-          <div className='mt-4 border-t pt-4'>
-            <p className='text-sm text-gray-500'>Mô tả</p>
-            <p className='mt-1 text-gray-900'>{station.description}</p>
-          </div>
-        </div>
 
-        {/* Tabs */}
-        <div className='border-b border-gray-200'>
-          <div className='flex gap-8'>
-            {['overview', 'vehicles', 'staff'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-4 font-medium transition ${
-                  activeTab === tab
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
+          <div className='rounded-lg border border-gray-200 bg-white p-6'>
+            <div className='mb-4 flex items-center justify-between'>
+              <h2 className='text-lg font-semibold text-gray-900'>Lịch sử thuê xe gần nhất</h2>
+              <Button
+                onClick={() => navigate('/dashboard/rentals')}
+                className='gap-2 bg-blue-600 hover:bg-blue-700'
               >
-                {tab === 'overview' && 'Tổng quan'}
-                {tab === 'vehicles' && 'Xe cộ'}
-                {tab === 'staff' && 'Nhân viên'}
-              </button>
-            ))}
-          </div>
-        </div>
+                <Eye className='h-4 w-4' />
+                View All
+              </Button>
+            </div>
 
-        {/* Tab Content */}
-        <div className='mt-8'>
-          {/* Overview Tab */}
-          {activeTab === 'overview' && (
-            <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
-              <div className='rounded-lg border border-gray-200 bg-white p-6'>
-                <h3 className='mb-4 text-lg font-semibold text-gray-900'>Doanh thu 6 tháng</h3>
-                <ResponsiveContainer width='100%' height={300}>
-                  <LineChart data={revenueData}>
-                    <CartesianGrid strokeDasharray='3 3' stroke='#f0f0f0' />
-                    <XAxis dataKey='month' stroke='#9ca3af' />
-                    <YAxis stroke='#9ca3af' />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#fff',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '8px'
-                      }}
-                    />
-                    <Line
-                      type='monotone'
-                      dataKey='revenue'
-                      stroke='#3b82f6'
-                      strokeWidth={2}
-                      dot={{ fill: '#3b82f6' }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className='rounded-lg border border-gray-200 bg-white p-6'>
-                <h3 className='mb-4 text-lg font-semibold text-gray-900'>Trạng thái xe</h3>
-                <ResponsiveContainer width='100%' height={300}>
-                  <PieChart>
-                    <Pie
-                      data={vehicleStats}
-                      cx='50%'
-                      cy='50%'
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={2}
-                      dataKey='value'
+            {station.rentals?.length > 0 ? (
+              <div className='space-y-3'>
+                {station.rentals.map((rental) => (
+                  <div
+                    key={rental.id}
+                    className='flex items-center justify-between rounded-md border p-3 hover:cursor-pointer hover:bg-gray-50'
+                    onClick={() => navigate(`/dashboard/rentals/${rental.id}`)}
+                  >
+                    <div>
+                      <p className='text-sm text-gray-500'>
+                        <span className='font-medium text-gray-900'>User:</span> {rental.userEmail}
+                      </p>
+                      <p className='text-sm text-gray-500'>
+                        <span className='font-medium text-gray-900'>Time:</span>
+                        {formatHourDate(rental.startTime)} — {formatHourDate(rental.endTime)}
+                      </p>
+                    </div>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        rental.status === 'COMPLETED'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}
                     >
-                      {vehicleStats.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className='mt-4 space-y-2'>
-                  {vehicleStats.map((stat) => (
-                    <div key={stat.name} className='flex items-center justify-between'>
-                      <span className='flex items-center gap-2 text-sm text-gray-600'>
+                      {rental.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className='text-gray-500'>Chưa có lịch sử thuê xe.</p>
+            )}
+          </div>
+          <div className='rounded-xl bg-white p-6 shadow-lg'>
+            <div className='mb-6 flex items-center justify-between'>
+              <h3 className='flex items-center text-xl font-semibold text-gray-800'>
+                <DollarSign className='mr-2 h-6 w-6 text-green-500' />
+                Báo cáo doanh thu
+              </h3>
+            </div>
+            {loadingRevenue ? (
+              <Loader />
+            ) : (
+              <ResponsiveContainer width='100%' height={300}>
+                <LineChart data={revenue}>
+                  <CartesianGrid strokeDasharray='3 3' stroke='#e5e7eb' />
+                  <XAxis dataKey='name' stroke='#6b7280' />
+                  <YAxis stroke='#6b7280' />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value) => [`${formatCurrency(value)}`, 'Doanh thu']}
+                  />
+                  <Legend />
+                  <Line
+                    type='monotone'
+                    dataKey='data'
+                    stroke='#3b82f6'
+                    strokeWidth={3}
+                    name='Doanh thu (VNĐ)'
+                    dot={{ fill: '#3b82f6', r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+            <div className='mt-4 grid grid-cols-3 gap-4'>
+              <div className='rounded-lg bg-blue-50 p-3 text-center'>
+                <p className='mb-1 text-sm text-gray-600'>Tổng thu</p>
+                <p className='text-xl font-bold text-blue-600'>{formatCurrency(totalRevenue)}</p>
+              </div>
+              <div className='rounded-lg bg-green-50 p-3 text-center'>
+                <p className='mb-1 text-sm text-gray-600'>Trung bình</p>
+                <p className='text-xl font-bold text-green-600'>{formatCurrency(averageRevenue)}</p>
+              </div>
+              <div className='rounded-lg bg-purple-50 p-3 text-center'>
+                <p className='mb-1 text-sm text-gray-600'>Cao nhất</p>
+                <p className='text-xl font-bold text-purple-600'>{formatCurrency(maxRevenue)}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className='rounded-xl bg-white p-6 shadow-lg'>
+            <div className='mb-6 flex items-center justify-between'>
+              <h3 className='flex items-center text-xl font-semibold text-gray-800'>
+                <Zap className='mr-2 h-6 w-6 text-blue-500' />
+                Trạng thái xe hiện tại
+              </h3>
+            </div>
+            {loadingCar ? (
+              <Loader />
+            ) : (
+              <div>
+                <div className='flex items-center justify-center'>
+                  <ResponsiveContainer width='100%' height={300}>
+                    <PieChart>
+                      <Pie
+                        data={carQuantity}
+                        cx='50%'
+                        cy='50%'
+                        labelLine={false}
+                        label={({ status, quantity, percent }) =>
+                          `${status}: ${quantity} (${(percent * 100).toFixed(0)}%)`
+                        }
+                        outerRadius={100}
+                        fill='#8884d8'
+                        dataKey='quantity'
+                      >
+                        {carQuantity.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={statusColors[entry.status] || '#6b7280'}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className='mt-4 grid grid-cols-3 gap-3'>
+                  {carQuantity.map((item, index) => (
+                    <div
+                      key={index}
+                      className='flex items-center justify-between rounded-lg bg-gray-50 p-3'
+                    >
+                      <div className='flex items-center'>
                         <div
-                          className='h-3 w-3 rounded-full'
-                          style={{ backgroundColor: stat.color }}
-                        ></div>
-                        {stat.name}
-                      </span>
-                      <span className='font-semibold text-gray-900'>{stat.value}</span>
+                          className='mr-2 h-4 w-4 rounded-full'
+                          style={{ backgroundColor: statusColors[item.status] }}
+                        />
+                        <span className='text-sm text-gray-700'>{item.status}</span>
+                      </div>
+                      <span className='font-bold text-gray-800'>{item.quantity}</span>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* Vehicles Tab */}
-          {activeTab === 'vehicles' && (
-            <div className='rounded-lg border border-gray-200 bg-white'>
-              <div className='border-b border-gray-200 p-6'>
-                <div className='flex items-center justify-between gap-4'>
-                  <div className='relative flex-1'>
-                    <Search className='absolute top-3 left-3 h-5 w-5 text-gray-400' />
-                    <input
-                      type='text'
-                      placeholder='Tìm kiếm xe...'
-                      value={searchVehicle}
-                      onChange={(e) => setSearchVehicle(e.target.value)}
-                      className='w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10'
-                    />
-                  </div>
-                  <button className='flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'>
-                    <Plus className='h-5 w-5' />
-                    Thêm xe
-                  </button>
-                </div>
-              </div>
-
-              <div className='overflow-x-auto'>
-                <table className='w-full'>
-                  <thead>
-                    <tr className='border-b border-gray-200 bg-gray-50'>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Tên xe
-                      </th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Loại
-                      </th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Biển số
-                      </th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Năm
-                      </th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Trạng thái
-                      </th>
-                      <th className='px-6 py-3 text-center text-sm font-semibold text-gray-900'>
-                        Hành động
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredVehicles.map((vehicle) => (
-                      <tr key={vehicle.id} className='border-b border-gray-100 hover:bg-gray-50'>
-                        <td className='px-6 py-4 font-medium text-gray-900'>{vehicle.name}</td>
-                        <td className='px-6 py-4 text-gray-600'>{vehicle.type}</td>
-                        <td className='px-6 py-4 text-gray-600'>{vehicle.plate}</td>
-                        <td className='px-6 py-4 text-gray-600'>{vehicle.year}</td>
-                        <td className='px-6 py-4'>
-                          <span
-                            className={`inline rounded-full px-3 py-1 text-xs font-semibold ${getStatusColor(vehicle.status)}`}
-                          >
-                            {vehicle.status}
-                          </span>
-                        </td>
-                        <td className='px-6 py-4 text-center'>
-                          <button className='rounded p-2 hover:bg-gray-200'>
-                            <MoreVertical className='h-5 w-5 text-gray-400' />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Staff Tab */}
-          {activeTab === 'staff' && (
-            <div className='rounded-lg border border-gray-200 bg-white'>
-              <div className='border-b border-gray-200 p-6'>
-                <div className='flex items-center justify-between gap-4'>
-                  <div className='relative flex-1'>
-                    <Search className='absolute top-3 left-3 h-5 w-5 text-gray-400' />
-                    <input
-                      type='text'
-                      placeholder='Tìm kiếm nhân viên...'
-                      value={searchStaff}
-                      onChange={(e) => setSearchStaff(e.target.value)}
-                      className='w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10'
-                    />
-                  </div>
-                  <button className='flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'>
-                    <Plus className='h-5 w-5' />
-                    Thêm nhân viên
-                  </button>
-                </div>
-              </div>
-
-              <div className='overflow-x-auto'>
-                <table className='w-full'>
-                  <thead>
-                    <tr className='border-b border-gray-200 bg-gray-50'>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Tên
-                      </th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Chức vụ
-                      </th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Điện thoại
-                      </th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Email
-                      </th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                        Trạng thái
-                      </th>
-                      <th className='px-6 py-3 text-center text-sm font-semibold text-gray-900'>
-                        Hành động
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredStaff.map((member) => (
-                      <tr key={member.id} className='border-b border-gray-100 hover:bg-gray-50'>
-                        <td className='px-6 py-4 font-medium text-gray-900'>{member.name}</td>
-                        <td className='px-6 py-4 text-gray-600'>{member.position}</td>
-                        <td className='px-6 py-4 text-gray-600'>{member.phone}</td>
-                        <td className='px-6 py-4 text-gray-600'>{member.email}</td>
-                        <td className='px-6 py-4'>
-                          <span
-                            className={`inline rounded-full px-3 py-1 text-xs font-semibold ${getStatusColor(member.status)}`}
-                          >
-                            {member.status}
-                          </span>
-                        </td>
-                        <td className='px-6 py-4 text-center'>
-                          <button className='rounded p-2 hover:bg-gray-200'>
-                            <MoreVertical className='h-5 w-5 text-gray-400' />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

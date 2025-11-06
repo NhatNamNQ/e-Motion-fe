@@ -32,9 +32,17 @@ const LoginPage = () => {
         toast.success('Đăng nhập thành công')
         switch (userResult.payload.role) {
           case 'ROLE_ADMIN':
-          case 'ROLE_STAFF':
             navigate('/dashboard')
             break
+          case 'ROLE_STAFF': {
+            const stationId = userResult.payload.station?.id
+            if (stationId) {
+              navigate(`/dashboard/stations/${stationId}`)
+            } else {
+              toast.error('Không tìm thấy trạm của nhân viên')
+            }
+            break
+          }
           default:
             navigate('/')
         }
