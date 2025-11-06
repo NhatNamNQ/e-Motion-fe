@@ -36,7 +36,7 @@ const HistoryPage = ({ user }) => {
       }
     }
     fetchData()
-  }, [])
+  }, [user.email])
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('vi-VN')

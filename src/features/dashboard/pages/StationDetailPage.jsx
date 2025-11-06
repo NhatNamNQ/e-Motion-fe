@@ -80,44 +80,44 @@ const StationDetailPage = () => {
     'Đang bảo trì': '#ef4444'
   }
 
-  const getStation = async () => {
-    setLoading(true)
-    try {
-      const res = await stationService.getStationById(stationId)
-      setStation(res)
-    } catch (error) {
-      toast.error('Get station failed: ' + error.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const getStationRevenue = async () => {
-    setLoadingRevenue(true)
-    try {
-      const res = await stationService.getRevenueOfStation(stationId)
-      setRevenue(res)
-    } catch (error) {
-      toast.error('Get station revenue failed: ' + error.message)
-    } finally {
-      setLoadingRevenue(false)
-    }
-  }
-
-  const getCarQuantity = async () => {
-    setLoadingCar(true)
-    try {
-      const res = await carService.getCarQuantityEachStatusOfStation(stationId)
-      console.log(res)
-      setCarQuantity(res)
-    } catch (error) {
-      toast.error('Get station car quantity failed: ' + error.message)
-    } finally {
-      setLoadingCar(false)
-    }
-  }
-
   useEffect(() => {
+    const getStation = async () => {
+      setLoading(true)
+      try {
+        const res = await stationService.getStationById(stationId)
+        setStation(res)
+      } catch (error) {
+        toast.error('Get station failed: ' + error.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    const getStationRevenue = async () => {
+      setLoadingRevenue(true)
+      try {
+        const res = await stationService.getRevenueOfStation(stationId)
+        setRevenue(res)
+      } catch (error) {
+        toast.error('Get station revenue failed: ' + error.message)
+      } finally {
+        setLoadingRevenue(false)
+      }
+    }
+
+    const getCarQuantity = async () => {
+      setLoadingCar(true)
+      try {
+        const res = await carService.getCarQuantityEachStatusOfStation(stationId)
+        console.log(res)
+        setCarQuantity(res)
+      } catch (error) {
+        toast.error('Get station car quantity failed: ' + error.message)
+      } finally {
+        setLoadingCar(false)
+      }
+    }
+
     getStation()
     getStationRevenue()
     getCarQuantity()

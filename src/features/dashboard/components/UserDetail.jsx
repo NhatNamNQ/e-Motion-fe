@@ -5,37 +5,6 @@ import HistoryPage from '@/features/profile/pages/HistoryPage'
 
 export default function UserDetail({ user }) {
   const [activeTab, setActiveTab] = useState('info')
-
-  const rentalHistory = [
-    {
-      id: 1,
-      car: 'Honda City 2023',
-      startDate: '15/10/2024',
-      endDate: '17/10/2024',
-      location: 'Quận 1, TPHCM',
-      status: 'Hoàn thành',
-      price: '1,500,000đ'
-    },
-    {
-      id: 2,
-      car: 'Toyota Vios 2022',
-      startDate: '05/09/2024',
-      endDate: '07/09/2024',
-      location: 'Quận 3, TPHCM',
-      status: 'Hoàn thành',
-      price: '1,200,000đ'
-    },
-    {
-      id: 3,
-      car: 'Mazda 3 2023',
-      startDate: '20/08/2024',
-      endDate: '22/08/2024',
-      location: 'Quận 7, TPHCM',
-      status: 'Hoàn thành',
-      price: '1,800,000đ'
-    }
-  ]
-
   return (
     <div className='bg-white shadow-lg'>
       <div className='flex border-b'>
