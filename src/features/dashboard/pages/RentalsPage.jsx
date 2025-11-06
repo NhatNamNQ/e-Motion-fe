@@ -25,7 +25,7 @@ const RentalsPage = () => {
 
   const navigate = useNavigate()
 
-  const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING', 'CONFIRM']
+  const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING_FEE', 'CONFIRM']
 
   const columns = [
     columnHelper.accessor('id', {
