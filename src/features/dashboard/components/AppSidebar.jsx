@@ -1,10 +1,4 @@
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -18,12 +12,12 @@ import {
 import {
   LayoutDashboard,
   User2,
-  ChevronUp,
   SquarePen,
   BookOpen,
   Package,
   ClipboardPenLine,
-  MapPin
+  MapPin,
+  Car
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -67,6 +61,11 @@ export function AppSidebar() {
       title: 'Users',
       url: '/dashboard/users',
       icon: User2
+    },
+    {
+      title: 'Cars',
+      url: '/dashboard/cars',
+      icon: Car
     }
   ]
 

@@ -12,7 +12,7 @@ export default function ProfilePage({ user }) {
   const dispatch = useDispatch()
   const currentUser = useSelector(selectUser)
   const canEdit = user == null
-  if (user == null) {
+  if (canEdit) {
     user = currentUser
   }
   const isLoading = useSelector(selectAuthLoading)

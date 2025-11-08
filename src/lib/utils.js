@@ -39,6 +39,13 @@ export const formatHourDate = (dateString) => {
   return `${hours}:${minutes} - ${day}/${month}/${year}`
 }
 
+export const formatTime = (date) => {
+  return new Intl.DateTimeFormat('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date)
+}
+
 export const uploadImage = async (file, folderName) => {
   const cloudName = import.meta.env.VITE_CLOUD_NAME
   const uploadPreset = import.meta.env.VITE_UPLOAD_PRESET

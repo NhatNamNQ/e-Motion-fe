@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { UserPlus, CirclePlus, X } from 'lucide-react'
+import { Car, CirclePlus, X } from 'lucide-react'
 import { userService } from '../services/userService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
 import UserForm from '../components/UserForm'
-import { statusOptions, roleOptions } from '../constants/userConfig'
+import { statusOptions } from '../constants/userConfig'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -24,13 +24,13 @@ import {
   SelectItem
 } from '@/components/ui/select'
 
-import UsersTable from '../components/UsersTable'
+import CarsTable from '../components/CarsTable'
 import { useDebounce } from 'use-debounce'
 import { stationService } from '../services/stationService'
 import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
 
-const UsersPage = () => {
+const CarsPage = () => {
   const currentUser = useSelector(selectUser)
   const isAdmin = currentUser.role === 'ROLE_ADMIN'
 
@@ -40,7 +40,6 @@ const UsersPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [users, setUsers] = useState([])
   const [selectedStatuses, setSelectedStatuses] = useState([])
-  const [selectedRoles, setSelectedRoles] = useState([])
   const [selectedStation, setSelectedStation] = useState(null)
   const [mode, setMode] = useState({
     type: 'add',
@@ -48,7 +47,7 @@ const UsersPage = () => {
   })
   const [showUserForm, setShowUserForm] = useState(false)
   const [searchKey, setSearchKey] = useState('')
-  const [debouncedFilter] = useDebounce(searchKey, 500)
+  const [debouncedSearch] = useDebounce(searchKey, 500)
   const [stations, setStations] = useState([])
 
   const fetchUsers = useCallback(async () => {
@@ -58,8 +57,7 @@ const UsersPage = () => {
         currentPage,
         limitPerPage,
         selectedStatuses,
-        selectedRoles,
-        debouncedFilter,
+        debouncedSearch,
         selectedStation?.id
       )
       const userData = res.content.map((user) => ({
@@ -79,14 +77,7 @@ const UsersPage = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [
-    currentPage,
-    debouncedFilter,
-    limitPerPage,
-    selectedRoles,
-    selectedStation?.id,
-    selectedStatuses
-  ])
+  }, [currentPage, debouncedSearch, limitPerPage, selectedStation?.id, selectedStatuses])
   const handleClickFilterStatus = (status) => {
     if (selectedStatuses.includes(status)) {
       setSelectedStatuses(selectedStatuses.filter((s) => s !== status))
@@ -95,17 +86,8 @@ const UsersPage = () => {
     }
   }
 
-  const handleClickFilterRole = (role) => {
-    if (selectedRoles.includes(role)) {
-      setSelectedRoles(selectedRoles.filter((r) => r !== role))
-    } else {
-      setSelectedRoles([...selectedRoles, role])
-    }
-  }
-
   const clearFilters = () => {
     setSelectedStatuses([])
-    setSelectedRoles([])
     setSelectedStation(null)
   }
 
@@ -145,7 +127,6 @@ const UsersPage = () => {
   }
 
   const handleFilterStation = (station) => {
-    setSelectedRoles(['ROLE_STAFF'])
     setSelectedStation(station)
   }
 
@@ -162,15 +143,7 @@ const UsersPage = () => {
       }
     }
     fetchStationNames()
-  }, [
-    currentPage,
-    limitPerPage,
-    fetchUsers,
-    selectedStatuses,
-    selectedRoles,
-    debouncedFilter,
-    selectedStation
-  ])
+  }, [currentPage, limitPerPage, fetchUsers, selectedStatuses, debouncedSearch, selectedStation])
 
   const tableProps = {
     users,
@@ -192,12 +165,12 @@ const UsersPage = () => {
         <div className='mb-8'>
           <div className='mb-2 flex items-start justify-between'>
             <div>
-              <h1 className='text-3xl font-bold text-gray-900'>Manage Users</h1>
-              <p className='mt-1 text-gray-500'>Manage your users and their roles here.</p>
+              <h1 className='text-3xl font-bold text-gray-900'>Manage Cars</h1>
+              <p className='mt-1 text-gray-500'>Manage your cars here.</p>
             </div>
             <Button onClick={handleCLickAddUserBtn}>
-              <UserPlus className='h-4 w-4' />
-              Add User
+              +<Car className='h-4 w-4' />
+              Add New Car
             </Button>
           </div>
         </div>
@@ -207,7 +180,7 @@ const UsersPage = () => {
           <div className='flex items-center justify-between'>
             <div className='flex flex-1 items-center gap-4'>
               <Input
-                placeholder='Filter users...'
+                placeholder='Filter car name...'
                 value={searchKey ?? ''}
                 onChange={(e) => setSearchKey(e.target.value)}
                 className='h-8 w-[150px] pl-8 lg:w-[250px]'
@@ -264,60 +237,6 @@ const UsersPage = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className={`flex items-center gap-2 rounded-lg border px-4 py-1 transition ${
-                      selectedRoles.length > 0
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <CirclePlus className='size-4' />
-                    Role
-                    {selectedRoles.length > 0 && (
-                      <span className='ml-2 flex flex-wrap gap-1'>
-                        {selectedRoles.map((role) => (
-                          <span
-                            key={role}
-                            className='rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700'
-                          >
-                            {roleOptions.find((r) => r.value === role)?.label || role}
-                          </span>
-                        ))}
-                      </span>
-                    )}
-                  </button>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent align='start' className='w-60'>
-                  <DropdownMenuItem>
-                    <h3 className='font-semibold text-gray-900'>Filter by Role</h3>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSeparator />
-                  {roleOptions
-                    .filter((role) => !isAdmin && role.value !== 'ROLE_ADMIN')
-                    .map((role) => (
-                      <Label>
-                        <DropdownMenuItem className='w-full'>
-                          <Checkbox
-                            checked={selectedRoles.includes(role.value)}
-                            onCheckedChange={() => handleClickFilterRole(role.value)}
-                            className='data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 [&_svg]:!text-white'
-                          />
-                          <div className='flex w-full justify-between px-3'>
-                            <span className='text-sm text-gray-700'>{role.label}</span>
-                            <role.icon
-                              className={`h-4 w-4 ${role.value === 'ROLE_ADMIN' ? 'text-red-500' : 'text-gray-600'}`}
-                            />
-                          </div>
-                        </DropdownMenuItem>
-                      </Label>
-                    ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
               {isAdmin && (
                 <Select
                   onValueChange={(stationId) => {
@@ -339,9 +258,7 @@ const UsersPage = () => {
                 </Select>
               )}
 
-              {(selectedRoles.length > 0 ||
-                selectedStatuses.length > 0 ||
-                selectedStation != null) && (
+              {(selectedStatuses.length > 0 || selectedStation != null) && (
                 <button
                   onClick={clearFilters}
                   className='flex items-center gap-2 rounded-lg p-3 px-4 py-2 hover:cursor-pointer hover:bg-gray-200'
@@ -355,7 +272,7 @@ const UsersPage = () => {
         </div>
 
         {/* Table */}
-        {isLoading ? <Loader /> : <UsersTable {...tableProps} />}
+        {isLoading ? <Loader /> : <CarsTable {...tableProps} />}
 
         {/* Add User Modal */}
         {showUserForm && (
@@ -371,4 +288,4 @@ const UsersPage = () => {
   )
 }
 
-export default UsersPage
+export default CarsPage
