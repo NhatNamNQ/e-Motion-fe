@@ -83,7 +83,6 @@ const CheckInPage = () => {
       setUploadingImage(true)
       const imageUrl = await uploadImage(imageFiles[0], 'check-in')
       form.setValue('img', imageUrl)
-      toast.success('Image uploaded successfully')
       setImageFiles([])
     } catch (error) {
       console.error('Upload error:', error)

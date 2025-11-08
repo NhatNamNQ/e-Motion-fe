@@ -125,6 +125,7 @@ const RentalDetailPage = () => {
   const isPendingFee = rental.status === 'PENDING_FEE'
   const hasVehicleLog = !!rental.vehicleLog
   const isCompleted = rental.status === 'COMPLETED'
+  const isOverdue = rental.status === 'OVERDUE'
 
   return (
     <div className='container mx-auto p-4 md:p-6'>
@@ -291,7 +292,7 @@ const RentalDetailPage = () => {
                   </Button>
                   <Button
                     onClick={handleCreateCheckOut}
-                    disabled={!isOngoing}
+                    disabled={!isOngoing && !isOverdue}
                     className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                   >
                     Tạo biên bản trả xe

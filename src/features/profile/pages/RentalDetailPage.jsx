@@ -9,6 +9,30 @@ import { profileService } from '../service/profileService'
 import { formatCurrency, getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import CarImageGallery from '@/features/cars/components/detail/CarImageGallery'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { toast } from 'sonner'
 
 const RentalDetailPage = () => {
   const { id } = useParams()
@@ -16,6 +40,9 @@ const RentalDetailPage = () => {
   const [rental, setRental] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [extending, setExtending] = useState(false)
+  const [isExtendDialogOpen, setIsExtendDialogOpen] = useState(false)
+  const [newEndTime, setNewEndTime] = useState('')
 
   const fetchRentalDetail = useCallback(async () => {
     if (!id) return
@@ -35,6 +62,40 @@ const RentalDetailPage = () => {
   useEffect(() => {
     fetchRentalDetail()
   }, [fetchRentalDetail])
+
+  const handleExtendRental = async () => {
+    try {
+      if (!newEndTime) {
+        toast.error('Vui lòng chọn thời gian kết thúc mới')
+        return
+      }
+
+      const selectedTime = new Date(newEndTime)
+      const currentEndTime = new Date(rental.endTime)
+
+      if (selectedTime <= currentEndTime) {
+        toast.error('Thời gian kết thúc mới phải sau thời gian kết thúc hiện tại')
+        return
+      }
+
+      setExtending(true)
+      await profileService.extendRental(id, {
+        endTime: new Date(newEndTime).toISOString()
+      })
+      toast.success('Gia hạn hợp đồng thành công')
+      setIsExtendDialogOpen(false)
+      setNewEndTime('')
+      // Refresh rental data
+      const data = await profileService.getRentalDetail(id)
+      setRental(data)
+    } catch (error) {
+      toast.error(error.message || 'Không thể gia hạn hợp đồng')
+    } finally {
+      setExtending(false)
+    }
+  }
+
+  const canExtend = rental?.status === 'ONGOING'
 
   if (loading) return <Loader />
   if (error) return <div className='text-center text-red-500'>Error: {error}</div>
@@ -73,7 +134,9 @@ const RentalDetailPage = () => {
           <h1 className='text-3xl font-bold'>Chi tiết Hợp đồng #{rental.id}</h1>
           <p className='text-muted-foreground mt-1'>Tạo lúc: {formatDateTime(rental.createdAt)}</p>
         </div>
-        <Badge className={`text-base ${getStatusColor(rental.status)}`}>{rental.status}</Badge>
+        <div className='flex items-center gap-3'>
+          <Badge className={`text-base ${getStatusColor(rental.status)}`}>{rental.status}</Badge>
+        </div>
       </div>
 
       {rental.vehicle.images && <CarImageGallery car={rental.vehicle} />}
@@ -219,6 +282,60 @@ const RentalDetailPage = () => {
             </div>
           )}
         </div>
+
+        <Separator />
+
+        {/* Extend Rental Button */}
+        {canExtend && (
+          <Dialog open={isExtendDialogOpen} onOpenChange={setIsExtendDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className='bg-primary hover:bg-primary/80' disabled={extending}>
+                {extending ? <Spinner /> : 'Gia hạn hợp đồng'}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Gia hạn hợp đồng thuê xe</DialogTitle>
+                <DialogDescription>
+                  Chọn thời gian kết thúc mới cho hợp đồng #{rental.id}
+                </DialogDescription>
+              </DialogHeader>
+              <div className='grid gap-4 py-4'>
+                <div className='grid gap-2'>
+                  <Label htmlFor='currentEndTime'>Thời gian kết thúc hiện tại</Label>
+                  <Input
+                    id='currentEndTime'
+                    value={formatDateTime(rental.endTime)}
+                    disabled
+                    className='bg-muted'
+                  />
+                </div>
+                <div className='grid gap-2'>
+                  <Label htmlFor='newEndTime'>Thời gian kết thúc mới</Label>
+                  <Input
+                    id='newEndTime'
+                    type='datetime-local'
+                    value={newEndTime}
+                    onChange={(e) => setNewEndTime(e.target.value)}
+                    min={format(new Date(rental.endTime), "yyyy-MM-dd'T'HH:mm")}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant='outline'
+                  onClick={() => setIsExtendDialogOpen(false)}
+                  disabled={extending}
+                >
+                  Hủy
+                </Button>
+                <Button onClick={handleExtendRental} disabled={extending}>
+                  {extending ? <Spinner /> : 'Xác nhận gia hạn'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   )

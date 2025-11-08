@@ -12,11 +12,13 @@ import { PersistGate } from 'redux-persist/integration/react'
 const router = createBrowserRouter(routes)
 
 createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <PersistGate loading={<Loader />} persistor={persistor}>
-      <AuthInitializer>
-        <RouterProvider router={router} />
-      </AuthInitializer>
-    </PersistGate>
-  </Provider>
+  <StrictMode>
+    <Provider store={store}>
+      <PersistGate loading={<Loader />} persistor={persistor}>
+        <AuthInitializer>
+          <RouterProvider router={router} />
+        </AuthInitializer>
+      </PersistGate>
+    </Provider>
+  </StrictMode>
 )

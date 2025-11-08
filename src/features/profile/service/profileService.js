@@ -33,5 +33,13 @@ export const profileService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  cancelReservation: async (code) => {
+    try {
+      const { data } = await instance.post(`/reservations/${code}/cancel`, code)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

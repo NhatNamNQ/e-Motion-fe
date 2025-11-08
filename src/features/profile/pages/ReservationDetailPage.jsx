@@ -10,12 +10,25 @@ import { toast } from 'sonner'
 import { getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import CarImageGallery from '@/features/cars/components/detail/CarImageGallery'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import { Spinner } from '@/components/ui/spinner'
 
 const ReservationDetailPage = () => {
   const { code } = useParams()
   const navigate = useNavigate()
   const [reservation, setReservation] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [cancelling, setCancelling] = useState(false)
 
   useEffect(() => {
     const fetchReservation = async () => {
@@ -32,6 +45,22 @@ const ReservationDetailPage = () => {
     }
     fetchReservation()
   }, [code])
+
+  const handleCancelReservation = async () => {
+    try {
+      setCancelling(true)
+      await profileService.cancelReservation(code)
+      toast.success('Hủy đặt trước thành công')
+      const data = await profileService.getReservationDetail(code)
+      setReservation(data)
+    } catch (error) {
+      toast.error(error.message || 'Không thể hủy đặt trước')
+    } finally {
+      setCancelling(false)
+    }
+  }
+
+  const canCancel = reservation?.status === 'CONFIRM'
 
   if (loading) {
     return <Loader />
@@ -67,9 +96,11 @@ const ReservationDetailPage = () => {
             Tạo lúc: {formatDateTime(reservation.createdAt)}
           </p>
         </div>
-        <Badge className={`text-base ${getStatusColor(reservation.status)}`}>
-          {reservation.status}
-        </Badge>
+        <div className='flex items-center gap-3'>
+          <Badge className={`text-base ${getStatusColor(reservation.status)}`}>
+            {reservation.status}
+          </Badge>
+        </div>
       </div>
 
       {reservation.vehicle.images && <CarImageGallery car={reservation.vehicle} />}
@@ -101,23 +132,33 @@ const ReservationDetailPage = () => {
           </div>
         </div>
         <Separator />
-        <div className='space-y-4'>
-          <h2 className='flex items-center gap-2 text-2xl font-bold'>
-            <Bell size={22} /> Trạng thái thông báo
-          </h2>
-          <div className='flex items-center justify-between text-sm'>
-            <span>Sắp hết hạn:</span>
-            <Badge variant={reservation.expiringNotified ? 'default' : 'secondary'}>
-              {reservation.expiringNotified ? 'Đã gửi' : 'Chưa gửi'}
-            </Badge>
-          </div>
-          <div className='flex items-center justify-between text-sm'>
-            <span>Quá hạn:</span>
-            <Badge variant={reservation.overdueNotified ? 'default' : 'secondary'}>
-              {reservation.overdueNotified ? 'Đã gửi' : 'Chưa gửi'}
-            </Badge>
-          </div>
-        </div>
+        {canCancel && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant='destructive' disabled={cancelling}>
+                {cancelling ? <Spinner /> : 'Hủy đặt trước'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Xác nhận hủy đặt trước</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Bạn có chắc chắn muốn hủy đơn đặt chỗ #{reservation.code}? Hành động này không thể
+                  hoàn tác.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Không</AlertDialogCancel>
+                <AlertDialogAction
+                  className='bg-destructive hover:bg-destructive/80'
+                  onClick={handleCancelReservation}
+                >
+                  Đồng ý hủy
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
     </div>
   )

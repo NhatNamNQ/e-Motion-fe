@@ -41,7 +41,7 @@ const BookingPage = () => {
   }
 
   const handleViewReservationDetail = () => {
-    navigate(`/account/reservation/${payment.reservationCode}`)
+    navigate(`/account/reservations/${payment.reservationResponse.code}`)
   }
 
   if (!car && !status) {
