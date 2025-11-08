@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import BookingForm from '../components/BookingForm'
 import BookingProgress from '../components/BookingProgress'
 import { useSelector } from 'react-redux'
@@ -13,6 +13,7 @@ import FailedPaymentCard from '../../../components/FailedPaymentCard'
 
 const BookingPage = () => {
   const location = useLocation()
+  const navigate = useNavigate()
   const payment = location?.state?.payment
   const status = payment?.status
   const txnRef = payment?.txnRef
@@ -39,6 +40,10 @@ const BookingPage = () => {
     }
   }
 
+  const handleViewReservationDetail = () => {
+    navigate(`/account/reservation/${payment.reservationCode}`)
+  }
+
   if (!car && !status) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
@@ -58,7 +63,7 @@ const BookingPage = () => {
         <BookingProgress status={status} />
         {status ? (
           status === 'SUCCESS' ? (
-            <SuccessPaymentCard txnRef={txnRef} />
+            <SuccessPaymentCard txnRef={txnRef} onNavigate={handleViewReservationDetail} />
           ) : (
             <FailedPaymentCard />
           )

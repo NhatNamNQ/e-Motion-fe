@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 import { profileService } from '../service/profileService'
-import { getStatusColor } from '@/lib/utils'
+import { formatHourDate, getStatusColor } from '@/lib/utils'
 import Loader from '@/components/Loader'
 import HistoryCard from '../components/HistoryCard'
 import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
+import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 
 const HistoryPage = ({ user }) => {
   const [reservations, setReservations] = useState([])
   const [rentals, setRentals] = useState([])
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [tab, setTab] = useState('reservations')
@@ -38,10 +41,6 @@ const HistoryPage = ({ user }) => {
     fetchData()
   }, [user.email])
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('vi-VN')
-  }
-
   if (loading) return <Loader />
   if (error)
     return (
@@ -51,56 +50,64 @@ const HistoryPage = ({ user }) => {
     )
 
   return (
-    <div className='min-h-screen w-full bg-gray-50 py-8'>
-      <h1 className='mb-8 text-3xl font-bold'>Lịch sử</h1>
-      <div className='mb-6 flex gap-4'>
-        <button
-          className={`rounded px-4 py-2 ${tab === 'reservations' ? 'bg-secondary text-white' : 'bg-gray-200'}`}
+    <div className='w-full py-8'>
+      <h1 className='mb-6 text-3xl font-bold'>Lịch sử của tôi</h1>
+      <div className='mb-6 flex gap-3'>
+        <Button
+          variant={tab === 'reservations' ? 'default' : 'outline'}
           onClick={() => setTab('reservations')}
+          className={`rounded-lg ${
+            tab === 'reservations' ? 'bg-secondary text-background hover:bg-secondary/90' : ''
+          }`}
         >
           Lịch sử đặt chỗ
-        </button>
-        <button
-          className={`rounded px-4 py-2 ${tab === 'rentals' ? 'bg-secondary text-white' : 'bg-gray-200'}`}
+        </Button>
+        <Button
+          variant={tab === 'rentals' ? 'default' : 'outline'}
           onClick={() => setTab('rentals')}
+          className={`rounded-lg ${
+            tab === 'rentals' ? 'bg-secondary text-background hover:bg-secondary/90' : ''
+          }`}
         >
           Lịch sử thuê xe
-        </button>
+        </Button>
       </div>
 
-      <div>
+      <div className='space-y-4'>
         {tab === 'reservations' ? (
           reservations.length === 0 ? (
-            <div className='py-12 text-center'>
-              <p className='text-lg text-gray-500'>Không có lịch sử đặt chỗ nào.</p>
+            <div className='rounded-lg bg-white p-12 text-center shadow-sm'>
+              <p className='text-lg text-gray-500'>Bạn chưa có đơn đặt chỗ nào.</p>
             </div>
           ) : (
             reservations.map((reservation) => (
               <HistoryCard
                 key={reservation.code}
-                image={reservation.vehicle.images[0].url || 'https://placehold.co/400x300'}
+                image={reservation.vehicle.images[0]?.url || 'https://placehold.co/400x300'}
                 title={reservation.vehicle.name}
-                dateRange={`${formatDate(reservation.createdAt)} - ${formatDate(reservation.endTime)}`}
-                price={reservation.totalPrice}
+                location={reservation.vehicle.station.name}
+                timeInfo={`Đặt lúc: ${formatHourDate(reservation.createdAt)}`}
                 status={reservation.status}
                 statusClass={getStatusColor(reservation.status)}
+                onClick={() => navigate(`/account/reservations/${reservation.code}`)}
               />
             ))
           )
         ) : rentals.length === 0 ? (
-          <div className='py-12 text-center'>
-            <p className='text-lg text-gray-500'>Không có lịch sử thuê xe nào.</p>
+          <div className='rounded-lg bg-white p-12 text-center shadow-sm'>
+            <p className='text-lg text-gray-500'>Bạn chưa có hợp đồng thuê xe nào.</p>
           </div>
         ) : (
           rentals.map((rental) => (
             <HistoryCard
               key={rental.id}
-              image={rental.vehicle.images[0].url || 'https://placehold.co/400x300'}
+              image={rental.vehicle.images[0]?.url || 'https://placehold.co/400x300'}
               title={rental.vehicle.name}
-              dateRange={`${formatDate(rental.startTime)} - ${formatDate(rental.endTime)}`}
-              price={rental.totalPrice}
+              location={rental.vehicle.station.name}
+              timeInfo={`${formatHourDate(rental.startTime)} - ${formatHourDate(rental.endTime)}`}
               status={rental.status}
               statusClass={getStatusColor(rental.status)}
+              onClick={() => navigate(`/account/rentals/${rental.id}`)}
             />
           ))
         )}

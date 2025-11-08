@@ -17,5 +17,21 @@ export const profileService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getReservationDetail: async (code) => {
+    try {
+      const { data } = await instance.get(`/reservations/me/${code}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getRentalDetail: async (id) => {
+    try {
+      const { data } = await instance.get(`/rentals/me/details/${id}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

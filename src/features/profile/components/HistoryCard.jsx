@@ -1,18 +1,26 @@
 import { Badge } from '@/components/ui/badge'
+import { Calendar, MapPin } from 'lucide-react'
 
-const HistoryCard = ({ image, title, dateRange, price, status, statusClass }) => (
-  <div className='mb-4 flex items-center overflow-hidden rounded-2xl bg-white shadow-sm'>
-    <img src={image} alt={title} className='h-32 w-48 object-cover' />
-    <div className='flex flex-1 flex-col px-8 py-6 md:flex-row md:items-center'>
-      <div className='flex-1'>
-        <div className='mb-2 text-2xl font-bold'>{title}</div>
-        <div className='mb-2 text-gray-500'>{dateRange}</div>
+const HistoryCard = ({ image, title, location, timeInfo, status, statusClass, onClick }) => (
+  <div
+    className='mb-4 flex cursor-pointer flex-col overflow-hidden rounded-lg bg-white shadow-sm transition hover:shadow-md md:flex-row'
+    onClick={onClick}
+  >
+    <img src={image} alt={title} className='h-48 w-full object-cover md:h-40 md:w-56' />
+    <div className='flex flex-1 flex-col justify-between p-4 md:p-6'>
+      <div>
+        <h3 className='mb-2 text-xl font-bold'>{title}</h3>
+        <div className='mb-2 flex items-center gap-2 text-sm text-gray-600'>
+          <MapPin size={16} />
+          <span>{location}</span>
+        </div>
+        <div className='flex items-center gap-2 text-sm text-gray-600'>
+          <Calendar size={16} />
+          <span>{timeInfo}</span>
+        </div>
       </div>
-      <div className='flex min-w-[160px] flex-col items-end gap-2'>
-        {price && (
-          <div className='text-right text-2xl font-bold'>{price.toLocaleString('vi-VN')}đ</div>
-        )}
-        <Badge className={statusClass + ' rounded-full px-6 py-2 text-base'}>{status}</Badge>
+      <div className='flex items-center justify-end'>
+        <Badge className={`${statusClass} rounded-full px-4 py-1`}>{status}</Badge>
       </div>
     </div>
   </div>
