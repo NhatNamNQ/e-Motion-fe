@@ -20,8 +20,23 @@ export const carService = {
   },
   searchCars: async (searchValues) => {
     try {
-      const { data } = await instance.post('/vehicles/filter', searchValues)
-      return data
+      const [availableRes, unavailableRes] = await Promise.all([
+        instance.post('/vehicles/filter/available', searchValues),
+        instance.post('/vehicles/filter/unavailable', searchValues)
+      ])
+
+      return {
+        data: {
+          content: {
+            availableVehicles: availableRes.data.data.content || [],
+            unavailableVehicles: unavailableRes.data.data.content || []
+          },
+          totalPages: Math.max(
+            availableRes.data.data.totalPages || 1,
+            unavailableRes.data.data.totalPages || 1
+          )
+        }
+      }
     } catch (error) {
       throw handleError(error)
     }
