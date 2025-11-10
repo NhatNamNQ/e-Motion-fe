@@ -84,7 +84,7 @@ const HistoryPage = () => {
 
       <div className='space-y-4'>
         {tab === 'reservations' ? (
-          reservations.length === 0 ? (
+          reservations.length === 0 && !loading ? (
             <div className='rounded-lg bg-white p-12 text-center shadow-sm'>
               <p className='text-lg text-gray-500'>Bạn chưa có đơn đặt chỗ nào.</p>
             </div>
@@ -113,7 +113,7 @@ const HistoryPage = () => {
               image={rental.vehicleImage || 'https://placehold.co/400x300'}
               title={rental.vehicleName}
               location={rental.stationName}
-              timeInfo={rental.createdAt}
+              timeInfo={formatHourDate(rental.createdAt)}
               status={rental.status}
               statusClass={getStatusColor(rental.status)}
               onClick={() => navigate(`/account/rentals/${rental.id}`)}

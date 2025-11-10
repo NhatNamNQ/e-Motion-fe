@@ -95,6 +95,9 @@ const ReservationDetailPage = () => {
           <p className='text-muted-foreground my-1'>
             Tạo lúc: {formatDateTime(reservation.createdAt)}
           </p>
+          <p className='text-muted-foreground mt-1'>
+            Kết thúc: {formatDateTime(reservation.endTime)}
+          </p>
         </div>
         <div className='flex items-center gap-3'>
           <Badge className={`text-base ${getStatusColor(reservation.status)}`}>

@@ -23,21 +23,20 @@ const CarListPage = () => {
   const isSearchLoading = useSelector(selectSearchLoading)
 
   const [currentPage, setCurrentPage] = useState(1)
-  const [cars, setCars] = useState([])
   const [totalPages, setTotalPages] = useState(1)
   const [selectedBrands, setSelectedBrands] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
+  const [availableCars, setAvailableCars] = useState([])
+  const [unavailableCars, setUnavailableCars] = useState([])
 
+  // Reset state khi search params thay đổi
   useEffect(() => {
-    if (searchResults?.content) {
-      setTotalPages(searchResults?.totalPages || 1)
-      setCars((prev) =>
-        currentPage === 1 ? searchResults.content : [...prev, ...searchResults.content]
-      )
-    }
-    // eslint-disable-next-line
-  }, [searchResults])
+    setCurrentPage(1)
+    setAvailableCars([])
+    setUnavailableCars([])
+  }, [city, startTime, endTime, selectedBrands, selectedCategories])
 
+  // Gọi API khi params thay đổi
   useEffect(() => {
     dispatch(
       searchCars({
@@ -51,19 +50,51 @@ const CarListPage = () => {
         endTime
       })
     )
-    // eslint-disable-next-line
-  }, [currentPage, selectedBrands, selectedCategories, dispatch])
+  }, [currentPage, selectedBrands, selectedCategories, city, startTime, endTime, dispatch])
 
+  // Xử lý kết quả API
   useEffect(() => {
-    setCurrentPage(1)
-    setCars([])
-  }, [city, startTime, endTime, selectedBrands, selectedCategories])
+    if (searchResults?.content?.availableVehicles && searchResults?.content?.unavailableVehicles) {
+      setTotalPages(searchResults?.totalPages || 1)
+
+      if (currentPage === 1) {
+        setAvailableCars(searchResults.content.availableVehicles)
+        setUnavailableCars(searchResults.content.unavailableVehicles)
+      } else {
+        setAvailableCars((prev) => {
+          const newCars = searchResults.content.availableVehicles.filter(
+            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
+          )
+          return [...prev, ...newCars]
+        })
+        setUnavailableCars((prev) => {
+          const newCars = searchResults.content.unavailableVehicles.filter(
+            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
+          )
+          return [...prev, ...newCars]
+        })
+      }
+    } else if (searchResults?.content) {
+      setTotalPages(searchResults?.totalPages || 1)
+
+      if (currentPage === 1) {
+        setAvailableCars(searchResults.content)
+        setUnavailableCars([])
+      } else {
+        setAvailableCars((prev) => {
+          const newCars = searchResults.content.filter(
+            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
+          )
+          return [...prev, ...newCars]
+        })
+        setUnavailableCars([])
+      }
+    }
+  }, [searchResults, currentPage])
 
   const handleFilterChange = ({ brands, categories }) => {
     setSelectedBrands(brands)
     setSelectedCategories(categories)
-    setCurrentPage(1)
-    setCars([])
   }
 
   const handleScroll = useCallback(() => {
@@ -72,9 +103,7 @@ const CarListPage = () => {
       !isSearchLoading &&
       currentPage < totalPages
     ) {
-      setCurrentPage((prev) => {
-        setCurrentPage(prev + 1)
-      })
+      setCurrentPage((prev) => prev + 1)
     }
   }, [isSearchLoading, currentPage, totalPages])
 
@@ -82,6 +111,8 @@ const CarListPage = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
+
+  const totalCars = availableCars.length + unavailableCars.length
 
   return (
     <div className='container mx-auto p-4'>
@@ -100,15 +131,21 @@ const CarListPage = () => {
 
         {/* Car List */}
         <div>
-          {cars.length === 0 && isSearchLoading ? (
+          {totalCars === 0 && isSearchLoading ? (
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
               {Array.from({ length: 8 }).map((_, index) => (
                 <SkeletonCard key={index} />
               ))}
             </div>
-          ) : cars.length > 0 ? (
+          ) : totalCars > 0 ? (
             <>
-              <CarList cars={cars} />
+              <CarList cars={availableCars} />
+              {unavailableCars.length > 0 && (
+                <>
+                  <h2 className='mt-8 mb-4 text-xl font-semibold text-gray-600'>Xe đang thuê</h2>
+                  <CarList cars={unavailableCars} />
+                </>
+              )}
               {isSearchLoading && currentPage > 1 && (
                 <div className='mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
                   {Array.from({ length: 4 }).map((_, index) => (

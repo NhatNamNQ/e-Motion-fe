@@ -133,6 +133,7 @@ const RentalDetailPage = () => {
         <div>
           <h1 className='text-3xl font-bold'>Chi tiết Hợp đồng #{rental.id}</h1>
           <p className='text-muted-foreground mt-1'>Tạo lúc: {formatDateTime(rental.createdAt)}</p>
+          <p className='text-muted-foreground mt-1'>Kết thúc: {formatDateTime(rental.endTime)}</p>
         </div>
         <div className='flex items-center gap-3'>
           <Badge className={`text-base ${getStatusColor(rental.status)}`}>{rental.status}</Badge>
