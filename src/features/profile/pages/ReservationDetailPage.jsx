@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, User, Car, MapPin, Bell } from 'lucide-react'
+import { ArrowLeft, User, Car, MapPin, Bell, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { profileService } from '../service/profileService'
@@ -22,6 +22,7 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Spinner } from '@/components/ui/spinner'
+import ExtendDialog from '../components/ExtendDialog'
 
 const ReservationDetailPage = () => {
   const { id } = useParams()
@@ -29,6 +30,7 @@ const ReservationDetailPage = () => {
   const [reservation, setReservation] = useState(null)
   const [loading, setLoading] = useState(true)
   const [cancelling, setCancelling] = useState(false)
+  const [showExtendDialog, setShowExtendDialog] = useState(false)
 
   useEffect(() => {
     const fetchReservation = async () => {
@@ -59,8 +61,19 @@ const ReservationDetailPage = () => {
     }
   }
 
+  const handleExtendSuccess = async () => {
+    // Reload reservation data
+    try {
+      const data = await profileService.getReservationDetail(id)
+      setReservation(data)
+    } catch (error) {
+      toast.error('Không thể tải lại thông tin đặt chỗ')
+    }
+  }
+
   const canCancel = reservation?.status === 'CONFIRM'
   const isPending = reservation?.status === 'PENDING'
+  const canExtend = reservation?.status === 'CONFIRM'
 
   if (loading) {
     return <Loader />
@@ -94,6 +107,9 @@ const ReservationDetailPage = () => {
           <h1 className='text-3xl font-bold'>Đơn đặt chỗ #{reservation.code}</h1>
           <p className='text-muted-foreground my-1'>
             Tạo lúc: {formatDateTime(reservation.createdAt)}
+          </p>
+          <p className='text-muted-foreground mt-1'>
+            Bắt đầu: {formatDateTime(reservation.startTime)}
           </p>
           <p className='text-muted-foreground mt-1'>
             Kết thúc: {formatDateTime(reservation.endTime)}
@@ -147,6 +163,16 @@ const ReservationDetailPage = () => {
               Thanh toán lại
             </Button>
           )}
+          {canExtend && (
+            <Button
+              variant='outline'
+              className='w-full sm:w-auto'
+              onClick={() => setShowExtendDialog(true)}
+            >
+              <Clock className='mr-2 h-4 w-4' />
+              Gia hạn đặt chỗ
+            </Button>
+          )}
           {canCancel && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -176,6 +202,12 @@ const ReservationDetailPage = () => {
           )}
         </div>
       </div>
+      <ExtendDialog
+        open={showExtendDialog}
+        onOpenChange={setShowExtendDialog}
+        reservation={reservation}
+        onSuccess={handleExtendSuccess}
+      />
     </div>
   )
 }

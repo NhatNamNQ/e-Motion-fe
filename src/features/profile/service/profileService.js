@@ -41,5 +41,31 @@ export const profileService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getVehicleSchedule: async (vehicleId) => {
+    try {
+      const { data } = await instance.get(`/vehicles/${vehicleId}/schedule`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  extendReservation: async (reservationCode, newReturnTime) => {
+    try {
+      const { data } = await instance.post(
+        `/reservations/${reservationCode}/extend`,
+        {
+          newReturnTime: newReturnTime
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }
