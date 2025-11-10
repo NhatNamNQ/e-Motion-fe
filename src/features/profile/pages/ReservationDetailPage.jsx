@@ -60,6 +60,7 @@ const ReservationDetailPage = () => {
   }
 
   const canCancel = reservation?.status === 'CONFIRM'
+  const isPending = reservation?.status === 'PENDING'
 
   if (loading) {
     return <Loader />
@@ -91,7 +92,7 @@ const ReservationDetailPage = () => {
       <div className='mb-4 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between'>
         <div>
           <h1 className='text-3xl font-bold'>Đơn đặt chỗ #{reservation.code}</h1>
-          <p className='text-muted-foreground mt-1'>
+          <p className='text-muted-foreground my-1'>
             Tạo lúc: {formatDateTime(reservation.createdAt)}
           </p>
         </div>
@@ -131,33 +132,46 @@ const ReservationDetailPage = () => {
           </div>
         </div>
         <Separator />
-        {canCancel && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant='destructive' disabled={cancelling}>
-                {cancelling ? <Spinner /> : 'Hủy đặt trước'}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Xác nhận hủy đặt trước</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Bạn có chắc chắn muốn hủy đơn đặt chỗ #{reservation.code}? Hành động này không thể
-                  hoàn tác.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Không</AlertDialogCancel>
-                <AlertDialogAction
-                  className='bg-destructive hover:bg-destructive/80'
-                  onClick={handleCancelReservation}
-                >
-                  Đồng ý hủy
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
+
+        {/* Action Buttons Section */}
+        <div className='flex flex-col gap-3 sm:flex-row sm:justify-end'>
+          {isPending && (
+            <Button
+              variant='default'
+              className='w-full sm:w-auto'
+              onClick={() => (window.location.href = reservation.paymentUrl)}
+            >
+              Thanh toán lại
+            </Button>
+          )}
+          {canCancel && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant='destructive' className='w-full sm:w-auto' disabled={cancelling}>
+                  {cancelling ? <Spinner /> : 'Hủy đặt trước'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Xác nhận hủy đặt trước</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Bạn có chắc chắn muốn hủy đơn đặt chỗ #{reservation.code}? Hành động này không
+                    thể hoàn tác.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Không</AlertDialogCancel>
+                  <AlertDialogAction
+                    className='bg-destructive hover:bg-destructive/80'
+                    onClick={handleCancelReservation}
+                  >
+                    Đồng ý hủy
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
       </div>
     </div>
   )

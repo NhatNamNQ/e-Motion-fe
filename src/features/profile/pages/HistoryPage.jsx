@@ -92,9 +92,9 @@ const HistoryPage = () => {
             reservations.map((reservation) => (
               <HistoryCard
                 key={reservation.id}
-                image={reservation.vehicle.images[0]?.url || 'https://placehold.co/400x300'}
-                title={reservation.vehicle.name}
-                location={reservation.vehicle.station.name}
+                image={reservation.vehicleImage || 'https://placehold.co/400x300'}
+                title={reservation.vehicleName}
+                location={reservation.stationName}
                 timeInfo={`Đặt lúc: ${formatHourDate(reservation.createdAt)}`}
                 status={reservation.status}
                 statusClass={getStatusColor(reservation.status)}
@@ -110,10 +110,10 @@ const HistoryPage = () => {
           rentals.map((rental) => (
             <HistoryCard
               key={rental.id}
-              image={rental.vehicle.images[0]?.url || 'https://placehold.co/400x300'}
-              title={rental.vehicle.name}
-              location={rental.vehicle.station.name}
-              timeInfo={`${formatHourDate(rental.startTime)} - ${formatHourDate(rental.endTime)}`}
+              image={rental.vehicleImage || 'https://placehold.co/400x300'}
+              title={rental.vehicleName}
+              location={rental.stationName}
+              timeInfo={rental.createdAt}
               status={rental.status}
               statusClass={getStatusColor(rental.status)}
               onClick={() => navigate(`/account/rentals/${rental.id}`)}

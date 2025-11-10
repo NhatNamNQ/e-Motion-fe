@@ -1,4 +1,6 @@
 import { MapPin, Users, Zap, CheckCircle } from 'lucide-react'
+// eslint-disable-next-line
+import { motion } from 'framer-motion'
 
 const guides = [
   {
@@ -33,8 +35,14 @@ const guides = [
 
 export function HowItWorksSection() {
   return (
-    <section className='bg-background flex min-h-screen items-center justify-center px-8 py-20'>
-      <div className='mx-auto w-full max-w-7xl'>
+    <section className='flex items-center justify-center'>
+      <motion.div
+        className='mx-auto w-full max-w-7xl'
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ amount: 0.2 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className='mb-16 text-center'>
           <h2 className='text-secondary mb-4 text-4xl font-bold md:text-5xl'>Hướng Dẫn Thuê Xe</h2>
           <p className='text-lg text-gray-600'>
@@ -68,7 +76,7 @@ export function HowItWorksSection() {
             )
           })}
         </div>
-      </div>
+      </motion.div>
     </section>
   )
 }

@@ -29,7 +29,7 @@ const faqs = [
 
 export function FaqSection() {
   return (
-    <section className='my-10'>
+    <section>
       <h1 className='mb-4 text-center text-3xl font-bold'>Câu hỏi thường gặp</h1>
       <Accordion type='single' collapsible className='w-full'>
         {faqs.map((faq, index) => (
