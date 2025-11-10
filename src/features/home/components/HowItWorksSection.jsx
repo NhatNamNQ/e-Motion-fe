@@ -1,40 +1,73 @@
-import { Car, Calendar, Key } from 'lucide-react'
+import { MapPin, Users, Zap, CheckCircle } from 'lucide-react'
 
-const steps = [
+const guides = [
   {
-    icon: Car,
-    title: 'Choose a car',
-    description: 'Browse our catalog and choose the car that suits you.'
+    number: '01',
+    title: 'Đặt xe trên nền tảng e-Motion',
+    description: 'Dễ dàng lựa chọn xe phù hợp với nhu cầu của bạn',
+    icon: MapPin,
+    image: '/step1.png'
   },
   {
-    icon: Calendar,
-    title: 'Book it',
-    description: 'Select your dates and confirm your booking.'
+    number: '02',
+    title: 'Nhận xe',
+    description: 'Nhận xe tại địa điểm đã đặt với đầy đủ tài liệu',
+    icon: Users,
+    image: '/step2.png'
   },
   {
-    icon: Key,
-    title: 'Enjoy the ride',
-    description: 'Pick up your car and enjoy the ride.'
+    number: '03',
+    title: 'Bắt đầu hành trình',
+    description: 'Khởi hành và tận hưởng chuyến đi thoải mái',
+    icon: Zap,
+    image: '/step3.png'
+  },
+  {
+    number: '04',
+    title: 'Trả xe & kết thúc chuyến đi',
+    description: 'Trả xe đúng giờ và nhận lại tiền cọc',
+    icon: CheckCircle,
+    image: '/step4.png'
   }
 ]
 
 export function HowItWorksSection() {
   return (
-    <section className='my-10'>
-      <h1 className='mb-8 text-center text-3xl font-bold'>3 Bước đặt xe dễ dàng</h1>
-      <div className='grid gap-8 md:grid-cols-3'>
-        {steps.map((step, index) => {
-          const Icon = step.icon
-          return (
-            <div key={index} className='flex flex-col items-center text-center'>
-              <div className='bg-primary text-primary-foreground mb-4 flex h-16 w-16 items-center justify-center rounded-full'>
-                <Icon size={32} />
+    <section className='bg-background flex min-h-screen items-center justify-center px-8 py-20'>
+      <div className='mx-auto w-full max-w-7xl'>
+        <div className='mb-16 text-center'>
+          <h2 className='text-secondary mb-4 text-4xl font-bold md:text-5xl'>Hướng Dẫn Thuê Xe</h2>
+          <p className='text-lg text-gray-600'>
+            Chỉ với 4 bước đơn giản để trải nghiệm thuê xe e-Motion một cách nhanh chóng
+          </p>
+        </div>
+
+        <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4'>
+          {guides.map((guide) => {
+            const Icon = guide.icon
+            return (
+              <div key={guide.number} className='flex flex-col'>
+                <div className='relative mb-6 h-64 overflow-hidden rounded-xl shadow-lg transition-shadow hover:shadow-2xl'>
+                  <img
+                    src={guide.image}
+                    alt={guide.title}
+                    className='h-full w-full object-cover transition-transform duration-300 hover:scale-105'
+                  />
+                  <div className='absolute inset-0 bg-gradient-to-t from-black/40 to-transparent'></div>
+                </div>
+
+                <div className='mb-3 flex items-center space-x-3'>
+                  <span className='text-secondary text-xl font-bold'>{guide.number}</span>
+                  <Icon className='text-secondary mt-1 h-6 w-6 flex-shrink-0' />
+                </div>
+
+                <h3 className='mb-2 text-xl font-bold text-gray-900'>{guide.title}</h3>
+
+                <p className='text-sm leading-relaxed text-gray-600'>{guide.description}</p>
               </div>
-              <h2 className='mb-2 text-xl font-semibold'>{step.title}</h2>
-              <p className='text-muted-foreground'>{step.description}</p>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
     </section>
   )

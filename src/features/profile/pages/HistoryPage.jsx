@@ -8,18 +8,14 @@ import { selectUser } from '@/store/selectors/authSelectors'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
-const HistoryPage = ({ user }) => {
+const HistoryPage = () => {
   const [reservations, setReservations] = useState([])
   const [rentals, setRentals] = useState([])
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [tab, setTab] = useState('reservations')
-
-  const currentUser = useSelector(selectUser)
-  if (user == null) {
-    user = currentUser
-  }
+  const user = useSelector(selectUser)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,6 +26,8 @@ const HistoryPage = ({ user }) => {
           profileService.viewReservationsHistory(user.email),
           profileService.viewRentalsHistory(user.email)
         ])
+
+        console.log(rentalsData)
         setReservations(reservationsData)
         setRentals(rentalsData)
       } catch (error) {

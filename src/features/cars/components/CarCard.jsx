@@ -7,7 +7,7 @@ const CarCard = ({ car }) => {
     <Link to={`/cars/${car.id}`}>
       <div className='cursor-pointer rounded-md border'>
         <div className='relative'>
-          <img src={car.isMain} alt={car.name} className='h-56 w-full rounded-t-md object-cover' />
+          <img src={car.main} alt={car.name} className='h-56 w-full rounded-t-md object-cover' />
           <div
             className={`text-background absolute top-4 right-4 rounded-sm px-2 py-1 text-center text-sm ${car.status === 'Sẵn sàng' ? 'bg-green-400' : 'bg-red-400'}`}
           >
