@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import CarList from '../components/CarList'
 import SkeletonCard from '@/components/SkeletonCard'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,6 +13,8 @@ import SearchDialog from '@/components/Search/SearchDialog'
 import SearchBar from '@/components/Search/SearchBar'
 import { searchCars } from '@/store/actions/searchActions'
 import FilterSidebar from '../components/FilterSidebar'
+import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 
 const CarListPage = () => {
   const dispatch = useDispatch()
@@ -29,14 +31,12 @@ const CarListPage = () => {
   const [availableCars, setAvailableCars] = useState([])
   const [unavailableCars, setUnavailableCars] = useState([])
 
-  // Reset state khi search params thay đổi
   useEffect(() => {
     setCurrentPage(1)
     setAvailableCars([])
     setUnavailableCars([])
   }, [city, startTime, endTime, selectedBrands, selectedCategories])
 
-  // Gọi API khi params thay đổi
   useEffect(() => {
     dispatch(
       searchCars({
@@ -52,7 +52,6 @@ const CarListPage = () => {
     )
   }, [currentPage, selectedBrands, selectedCategories, city, startTime, endTime, dispatch])
 
-  // Xử lý kết quả API
   useEffect(() => {
     if (searchResults?.content?.availableVehicles && searchResults?.content?.unavailableVehicles) {
       setTotalPages(searchResults?.totalPages || 1)
@@ -97,22 +96,14 @@ const CarListPage = () => {
     setSelectedCategories(categories)
   }
 
-  const handleScroll = useCallback(() => {
-    if (
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
-      !isSearchLoading &&
-      currentPage < totalPages
-    ) {
+  const handleLoadMore = () => {
+    if (currentPage < totalPages && !isSearchLoading) {
       setCurrentPage((prev) => prev + 1)
     }
-  }, [isSearchLoading, currentPage, totalPages])
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
+  }
 
   const totalCars = availableCars.length + unavailableCars.length
+  const hasMorePages = currentPage < totalPages
 
   return (
     <div className='container mx-auto p-4'>
@@ -131,7 +122,7 @@ const CarListPage = () => {
 
         {/* Car List */}
         <div>
-          {totalCars === 0 && isSearchLoading ? (
+          {isSearchLoading && currentPage === 1 ? (
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
               {Array.from({ length: 8 }).map((_, index) => (
                 <SkeletonCard key={index} />
@@ -140,18 +131,31 @@ const CarListPage = () => {
           ) : totalCars > 0 ? (
             <>
               <CarList cars={availableCars} />
+
+              {hasMorePages && (
+                <div className='mt-8 mb-8 flex justify-center'>
+                  <Button
+                    onClick={handleLoadMore}
+                    disabled={isSearchLoading}
+                    className='bg-secondary text-background hover:bg-secondary/80 min-w-[200px]'
+                    size='lg'
+                  >
+                    {isSearchLoading ? '' : 'Xem thêm xe'}
+                  </Button>
+                </div>
+              )}
+
+              {isSearchLoading && (
+                <div className='mt-8 mb-8 flex w-full justify-center'>
+                  <Spinner className='text-secondary size-10' />
+                </div>
+              )}
+
               {unavailableCars.length > 0 && (
                 <>
                   <h2 className='mt-8 mb-4 text-xl font-semibold text-gray-600'>Xe đang thuê</h2>
                   <CarList cars={unavailableCars} />
                 </>
-              )}
-              {isSearchLoading && currentPage > 1 && (
-                <div className='mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <SkeletonCard key={index} />
-                  ))}
-                </div>
               )}
             </>
           ) : (
