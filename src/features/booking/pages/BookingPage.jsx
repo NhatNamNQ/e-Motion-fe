@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { useLocation, useNavigate } from 'react-router-dom'
 import BookingForm from '../components/BookingForm'
 import BookingProgress from '../components/BookingProgress'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { selectBookingFees, selectSelectedCar } from '@/store/selectors/carsSelectors'
 import { selectEndTime, selectSearchForm, selectStartTime } from '@/store/selectors/searchSelectors'
 import { selectUser } from '@/store/selectors/authSelectors'
@@ -10,6 +10,8 @@ import { bookingService } from '../services/bookingService'
 import { toast } from 'sonner'
 import SuccessPaymentCard from '../../../components/SuccessPaymentCard'
 import FailedPaymentCard from '../../../components/FailedPaymentCard'
+import { useEffect } from 'react'
+import { getCarDetail } from '@/store/actions/carsActions'
 
 const BookingPage = () => {
   const location = useLocation()
@@ -17,7 +19,6 @@ const BookingPage = () => {
   const payment = location?.state?.payment
   const status = payment?.status || location?.state?.status
   const txnRef = payment?.txnRef
-  console.log(location)
 
   const user = useSelector(selectUser)
   const car = useSelector(selectSelectedCar)
@@ -25,6 +26,20 @@ const BookingPage = () => {
   const searchForm = useSelector(selectSearchForm)
   const startTime = useSelector(selectStartTime)
   const endTime = useSelector(selectEndTime)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (!car) {
+      const persistCars = localStorage.getItem('persist:cars')
+      if (persistCars) {
+        const carsState = JSON.parse(persistCars)
+        const selectedCarData = carsState.selectedCar && JSON.parse(carsState.selectedCar)
+        if (selectedCarData && selectedCarData.id) {
+          dispatch(getCarDetail(selectedCarData.id))
+        }
+      }
+    }
+  }, [car, dispatch])
 
   const onSubmit = async () => {
     try {

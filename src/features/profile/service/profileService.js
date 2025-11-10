@@ -18,9 +18,9 @@ export const profileService = {
       throw handleError(error)
     }
   },
-  getReservationDetail: async (code) => {
+  getReservationDetail: async (id) => {
     try {
-      const { data } = await instance.get(`/reservations/me/${code}`)
+      const { data } = await instance.get(`/reservations/me/${id}`)
       return data.data
     } catch (error) {
       throw handleError(error)

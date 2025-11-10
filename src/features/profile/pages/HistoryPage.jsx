@@ -19,23 +19,36 @@ const HistoryPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (tab === 'reservations' && reservations.length > 0) {
+        return
+      }
+      if (tab === 'rentals' && rentals.length > 0) {
+        return
+      }
+
+      setLoading(true)
+      setError(null)
       try {
-        setLoading(true)
-        setError(null)
-        const [reservationsData, rentalsData] = await Promise.all([
-          profileService.viewReservationsHistory(user.email),
-          profileService.viewRentalsHistory(user.email)
-        ])
-        setReservations(reservationsData)
-        setRentals(rentalsData)
-      } catch (error) {
-        setError(error.message)
+        if (tab === 'reservations') {
+          const reservationsData = await profileService.viewReservationsHistory(user.email)
+          setRentals([])
+          setReservations(reservationsData)
+        } else if (tab === 'rentals') {
+          const rentalsData = await profileService.viewRentalsHistory(user.email)
+          setReservations([])
+          setRentals(rentalsData)
+        }
+      } catch (err) {
+        setError(err.message)
       } finally {
         setLoading(false)
       }
     }
-    fetchData()
-  }, [user.email])
+
+    if (user?.email) {
+      fetchData()
+    }
+  }, [tab, user.email, reservations.length, rentals.length])
 
   if (loading) return <Loader />
   if (error)
@@ -78,14 +91,14 @@ const HistoryPage = () => {
           ) : (
             reservations.map((reservation) => (
               <HistoryCard
-                key={reservation.code}
+                key={reservation.id}
                 image={reservation.vehicle.images[0]?.url || 'https://placehold.co/400x300'}
                 title={reservation.vehicle.name}
                 location={reservation.vehicle.station.name}
                 timeInfo={`Đặt lúc: ${formatHourDate(reservation.createdAt)}`}
                 status={reservation.status}
                 statusClass={getStatusColor(reservation.status)}
-                onClick={() => navigate(`/account/reservations/${reservation.code}`)}
+                onClick={() => navigate(`/account/reservations/${reservation.id}`)}
               />
             ))
           )

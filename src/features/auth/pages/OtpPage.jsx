@@ -11,7 +11,6 @@ import {
 } from '@/store/selectors/authSelectors'
 import { authService } from '../services/authService'
 // eslint-disable-next-line
-
 import { motion } from 'framer-motion'
 
 const OtpPage = () => {

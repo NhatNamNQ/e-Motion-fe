@@ -24,7 +24,7 @@ import {
 import { Spinner } from '@/components/ui/spinner'
 
 const ReservationDetailPage = () => {
-  const { code } = useParams()
+  const { id } = useParams()
   const navigate = useNavigate()
   const [reservation, setReservation] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -34,7 +34,7 @@ const ReservationDetailPage = () => {
     const fetchReservation = async () => {
       try {
         setLoading(true)
-        const data = await profileService.getReservationDetail(code)
+        const data = await profileService.getReservationDetail(id)
         setReservation(data)
       } catch (error) {
         toast.error(error.message)
@@ -43,14 +43,14 @@ const ReservationDetailPage = () => {
       }
     }
     fetchReservation()
-  }, [code])
+  }, [id])
 
   const handleCancelReservation = async () => {
     try {
       setCancelling(true)
-      await profileService.cancelReservation(code)
+      await profileService.cancelReservation(reservation.code)
       toast.success('Hủy đặt trước thành công')
-      const data = await profileService.getReservationDetail(code)
+      const data = await profileService.getReservationDetail(reservation.code)
       setReservation(data)
     } catch (error) {
       toast.error(error.message || 'Không thể hủy đặt trước')

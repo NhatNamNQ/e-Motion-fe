@@ -8,7 +8,6 @@ import { clearError } from '../../../store/slices/authSlice'
 import { getCurrentUser, loginUser } from '@/store/actions/authActions'
 import { selectAuthLoading } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
-
 // eslint-disable-next-line
 import { motion } from 'framer-motion'
 
