@@ -13,7 +13,19 @@ const PaymentResultHandler = () => {
 
   useEffect(() => {
     if (status === 'failed' && type === 'RENTAL') {
-      navigate('/dashboard/payment-result')
+      navigate('/dashboard/payment-result', {
+        state: {
+          status
+        }
+      })
+      return
+    }
+    if (status === 'failed' && type === 'RESERVATION') {
+      navigate('/booking/payment-result', {
+        state: {
+          status
+        }
+      })
       return
     }
     const getPaymentAndNavigate = async () => {

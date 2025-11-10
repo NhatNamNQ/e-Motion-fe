@@ -26,8 +26,6 @@ const HistoryPage = () => {
           profileService.viewReservationsHistory(user.email),
           profileService.viewRentalsHistory(user.email)
         ])
-
-        console.log(rentalsData)
         setReservations(reservationsData)
         setRentals(rentalsData)
       } catch (error) {

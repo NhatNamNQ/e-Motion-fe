@@ -32,7 +32,6 @@ const ReservationDetailPage = () => {
 
   useEffect(() => {
     const fetchReservation = async () => {
-      if (!code) return
       try {
         setLoading(true)
         const data = await profileService.getReservationDetail(code)

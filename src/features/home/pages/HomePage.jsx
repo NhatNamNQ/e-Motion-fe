@@ -65,34 +65,43 @@ function HomePage() {
         <div className="absolute inset-0 bg-[url('/backgroundHero.webp')] bg-cover bg-center" />
         <div className='absolute inset-0 bg-black/30' />
         <div
-          className={`z-10 container ${isFixed ? 'fixed top-0 left-1/2 -translate-x-1/2' : 'absolute top-4 left-1/2 -translate-x-1/2'}`}
+          className={`z-10 container ${
+            isFixed
+              ? 'fixed top-0 left-1/2 -translate-x-1/2'
+              : 'absolute top-4 left-1/2 -translate-x-1/2'
+          }`}
         >
-          {/*-translate-x-1/2 shift back half by its own */}
           <SearchDialog
             triggerChildren={({ form, onSubmit }) => <SearchBar form={form} onSubmit={onSubmit} />}
           />
         </div>
       </section>
 
-      <div className='container mx-auto px-4 md:px-0'>
-        <div className='grid gap-8 pt-4 md:grid-cols-3'>
+      <div className='container mx-auto px-4 md:px-8'>
+        <div className='grid gap-8 pt-8 md:grid-cols-3'>
           {features.map((feature, index) => {
             const Icon = feature.icon
             return <InfoCard key={index} Icon={Icon} feature={feature} />
           })}
         </div>
-        {/* View slider cars list */}
-        <section className='my-10'>
-          <h1 className='mb-4 text-center text-3xl font-bold'>Danh sách xe điện</h1>
+
+        <section className='my-16'>
+          <h1 className='mb-6 text-center text-3xl font-bold'>Danh sách xe điện</h1>
           <CarsSlider cars={cars} />
-          <div className='mt-6 flex justify-center'>
-            <Button className='bg-background text-secondary hover:text-background border-secondary hover:bg-secondary h-12 w-53 cursor-pointer border p-3 text-2xl'>
+          <div className='mt-8 flex justify-center'>
+            <Button className='bg-background text-secondary hover:text-background border-secondary hover:bg-secondary h-12 w-53 cursor-pointer border px-6 py-3 text-2xl'>
               <Link to='/cars'>Xem thêm xe</Link>
             </Button>
           </div>
         </section>
-        <HowItWorksSection />
-        <FaqSection />
+
+        <section className='my-16'>
+          <HowItWorksSection />
+        </section>
+
+        <section className='my-16'>
+          <FaqSection />
+        </section>
       </div>
     </main>
   )

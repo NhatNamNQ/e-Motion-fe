@@ -15,8 +15,9 @@ const BookingPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const payment = location?.state?.payment
-  const status = payment?.status
+  const status = payment?.status || location?.state?.status
   const txnRef = payment?.txnRef
+  console.log(location)
 
   const user = useSelector(selectUser)
   const car = useSelector(selectSelectedCar)

@@ -10,6 +10,9 @@ import {
   selectRegistrationEmail
 } from '@/store/selectors/authSelectors'
 import { authService } from '../services/authService'
+// eslint-disable-next-line
+
+import { motion } from 'framer-motion'
 
 const OtpPage = () => {
   usePageTitle('Verify OTP')
@@ -43,7 +46,12 @@ const OtpPage = () => {
   }
 
   return (
-    <div className='w-full max-w-md'>
+    <motion.div
+      className='w-full max-w-md'
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className='px-6 py-8'>
         <div className='mb-6 text-center'>
           <h2 className='text-2xl font-bold'>Xác thực OTP</h2>
@@ -53,7 +61,7 @@ const OtpPage = () => {
         </div>
         <OtpForm onSubmit={handleVerifyOtp} isLoading={isLoading} email={registrationEmail} />
       </div>
-    </div>
+    </motion.div>
   )
 }
 

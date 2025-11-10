@@ -4,6 +4,8 @@ import AuthForm from '../components/AuthForm'
 import { Link, useNavigate } from 'react-router-dom'
 import { forgotPasswordConfig } from '../constants'
 import { forgotPasswordSchema } from '../schemas/authSchemas'
+// eslint-disable-next-line
+import { motion } from 'framer-motion'
 
 const ForgotPasswordPage = () => {
   usePageTitle('Forgot Password')
@@ -16,7 +18,12 @@ const ForgotPasswordPage = () => {
   }
 
   return (
-    <div className='w-full max-w-md'>
+    <motion.div
+      className='w-full max-w-md'
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className='px-6 py-8'>
         <AuthForm
           config={forgotPasswordConfig}
@@ -33,7 +40,7 @@ const ForgotPasswordPage = () => {
           </Link>
         </p>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
