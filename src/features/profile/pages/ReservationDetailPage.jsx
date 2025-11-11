@@ -166,7 +166,7 @@ const ReservationDetailPage = () => {
           {canExtend && (
             <Button
               variant='outline'
-              className='w-full sm:w-auto'
+              className='hover:border-primary hover:bg-primary hover:text-primary-foreground w-full border-gray-400 transition-all duration-300 ease-in-out sm:w-auto'
               onClick={() => setShowExtendDialog(true)}
             >
               <Clock className='mr-2 h-4 w-4' />
@@ -205,7 +205,8 @@ const ReservationDetailPage = () => {
       <ExtendDialog
         open={showExtendDialog}
         onOpenChange={setShowExtendDialog}
-        reservation={reservation}
+        data={reservation}
+        type='reservation'
         onSuccess={handleExtendSuccess}
       />
     </div>

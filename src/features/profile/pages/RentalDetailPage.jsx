@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, User, Car, MapPin, FileText, CreditCard } from 'lucide-react'
+import { ArrowLeft, User, Car, MapPin, FileText, CreditCard, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { profileService } from '../service/profileService'
@@ -33,6 +33,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
 import { toast } from 'sonner'
+import ExtendDialog from '../components/ExtendDialog'
 
 const RentalDetailPage = () => {
   const { id } = useParams()
@@ -40,9 +41,10 @@ const RentalDetailPage = () => {
   const [rental, setRental] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [extending, setExtending] = useState(false)
-  const [isExtendDialogOpen, setIsExtendDialogOpen] = useState(false)
-  const [newEndTime, setNewEndTime] = useState('')
+  // const [extending, setExtending] = useState(false)
+  // const [isExtendDialogOpen, setIsExtendDialogOpen] = useState(false)
+  // const [newEndTime, setNewEndTime] = useState('')
+  const [showExtendDialog, setShowExtendDialog] = useState(false)
 
   const fetchRentalDetail = useCallback(async () => {
     if (!id) return
@@ -95,8 +97,6 @@ const RentalDetailPage = () => {
     }
   }
 
-  const canExtend = rental?.status === 'ONGOING'
-
   if (loading) return <Loader />
   if (error) return <div className='text-center text-red-500'>Error: {error}</div>
   if (!rental) {
@@ -120,6 +120,12 @@ const RentalDetailPage = () => {
     </div>
   )
 
+  const handleExtendSuccess = async () => {
+    await fetchRentalDetail()
+  }
+
+  const canExtend =
+    rental?.status === 'ONGOING' || rental?.status === 'CONFIRM' || rental?.status === 'OVERDUE'
   const isCompleted = rental.status === 'COMPLETED'
   const rentFee = rental?.rentFee || 0
   const reservationFee = rental?.reservationDeposit?.amount || 0
@@ -286,57 +292,28 @@ const RentalDetailPage = () => {
 
         <Separator />
 
-        {/* Extend Rental Button */}
+        {/* Action Buttons */}
         {canExtend && (
-          <Dialog open={isExtendDialogOpen} onOpenChange={setIsExtendDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className='bg-primary hover:bg-primary/80' disabled={extending}>
-                {extending ? <Spinner /> : 'Gia hạn hợp đồng'}
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Gia hạn hợp đồng thuê xe</DialogTitle>
-                <DialogDescription>
-                  Chọn thời gian kết thúc mới cho hợp đồng #{rental.id}
-                </DialogDescription>
-              </DialogHeader>
-              <div className='grid gap-4 py-4'>
-                <div className='grid gap-2'>
-                  <Label htmlFor='currentEndTime'>Thời gian kết thúc hiện tại</Label>
-                  <Input
-                    id='currentEndTime'
-                    value={formatDateTime(rental.endTime)}
-                    disabled
-                    className='bg-muted'
-                  />
-                </div>
-                <div className='grid gap-2'>
-                  <Label htmlFor='newEndTime'>Thời gian kết thúc mới</Label>
-                  <Input
-                    id='newEndTime'
-                    type='datetime-local'
-                    value={newEndTime}
-                    onChange={(e) => setNewEndTime(e.target.value)}
-                    min={format(new Date(rental.endTime), "yyyy-MM-dd'T'HH:mm")}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  variant='outline'
-                  onClick={() => setIsExtendDialogOpen(false)}
-                  disabled={extending}
-                >
-                  Hủy
-                </Button>
-                <Button onClick={handleExtendRental} disabled={extending}>
-                  {extending ? <Spinner /> : 'Xác nhận gia hạn'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <div className='flex justify-end'>
+            <Button
+              variant='outline'
+              onClick={() => setShowExtendDialog(true)}
+              className='hover:border-primary hover:bg-primary hover:text-primary-foreground w-full border-gray-400 transition-all duration-300 ease-in-out sm:w-auto'
+            >
+              <Clock className='mr-2 h-4 w-4' />
+              Gia hạn hợp đồng
+            </Button>
+          </div>
         )}
+
+        {/* Extend Rental Dialog */}
+        <ExtendDialog
+          open={showExtendDialog}
+          onOpenChange={setShowExtendDialog}
+          data={rental}
+          type='rental'
+          onSuccess={handleExtendSuccess}
+        />
       </div>
     </div>
   )
