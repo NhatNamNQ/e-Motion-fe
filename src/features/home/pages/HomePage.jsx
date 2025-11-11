@@ -9,24 +9,7 @@ import { HowItWorksSection } from '../components/HowItWorksSection'
 import { carService } from '@/features/cars/services/carService'
 import SearchDialog from '@/components/Search/SearchDialog'
 import SearchBar from '@/components/Search/SearchBar'
-
-const features = [
-  {
-    icon: MapPin,
-    title: 'Tiện Lợi',
-    description: 'Dịch vụ chuyển đổi số cho sự tiện lợi tối đa'
-  },
-  {
-    icon: Car,
-    title: 'Thoải Mái',
-    description: 'Các giải pháp cao cấp với trải nghiệm người dùng vượt trội'
-  },
-  {
-    icon: CreditCard,
-    title: 'Tiết Kiệm',
-    description: 'Giá cả hiệu quả cho giá trị sử dụng tối đa'
-  }
-]
+import Advantages from '../components/Advantages'
 
 function HomePage() {
   const [isFixed, setIsFixed] = useState(false)
@@ -77,14 +60,9 @@ function HomePage() {
         </div>
       </section>
 
-      <div className=''>
+      <div>
         <section className='min-h-screen bg-[#F6F6F6] py-16'>
-          <div className='container mx-auto grid gap-8 pt-8 md:grid-cols-3'>
-            {features.map((feature, index) => {
-              const Icon = feature.icon
-              return <InfoCard key={index} Icon={Icon} feature={feature} />
-            })}
-          </div>
+          <Advantages />
         </section>
 
         <section className='min-h-screen w-full py-16'>
