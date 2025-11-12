@@ -1,27 +1,29 @@
 import { Button } from '../../../components/ui/button'
 import { useEffect, useState } from 'react'
-import CarsSlider from '@/features/cars/components/CarsSlider'
+import CarsSlider from '../components/CarsSlider'
 import { Link } from 'react-router-dom'
-import { Car, CreditCard, MapPin } from 'lucide-react'
-import InfoCard from '@/components/InfoCard'
 import { FaqSection } from '../components/FaqSection'
 import { HowItWorksSection } from '../components/HowItWorksSection'
-import { carService } from '@/features/cars/services/carService'
 import SearchDialog from '@/components/Search/SearchDialog'
 import SearchBar from '@/components/Search/SearchBar'
 import Advantages from '../components/Advantages'
+import { homeService } from '../services/homeService'
 
 function HomePage() {
   const [isFixed, setIsFixed] = useState(false)
   const [cars, setCars] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const getCarList = async () => {
       try {
-        const res = await carService.getCars()
+        setIsLoading(true)
+        const res = await homeService.getCars()
         setCars(res.data)
       } catch (error) {
         console.error(error)
+      } finally {
+        setIsLoading(false)
       }
     }
     getCarList()
@@ -70,7 +72,7 @@ function HomePage() {
             <h2 className='text-secondary mb-8 text-center text-4xl font-bold md:text-5xl'>
               Danh sách xe
             </h2>
-            <CarsSlider cars={cars} />
+            <CarsSlider cars={cars} isLoading={isLoading} />
             <div className='mt-8 flex justify-center'>
               <Button className='bg-background text-secondary hover:text-background border-secondary hover:bg-secondary h-12 w-53 cursor-pointer border px-6 py-3 text-2xl'>
                 <Link to='/cars'>Xem thêm xe</Link>

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 const CarCard = ({ car, isUnavailabel, handleViewSchedule }) => {
   return (
-    <Link to={`/cars/${car.id}`}>
+    <Link to={`/cars/${car.id}`} className='h-[450px]'>
       <div className='cursor-pointer rounded-md border'>
         <div className='relative'>
           <img
@@ -17,15 +17,15 @@ const CarCard = ({ car, isUnavailabel, handleViewSchedule }) => {
             className='h-56 w-full rounded-t-md object-cover'
           />
           <div
-            className={`text-background absolute top-4 right-4 rounded-sm px-2 py-1 text-center text-sm ${car.status === 'Sẵn sàng' ? 'bg-green-400' : 'bg-red-400'}`}
+            className={`text-destructive absolute top-2 right-2 rounded-sm bg-white px-2 py-1 text-center text-sm`}
           >
-            {car.status}
+            Giảm {car.point}%
           </div>
         </div>
         <div className='p-4 text-sm'>
           <div className='min-h-[5rem]'>
             <p className='line-clamp-2 text-xl font-bold'>{car.name}</p>
-            <p className='text-slate-700'>{car.city}</p>
+            <p className='text-slate-700'>{car.station.name}</p>
           </div>
           <div className='pb-4 text-end'>
             <p className='text-xl'>

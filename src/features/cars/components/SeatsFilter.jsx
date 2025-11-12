@@ -5,17 +5,17 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 
-const SEAT_OPTIONS = [2, 4, 5, 7, 8, 16]
+const SEAT_OPTIONS = [4, 5, 7, 8, 16]
 
-const SeatsFilter = ({ selectedSeats, onSeatsChange, isOpen, onOpenChange }) => {
-  const [localSeat, setLocalSeat] = useState(selectedSeats[0] || null)
+const SeatsFilter = ({ selectedSeat, onSeatChange, isOpen, onOpenChange }) => {
+  const [localSeat, setLocalSeat] = useState(selectedSeat)
 
   const handleSeatChange = (seat) => {
     setLocalSeat(parseInt(seat))
   }
 
   const handleApply = () => {
-    onSeatsChange(localSeat ? [localSeat] : [])
+    onSeatChange(localSeat)
     onOpenChange(false)
   }
 
@@ -29,15 +29,15 @@ const SeatsFilter = ({ selectedSeats, onSeatsChange, isOpen, onOpenChange }) => 
         <Button
           variant='outline'
           className={`flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-all ${
-            selectedSeats.length > 0
+            selectedSeat
               ? 'border-secondary bg-secondary/10 text-secondary'
               : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
           Số chỗ ngồi
-          {selectedSeats.length > 0 && (
+          {selectedSeat && (
             <span className='bg-secondary flex h-5 w-5 items-center justify-center rounded-full text-xs text-white'>
-              {selectedSeats[0]}
+              {selectedSeat}
             </span>
           )}
           <ChevronDown className='h-4 w-4' />

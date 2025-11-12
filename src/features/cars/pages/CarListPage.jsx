@@ -151,7 +151,7 @@ const CarListPage = () => {
   const hasMorePages = currentPage < totalPages
 
   return (
-    <div className='container mx-auto h-full p-4'>
+    <div className='container mx-auto mb-12 h-full p-4'>
       <SearchDialog
         triggerChildren={({ form, onSubmit }) => <SearchBar form={form} onSubmit={onSubmit} />}
       />

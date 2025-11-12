@@ -5,9 +5,11 @@ import { Toaster } from '@/components/ui/sonner'
 
 const MainLayout = () => {
   return (
-    <div className='min-h-screen'>
+    <div className='flex min-h-screen flex-col'>
       <Header />
-      <Outlet />
+      <main className='flex-1'>
+        <Outlet />
+      </main>
       <Footer />
       <Toaster expand={true} richColors />
       <ScrollRestoration />

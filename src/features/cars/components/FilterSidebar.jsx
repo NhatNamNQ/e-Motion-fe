@@ -9,15 +9,15 @@ const FilterSidebar = ({
   onFilterChange,
   selectedBrands,
   selectedCategories,
-  priceRange = [0, 1000000],
-  selectedSeats = []
+  priceRange = [],
+  selectedSeat = null
 }) => {
   const [brands, setBrands] = useState([])
   const [categories, setCategories] = useState([])
   const [localBrands, setLocalBrands] = useState(selectedBrands || [])
   const [localCategories, setLocalCategories] = useState(selectedCategories || [])
   const [localPriceRange, setLocalPriceRange] = useState(priceRange)
-  const [localSeats, setLocalSeats] = useState(selectedSeats)
+  const [localSeat, setLocalSeat] = useState(selectedSeat)
   const [openPopover, setOpenPopover] = useState(null)
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const FilterSidebar = ({
       brands: localBrands,
       categories: localCategories,
       priceRange: localPriceRange,
-      seats: localSeats
+      seat: localSeat
     })
     setOpenPopover(null)
   }
@@ -76,17 +76,17 @@ const FilterSidebar = ({
       brands: localBrands,
       categories: localCategories,
       priceRange: newPriceRange,
-      seats: localSeats
+      seat: localSeat
     })
   }
 
-  const handleSeatsChange = (newSeats) => {
-    setLocalSeats(newSeats)
+  const handleSeatChange = (newSeat) => {
+    setLocalSeat(newSeat)
     onFilterChange({
       brands: localBrands,
       categories: localCategories,
       priceRange: localPriceRange,
-      seats: newSeats
+      seat: newSeat
     })
   }
 
@@ -94,12 +94,12 @@ const FilterSidebar = ({
     setLocalBrands([])
     setLocalCategories([])
     setLocalPriceRange([0, 1000000])
-    setLocalSeats([])
+    setLocalSeat(null)
     onFilterChange({
       brands: [],
       categories: [],
       priceRange: [0, 1000000],
-      seats: []
+      seat: null
     })
   }
 
@@ -108,7 +108,7 @@ const FilterSidebar = ({
     localCategories.length > 0 ||
     localPriceRange[0] > 0 ||
     localPriceRange[1] < 1000000 ||
-    localSeats.length > 0
+    localSeat !== null
 
   return (
     <div className='flex flex-wrap items-center gap-3'>
@@ -158,8 +158,8 @@ const FilterSidebar = ({
 
       {/* Seats Filter */}
       <SeatsFilter
-        selectedSeats={localSeats}
-        onSeatsChange={handleSeatsChange}
+        selectedSeat={localSeat}
+        onSeatChange={handleSeatChange}
         isOpen={openPopover === 'seats'}
         onOpenChange={(open) => setOpenPopover(open ? 'seats' : null)}
       />

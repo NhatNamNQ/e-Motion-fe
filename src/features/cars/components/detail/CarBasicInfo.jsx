@@ -1,5 +1,13 @@
-import { MapPin, Share2, Users, Fuel, BatteryFull, BatteryCharging, Car, Tag } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import {
+  MapPin,
+  Users,
+  Fuel,
+  BatteryFull,
+  BatteryCharging,
+  Car,
+  Tag,
+  CreditCard
+} from 'lucide-react'
 
 const CarBasicInfo = ({ car }) => {
   return (
@@ -23,6 +31,13 @@ const CarBasicInfo = ({ car }) => {
         <div className='bg-secondary my-2 h-1 w-10 rounded-full' />
         <div className='grid grid-cols-2 gap-6 md:grid-cols-4'>
           <div className='flex items-center space-x-3'>
+            <CreditCard className='text-secondary h-5 w-5' />
+            <div>
+              <p className='text-sm text-gray-500'>Biển số xe</p>
+              <p className='font-bold text-gray-800'>{car.plateNumber}</p>
+            </div>
+          </div>
+          <div className='flex items-center space-x-3'>
             <Users className='text-secondary h-5 w-5' />
             <div>
               <p className='text-sm text-gray-500'>Số ghế</p>
@@ -32,7 +47,7 @@ const CarBasicInfo = ({ car }) => {
           <div className='flex items-center space-x-3'>
             <BatteryFull className='text-secondary h-5 w-5' />
             <div>
-              <p className='text-sm text-gray-500'>Dung lượng pin </p>
+              <p className='text-sm text-gray-500'>Dung lượng pin</p>
               <p className='font-bold text-gray-800'>{car.batteryCapacity}</p>
             </div>
           </div>
