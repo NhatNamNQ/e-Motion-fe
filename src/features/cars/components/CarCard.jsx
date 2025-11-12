@@ -1,8 +1,9 @@
+import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
 import { BatteryCharging, BatteryFull, CarFront, UsersRound } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-const CarCard = ({ car }) => {
+const CarCard = ({ car, isUnavailabel, handleViewSchedule }) => {
   return (
     <Link to={`/cars/${car.id}`}>
       <div className='cursor-pointer rounded-md border'>
@@ -46,6 +47,17 @@ const CarCard = ({ car }) => {
               <BatteryCharging className='h-5 w-5' /> {car.consumptionRate}
             </div>
           </div>
+          {isUnavailabel && (
+            <Button
+              className='bg-secondary hover:bg-secondary/80 mt-4 w-full'
+              onClick={(e) => {
+                e.preventDefault()
+                handleViewSchedule(car.id)
+              }}
+            >
+              Xem lịch trình
+            </Button>
+          )}
         </div>
       </div>
     </Link>

@@ -15,6 +15,8 @@ import { searchCars } from '@/store/actions/searchActions'
 import FilterSidebar from '../components/FilterSidebar'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
+import { carService } from '../services/carService'
+import SchedulePopup from '../components/SchedulePopup'
 
 const CarListPage = () => {
   const dispatch = useDispatch()
@@ -30,6 +32,13 @@ const CarListPage = () => {
   const [selectedCategories, setSelectedCategories] = useState([])
   const [availableCars, setAvailableCars] = useState([])
   const [unavailableCars, setUnavailableCars] = useState([])
+  const [schedulePopup, setSchedulePopup] = useState({
+    open: false,
+    carId: null,
+    data: null,
+    loading: false,
+    error: null
+  })
 
   useEffect(() => {
     setCurrentPage(1)
@@ -102,6 +111,25 @@ const CarListPage = () => {
     }
   }
 
+  const handleViewSchedule = async (carId) => {
+    setSchedulePopup({ open: true, carId, data: null, loading: true, error: null })
+    try {
+      const data = await carService.viewCarSchedule(carId)
+      setSchedulePopup({ open: true, carId, data, loading: false, error: null })
+    } catch (error) {
+      setSchedulePopup({
+        open: true,
+        carId,
+        data: null,
+        loading: false,
+        error: error.message || 'Lỗi khi tải lịch trình'
+      })
+    }
+  }
+
+  const closeSchedulePopup = () =>
+    setSchedulePopup({ open: false, carId: null, data: null, loading: false, error: null })
+
   const totalCars = availableCars.length + unavailableCars.length
   const hasMorePages = currentPage < totalPages
 
@@ -132,7 +160,7 @@ const CarListPage = () => {
             <>
               <CarList cars={availableCars} />
 
-              {hasMorePages && (
+              {hasMorePages && !isSearchLoading && (
                 <div className='mt-8 mb-8 flex justify-center'>
                   <Button
                     onClick={handleLoadMore}
@@ -153,8 +181,14 @@ const CarListPage = () => {
 
               {unavailableCars.length > 0 && (
                 <>
-                  <h2 className='mt-8 mb-4 text-xl font-semibold text-gray-600'>Xe đang thuê</h2>
-                  <CarList cars={unavailableCars} />
+                  <h2 className='mt-8 mb-4 text-xl font-semibold text-gray-600'>
+                    Xe đang thuê trong thời gian tìm kiếm
+                  </h2>
+                  <CarList
+                    cars={unavailableCars}
+                    isUnavailabel={true}
+                    handleViewSchedule={handleViewSchedule}
+                  />
                 </>
               )}
             </>
@@ -165,6 +199,14 @@ const CarListPage = () => {
           )}
         </div>
       </div>
+
+      <SchedulePopup
+        isOpen={schedulePopup.open}
+        onClose={closeSchedulePopup}
+        loading={schedulePopup.loading}
+        error={schedulePopup.error}
+        data={schedulePopup.data}
+      />
     </div>
   )
 }

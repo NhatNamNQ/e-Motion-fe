@@ -9,30 +9,6 @@ import { profileService } from '../service/profileService'
 import { formatCurrency, getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import CarImageGallery from '@/features/cars/components/detail/CarImageGallery'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Spinner } from '@/components/ui/spinner'
-import { toast } from 'sonner'
 import ExtendDialog from '../components/ExtendDialog'
 
 const RentalDetailPage = () => {
@@ -64,38 +40,6 @@ const RentalDetailPage = () => {
   useEffect(() => {
     fetchRentalDetail()
   }, [fetchRentalDetail])
-
-  const handleExtendRental = async () => {
-    try {
-      if (!newEndTime) {
-        toast.error('Vui lòng chọn thời gian kết thúc mới')
-        return
-      }
-
-      const selectedTime = new Date(newEndTime)
-      const currentEndTime = new Date(rental.endTime)
-
-      if (selectedTime <= currentEndTime) {
-        toast.error('Thời gian kết thúc mới phải sau thời gian kết thúc hiện tại')
-        return
-      }
-
-      setExtending(true)
-      await profileService.extendRental(id, {
-        endTime: new Date(newEndTime).toISOString()
-      })
-      toast.success('Gia hạn hợp đồng thành công')
-      setIsExtendDialogOpen(false)
-      setNewEndTime('')
-      // Refresh rental data
-      const data = await profileService.getRentalDetail(id)
-      setRental(data)
-    } catch (error) {
-      toast.error(error.message || 'Không thể gia hạn hợp đồng')
-    } finally {
-      setExtending(false)
-    }
-  }
 
   if (loading) return <Loader />
   if (error) return <div className='text-center text-red-500'>Error: {error}</div>

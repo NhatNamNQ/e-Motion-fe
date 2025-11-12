@@ -62,5 +62,13 @@ export const carService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  viewCarSchedule: async (id) => {
+    try {
+      const { data } = await instance.get(`/vehicles/schedule/${id}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

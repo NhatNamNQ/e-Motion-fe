@@ -67,6 +67,7 @@ const ReservationDetailPage = () => {
       const data = await profileService.getReservationDetail(id)
       setReservation(data)
     } catch (error) {
+      console.error(error)
       toast.error('Không thể tải lại thông tin đặt chỗ')
     }
   }

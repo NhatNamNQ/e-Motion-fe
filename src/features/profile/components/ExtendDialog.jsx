@@ -43,6 +43,7 @@ const ExtendDialog = ({ open, onOpenChange, data, type = 'reservation', onSucces
     if (open && data) {
       fetchVehicleSchedule()
     }
+    // eslint-disable-next-line
   }, [open, data])
 
   const fetchVehicleSchedule = async () => {
@@ -58,6 +59,7 @@ const ExtendDialog = ({ open, onOpenChange, data, type = 'reservation', onSucces
       const scheduleData = await profileService.getVehicleSchedule(vehicleId)
       setSchedule(scheduleData || [])
     } catch (error) {
+      console.error(error)
       toast.error('Không thể tải lịch bận của xe')
     } finally {
       setLoading(false)
