@@ -181,6 +181,7 @@ const CheckInPage = () => {
                           min='0'
                           max='100'
                           placeholder='100'
+                          disabled
                           onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                         />
                       </FormControl>

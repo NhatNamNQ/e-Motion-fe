@@ -3,8 +3,8 @@ import { Car, CirclePlus, X } from 'lucide-react'
 import { userService } from '../services/userService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
-import UserForm from '../components/UserForm'
-import { statusOptions } from '../constants/userConfig'
+import CarForm from '../components/CarForm'
+import { carStatusOptions } from '../constants/carConfig'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -29,6 +29,7 @@ import { useDebounce } from 'use-debounce'
 import { stationService } from '../services/stationService'
 import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
+import { carService } from '@/features/cars/services/carService'
 
 const CarsPage = () => {
   const currentUser = useSelector(selectUser)
@@ -38,39 +39,40 @@ const CarsPage = () => {
   const [totalPages, setTotalPages] = useState(1)
   const [limitPerPage, setLimitPerPage] = useState(10)
   const [isLoading, setIsLoading] = useState(false)
-  const [users, setUsers] = useState([])
+  const [cars, setCars] = useState([])
   const [selectedStatuses, setSelectedStatuses] = useState([])
   const [selectedStation, setSelectedStation] = useState(null)
   const [mode, setMode] = useState({
     type: 'add',
-    user: null
+    car: null
   })
-  const [showUserForm, setShowUserForm] = useState(false)
+  const [showCarForm, setShowCarForm] = useState(false)
   const [searchKey, setSearchKey] = useState('')
   const [debouncedSearch] = useDebounce(searchKey, 500)
   const [stations, setStations] = useState([])
 
-  const fetchUsers = useCallback(async () => {
+  const fetchCars = useCallback(async () => {
     setIsLoading(true)
     try {
-      const res = await userService.getUsers(
+      const res = await carService.getManageCars(
         currentPage,
         limitPerPage,
         selectedStatuses,
         debouncedSearch,
         selectedStation?.id
       )
-      const userData = res.content.map((user) => ({
-        fullname: user.fullName,
-        email: user.email,
-        phone: user.phone,
-        createdAt: user.createdAt,
-        blocked: user.blocked,
-        role: user.role,
-        station: user?.station
+
+      const carData = res.content.map((car) => ({
+        id: car.id,
+        name: car.name,
+        plate: car.plateNumber,
+        battery: car.batteryLevel,
+        brand: car.brand,
+        station: car.station.name,
+        status: car.status
       }))
 
-      setUsers(userData)
+      setCars(carData)
       setTotalPages(res.totalPages)
     } catch (error) {
       toast.error('Error get users: ' + error.message)
@@ -92,34 +94,35 @@ const CarsPage = () => {
   }
 
   const handleCLickAddUserBtn = () => {
-    setMode({ type: 'add', user: null })
-    setShowUserForm(true)
+    setMode({ type: 'add', car: null })
+    setShowCarForm(true)
   }
 
-  const handleSubmitAddUser = async (userData) => {
-    setShowUserForm(false)
+  const handleSubmitAddCar = async (carData) => {
+    console.log(carData)
+    setShowCarForm(false)
     setIsLoading(true)
     try {
-      await userService.addUser(userData)
-      toast.success('User added successfully!')
-      fetchUsers()
+      await carService.addNewCar(carData)
+      toast.success('Car added successfully!')
+      fetchCars()
     } catch (error) {
-      setShowUserForm(true)
-      toast.error('Error adding user: ' + error.message)
+      setShowCarForm(true)
+      toast.error('Error adding car: ' + error.message)
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleSubmitEditUser = async (userData) => {
-    setShowUserForm(false)
+    setShowCarForm(false)
     setIsLoading(true)
     try {
       await userService.editUser(userData)
       toast.success('Edit user successfully!')
-      fetchUsers()
+      fetchCars()
     } catch (error) {
-      setShowUserForm(true)
+      setShowCarForm(true)
       toast.error('Error adding user: ' + error.message)
     } finally {
       setIsLoading(false)
@@ -139,24 +142,23 @@ const CarsPage = () => {
       } catch (error) {
         toast.error('Error get users: ' + error.message)
       } finally {
-        fetchUsers()
+        fetchCars()
       }
     }
     fetchStationNames()
-  }, [currentPage, limitPerPage, fetchUsers, selectedStatuses, debouncedSearch, selectedStation])
+  }, [currentPage, limitPerPage, fetchCars, selectedStatuses, debouncedSearch, selectedStation])
 
   const tableProps = {
-    users,
+    cars,
     limitPerPage,
     setLimitPerPage,
     currentPage,
     setCurrentPage,
     totalPages,
-    setTotalPages,
     setMode,
-    setShowUserForm,
+    setShowCarForm,
     setIsLoading,
-    fetchUsers
+    fetchCars
   }
 
   return (
@@ -204,7 +206,7 @@ const CarsPage = () => {
                             key={status}
                             className='rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700'
                           >
-                            {statusOptions.find((s) => s.value === status)?.label || status}
+                            {carStatusOptions.find((s) => s.value === status)?.value || status}
                           </span>
                         ))}
                       </span>
@@ -218,7 +220,7 @@ const CarsPage = () => {
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
-                  {statusOptions.map((status) => (
+                  {carStatusOptions.map((status) => (
                     <Label>
                       <DropdownMenuItem className='w-full'>
                         <Checkbox
@@ -229,7 +231,7 @@ const CarsPage = () => {
                         <span
                           className={`rounded-full px-2 py-0.5 text-xs font-medium ${status.color}`}
                         >
-                          {status.label}
+                          {status.value}
                         </span>
                       </DropdownMenuItem>
                     </Label>
@@ -275,11 +277,11 @@ const CarsPage = () => {
         {isLoading ? <Loader /> : <CarsTable {...tableProps} />}
 
         {/* Add User Modal */}
-        {showUserForm && (
-          <UserForm
+        {showCarForm && (
+          <CarForm
             mode={mode}
-            handleSubmitUser={mode.type === 'add' ? handleSubmitAddUser : handleSubmitEditUser}
-            setShowUserForm={setShowUserForm}
+            handleSubmitCar={mode.type === 'add' ? handleSubmitAddCar : handleSubmitEditUser}
+            setShowCarForm={setShowCarForm}
             stations={stations}
           />
         )}

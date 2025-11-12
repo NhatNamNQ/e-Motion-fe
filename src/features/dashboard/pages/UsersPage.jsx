@@ -4,7 +4,7 @@ import { userService } from '../services/userService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
 import UserForm from '../components/UserForm'
-import { statusOptions, roleOptions } from '../constants/userConfig'
+import { userStatusOptions, roleOptions } from '../constants/userConfig'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,6 +31,7 @@ import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
 
 const UsersPage = () => {
+  console.log(roleOptions)
   const currentUser = useSelector(selectUser)
   const isAdmin = currentUser.role === 'ROLE_ADMIN'
 
@@ -231,7 +232,7 @@ const UsersPage = () => {
                             key={status}
                             className='rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700'
                           >
-                            {statusOptions.find((s) => s.value === status)?.label || status}
+                            {userStatusOptions.find((s) => s.value === status)?.label || status}
                           </span>
                         ))}
                       </span>
@@ -245,7 +246,7 @@ const UsersPage = () => {
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
-                  {statusOptions.map((status) => (
+                  {userStatusOptions.map((status) => (
                     <Label>
                       <DropdownMenuItem className='w-full'>
                         <Checkbox

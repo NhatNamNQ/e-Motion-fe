@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@/store/selectors/authSelectors'
 
 const UsersTable = ({
   users,
@@ -26,6 +28,8 @@ const UsersTable = ({
   fetchUsers
 }) => {
   const paginationProps = { limitPerPage, setLimitPerPage, currentPage, setCurrentPage, totalPages }
+
+  const currentUser = useSelector(selectUser)
 
   const navigate = useNavigate()
 
@@ -80,7 +84,9 @@ const UsersTable = ({
               </th>
               <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Status</th>
               <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Role</th>
-              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'></th>
+              {currentUser?.role === 'ROLE_ADMIN' && (
+                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'></th>
+              )}
             </tr>
           </thead>
           <tbody className='divide-y divide-gray-200'>
@@ -111,41 +117,43 @@ const UsersTable = ({
                     {user.role}
                   </div>
                 </td>
-                <td className='relative px-6 py-4' onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenu modal={false}>
-                    <DropdownMenuTrigger asChild>
-                      <button className='p-1 text-gray-500 hover:text-gray-700'>
-                        <MoreHorizontal className='h-5 w-5' />
-                      </button>
-                    </DropdownMenuTrigger>
+                {currentUser?.role === 'ROLE_ADMIN' && (
+                  <td className='relative px-6 py-4' onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu modal={false}>
+                      <DropdownMenuTrigger asChild>
+                        <button className='p-1 text-gray-500 hover:text-gray-700'>
+                          <MoreHorizontal className='h-5 w-5' />
+                        </button>
+                      </DropdownMenuTrigger>
 
-                    <DropdownMenuContent align='end' className='w-40'>
-                      <DropdownMenuItem
-                        className='flex justify-between'
-                        onClick={() => handleClickEdit(user)}
-                      >
-                        Edit <Edit2 className='h-4 w-4' />
-                      </DropdownMenuItem>
+                      <DropdownMenuContent align='end' className='w-40'>
+                        <DropdownMenuItem
+                          className='flex justify-between'
+                          onClick={() => handleClickEdit(user)}
+                        >
+                          Edit <Edit2 className='h-4 w-4' />
+                        </DropdownMenuItem>
 
-                      <DropdownMenuSeparator />
+                        <DropdownMenuSeparator />
 
-                      <DropdownMenuItem
-                        className={`${user.blocked ? 'text-teal-600 focus:text-teal-600' : 'text-red-600 focus:text-red-600'} flex justify-between`}
-                        onClick={() => handleToggleBlock(user)}
-                      >
-                        {user.blocked ? (
-                          <>
-                            Active <Unlock className='h-4 w-4' />
-                          </>
-                        ) : (
-                          <>
-                            Block <Lock className='h-4 w-4' />
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
+                        <DropdownMenuItem
+                          className={`${user.blocked ? 'text-teal-600 focus:text-teal-600' : 'text-red-600 focus:text-red-600'} flex justify-between`}
+                          onClick={() => handleToggleBlock(user)}
+                        >
+                          {user.blocked ? (
+                            <>
+                              Active <Unlock className='h-4 w-4' />
+                            </>
+                          ) : (
+                            <>
+                              Block <Lock className='h-4 w-4' />
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

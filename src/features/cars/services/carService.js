@@ -47,5 +47,50 @@ export const carService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getManageCars: async (page, limit, statusList, search, stationId) => {
+    try {
+      const { data } = await instance.post('vehicles/manage', {
+        page: page,
+        limit: limit,
+        status: statusList,
+        search: search,
+        stationId: stationId
+      })
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  addNewCar: async (carData) => {
+    try {
+      const { data } = await instance.post('vehicles/create', {
+        name: carData.name,
+        description: carData.description,
+        category: carData.category,
+        brand: carData.brand,
+        depositFee: carData.depositFee,
+        point: carData.point,
+        seats: carData.seats,
+        pricePer4Hours: carData.pricePer4Hours,
+        consumptionRate: carData.consumptionRate,
+        batteryLevel: carData.batteryLevel,
+        batteryCapacity: carData.batteryCapacity,
+        plateNumber: carData.plateNumber,
+        stationId: carData.stationId,
+        images: carData.images
+      })
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getUpdateCar: async (id) => {
+    try {
+      const { data } = await instance.get(`/vehicles/update/${id}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }
