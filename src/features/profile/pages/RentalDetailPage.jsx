@@ -17,9 +17,6 @@ const RentalDetailPage = () => {
   const [rental, setRental] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  // const [extending, setExtending] = useState(false)
-  // const [isExtendDialogOpen, setIsExtendDialogOpen] = useState(false)
-  // const [newEndTime, setNewEndTime] = useState('')
   const [showExtendDialog, setShowExtendDialog] = useState(false)
 
   const fetchRentalDetail = useCallback(async () => {

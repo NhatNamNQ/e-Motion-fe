@@ -30,6 +30,8 @@ const CarListPage = () => {
   const [totalPages, setTotalPages] = useState(1)
   const [selectedBrands, setSelectedBrands] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
+  const [priceRange, setPriceRange] = useState([])
+  const [selectedSeat, setSelectedSeat] = useState(null)
   const [availableCars, setAvailableCars] = useState([])
   const [unavailableCars, setUnavailableCars] = useState([])
   const [schedulePopup, setSchedulePopup] = useState({
@@ -44,13 +46,16 @@ const CarListPage = () => {
     setCurrentPage(1)
     setAvailableCars([])
     setUnavailableCars([])
-  }, [city, startTime, endTime, selectedBrands, selectedCategories])
+  }, [city, startTime, endTime, selectedBrands, selectedCategories, priceRange, selectedSeat])
 
   useEffect(() => {
     dispatch(
       searchCars({
         brands: selectedBrands,
         categories: selectedCategories,
+        minPrice: priceRange[0] || 0.1,
+        maxPrice: priceRange[1] || 100000000,
+        seats: selectedSeat || null,
         page: currentPage,
         limit: 8,
         search: '',
@@ -59,7 +64,17 @@ const CarListPage = () => {
         endTime
       })
     )
-  }, [currentPage, selectedBrands, selectedCategories, city, startTime, endTime, dispatch])
+  }, [
+    currentPage,
+    selectedBrands,
+    selectedCategories,
+    priceRange,
+    selectedSeat,
+    city,
+    startTime,
+    endTime,
+    dispatch
+  ])
 
   useEffect(() => {
     if (searchResults?.content?.availableVehicles && searchResults?.content?.unavailableVehicles) {
@@ -100,9 +115,11 @@ const CarListPage = () => {
     }
   }, [searchResults, currentPage])
 
-  const handleFilterChange = ({ brands, categories }) => {
+  const handleFilterChange = ({ brands, categories, priceRange: newPriceRange, seat }) => {
     setSelectedBrands(brands)
     setSelectedCategories(categories)
+    setPriceRange(newPriceRange)
+    setSelectedSeat(seat)
   }
 
   const handleLoadMore = () => {
@@ -134,7 +151,7 @@ const CarListPage = () => {
   const hasMorePages = currentPage < totalPages
 
   return (
-    <div className='container mx-auto p-4'>
+    <div className='container mx-auto h-full p-4'>
       <SearchDialog
         triggerChildren={({ form, onSubmit }) => <SearchBar form={form} onSubmit={onSubmit} />}
       />
@@ -145,6 +162,8 @@ const CarListPage = () => {
             onFilterChange={handleFilterChange}
             selectedBrands={selectedBrands}
             selectedCategories={selectedCategories}
+            priceRange={priceRange}
+            selectedSeat={selectedSeat}
           />
         </div>
 
@@ -193,7 +212,7 @@ const CarListPage = () => {
               )}
             </>
           ) : (
-            <div className='py-12 text-center'>
+            <div className='h-full py-12 text-center'>
               <p className='text-lg text-gray-500'>Không tìm thấy xe nào phù hợp.</p>
             </div>
           )}

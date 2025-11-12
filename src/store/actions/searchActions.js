@@ -8,6 +8,9 @@ export const searchCars = createAsyncThunk(
       const res = await carService.searchCars({
         brands: searchValues.brands,
         categories: searchValues.categories,
+        minPrice: searchValues.minPrice,
+        maxPrice: searchValues.maxPrice,
+        seats: searchValues.seats,
         page: searchValues.page,
         limit: searchValues.limit,
         search: searchValues.search,
