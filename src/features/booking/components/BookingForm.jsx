@@ -2,12 +2,11 @@ import { Calendar, MapPin, User, Shield, CheckCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 
 const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) => {
-  console.log(car)
   const { startDate, startHour, endDate, endHour } = searchForm
   const { deposit, total, holdCar, booking } = bookingFees
-  console.log(car)
   return (
     <Card className='shadow-lg'>
       <CardContent className='p-8'>
@@ -106,9 +105,9 @@ const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) 
         <Button
           onClick={onSubmit}
           disabled={submitLoading}
-          className='bg-secondary w-full cursor-pointer py-3 text-lg font-semibold hover:bg-blue-600 disabled:opacity-50'
+          className='bg-secondary flex w-full cursor-pointer items-center justify-center gap-2 py-3 text-lg font-semibold hover:bg-blue-600 disabled:opacity-50'
         >
-          {submitLoading ? 'Đang xử lý...' : 'Xác nhận'}
+          {submitLoading ? <Spinner size={20} /> : 'Xác nhận'}
         </Button>
 
         {/* Terms */}

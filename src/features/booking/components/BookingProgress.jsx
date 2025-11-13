@@ -22,31 +22,67 @@ const BookingProgress = ({ status }) => {
           <span className='text-secondary mt-2 text-xs font-medium'>Xác nhận đơn hàng</span>
         </div>
 
-        <div className={`mx-4 h-0.5 flex-1 ${status ? 'bg-secondary' : 'bg-gray-300'}`}></div>
+        <div
+          className={`mx-4 h-0.5 flex-1 ${
+            status === 'FAILED' || status === 'failed'
+              ? 'bg-red-500'
+              : status
+                ? 'bg-secondary'
+                : 'bg-gray-300'
+          }`}
+        ></div>
 
         <div className='flex flex-col items-center'>
           <div
-            className={`flex h-10 w-10 items-center justify-center rounded-full ${status ? 'bg-secondary text-white' : 'bg-gray-300 text-gray-500'}`}
+            className={`flex h-10 w-10 items-center justify-center rounded-full ${
+              status === 'failed'
+                ? 'bg-red-500 text-white'
+                : status
+                  ? 'bg-secondary text-white'
+                  : 'bg-gray-300 text-gray-500'
+            }`}
           >
             <Shield className='h-5 w-5' />
           </div>
           <span
-            className={`mt-2 text-xs font-medium ${status ? 'text-secondary' : 'text-gray-500'} `}
+            className={`mt-2 text-xs font-medium ${
+              status === 'failed' ? 'text-red-500' : status ? 'text-secondary' : 'text-gray-500'
+            }`}
           >
             Thanh toán giữ chỗ
           </span>
         </div>
 
-        <div className={`mx-4 h-0.5 flex-1 ${status ? 'bg-secondary' : 'bg-gray-300'}`}></div>
+        <div
+          className={`mx-4 h-0.5 flex-1 ${
+            status === 'FAILED' || status === 'failed'
+              ? 'bg-red-500'
+              : status
+                ? 'bg-secondary'
+                : 'bg-gray-300'
+          }`}
+        ></div>
 
         <div className='flex flex-col items-center'>
           <div
-            className={`flex h-10 w-10 items-center justify-center rounded-full ${status ? 'bg-secondary text-white' : 'bg-gray-300 text-gray-500'}`}
+            className={`flex h-10 w-10 items-center justify-center rounded-full ${
+              status === 'failed'
+                ? 'bg-red-500 text-white'
+                : status
+                  ? 'bg-secondary text-white'
+                  : 'bg-gray-300 text-gray-500'
+            }`}
           >
             <Calendar className='h-5 w-5' />
           </div>
           <span
-            className={`mt-2 text-xs font-medium ${status ? 'text-secondary' : 'text-gray-500'} `}
+            className={`mt-2 text-xs font-medium ${
+              status === 'FAILED'
+                ? 'text-red-600'
+                : status === 'SUCCESS'
+                  ? 'text-secondary'
+                  : 'text-gray-500'
+            }`}
           >
             Lấy mã & lấy xe
           </span>

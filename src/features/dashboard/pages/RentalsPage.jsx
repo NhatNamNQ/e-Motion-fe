@@ -5,10 +5,12 @@ import { getStatusColor } from '@/lib/utils'
 import { rentalService } from '../services/rentalService'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import DataTableToolbar from '../components/DataTableToolbar'
 import { useNavigate } from 'react-router-dom'
 import { useDebounce } from 'use-debounce'
 import Pagination from '@/components/Pagination'
+import { Plus } from 'lucide-react'
 
 const columnHelper = createColumnHelper()
 
@@ -25,7 +27,7 @@ const RentalsPage = () => {
 
   const navigate = useNavigate()
 
-  const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING_FEE', 'CONFIRM']
+  const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING_FEE', 'CONFIRM', 'OVERDUE']
 
   const columns = [
     columnHelper.accessor('id', {
@@ -63,6 +65,10 @@ const RentalsPage = () => {
     navigate(`/dashboard/rentals/${row.id}`)
   }
 
+  const handleCreateRental = () => {
+    navigate('/dashboard/rentals/create')
+  }
+
   useEffect(() => {
     const fetchRentals = async () => {
       try {
@@ -88,9 +94,14 @@ const RentalsPage = () => {
 
   return (
     <div className='flex h-full flex-col space-y-4'>
-      <div>
-        <h2 className='text-2xl font-bold tracking-tight'>Rentals</h2>
-        <p className='text-muted-foreground'>Manage your rental operations</p>
+      <div className='flex items-center justify-between'>
+        <div>
+          <h2 className='text-2xl font-bold tracking-tight'>Rentals</h2>
+          <p className='text-muted-foreground'>Manage your rental operations</p>
+        </div>
+        <Button className='bg-secondary hover:bg-secondary/80' onClick={handleCreateRental}>
+          Tạo rental mới
+        </Button>
       </div>
 
       <DataTableToolbar

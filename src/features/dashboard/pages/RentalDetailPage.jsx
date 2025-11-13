@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, FileText, ExternalLink } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { rentalService } from '../services/rentalService'
@@ -125,6 +125,7 @@ const RentalDetailPage = () => {
   const isPendingFee = rental.status === 'PENDING_FEE'
   const hasVehicleLog = !!rental.vehicleLog
   const isCompleted = rental.status === 'COMPLETED'
+  const isOverdue = rental.status === 'OVERDUE'
 
   return (
     <div className='container mx-auto p-4 md:p-6'>
@@ -159,6 +160,24 @@ const RentalDetailPage = () => {
                 <InfoRow label='Tên xe'>{rental.vehicle.name}</InfoRow>
                 <InfoRow label='Tên nhân viên'>{rental.staff.fullName}</InfoRow>
                 <InfoRow label='Tên trạm'>{rental.vehicle.station.name}</InfoRow>
+                <InfoRow label='Tình trạng hợp đồng'>{rental.contractStatus}</InfoRow>
+
+                <div className='space-y-1'>
+                  {rental.contractDocumentUrl ? (
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      className='h-auto w-fit gap-2 px-3 py-1.5'
+                      onClick={() => window.open(rental.contractDocumentUrl, '_blank')}
+                    >
+                      <FileText className='h-4 w-4' />
+                      <span className='text-sm'>Xem hợp đồng</span>
+                      <ExternalLink className='h-3 w-3' />
+                    </Button>
+                  ) : (
+                    <p className='text-sm font-semibold'>Chưa có hợp đồng</p>
+                  )}
+                </div>
               </div>
 
               {/* Vehicle Log Details */}
@@ -291,7 +310,7 @@ const RentalDetailPage = () => {
                   </Button>
                   <Button
                     onClick={handleCreateCheckOut}
-                    disabled={!isOngoing}
+                    disabled={!isOngoing && !isOverdue}
                     className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                   >
                     Tạo biên bản trả xe

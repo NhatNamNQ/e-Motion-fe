@@ -14,7 +14,7 @@ export default function ErrorPage() {
         <h2 className='text-center text-[30px]'>Look like you are lost</h2>
         <p className='text-center'>{error.statusText || error.message}</p>
         <div className='mt-3 flex justify-center'>
-          <Button onClick={() => navigate(-1)}>Go home</Button>
+          <Button onClick={() => navigate('/')}>Go home</Button>
         </div>
       </div>
     </section>

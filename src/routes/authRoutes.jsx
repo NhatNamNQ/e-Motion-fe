@@ -5,6 +5,7 @@ import RegisterPage from '@/features/auth/pages/RegisterPage'
 import OtpPage from '@/features/auth/pages/OtpPage'
 import ForgotPasswordPage from '@/features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from '@/features/auth/pages/ResetPasswordPage'
+import VerifyForgotPasswordPage from '@/features/auth/pages/VerifyForgotPasswordPage'
 
 const authRoutes = {
   path: '/auth',
@@ -39,6 +40,14 @@ const authRoutes = {
       element: (
         <PublicRoute>
           <ForgotPasswordPage />
+        </PublicRoute>
+      )
+    },
+    {
+      path: 'verify-forgot-password',
+      element: (
+        <PublicRoute>
+          <VerifyForgotPasswordPage />
         </PublicRoute>
       )
     },

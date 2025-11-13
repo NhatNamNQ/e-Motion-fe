@@ -2,13 +2,23 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, User, Car, MapPin, FileText, CreditCard } from 'lucide-react'
+import {
+  ArrowLeft,
+  User,
+  Car,
+  MapPin,
+  FileText,
+  CreditCard,
+  Clock,
+  ExternalLink
+} from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { profileService } from '../service/profileService'
 import { formatCurrency, getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import CarImageGallery from '@/features/cars/components/detail/CarImageGallery'
+import ExtendDialog from '../components/ExtendDialog'
 
 const RentalDetailPage = () => {
   const { id } = useParams()
@@ -16,6 +26,7 @@ const RentalDetailPage = () => {
   const [rental, setRental] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showExtendDialog, setShowExtendDialog] = useState(false)
 
   const fetchRentalDetail = useCallback(async () => {
     if (!id) return
@@ -59,6 +70,12 @@ const RentalDetailPage = () => {
     </div>
   )
 
+  const handleExtendSuccess = async () => {
+    await fetchRentalDetail()
+  }
+
+  const canExtend =
+    rental?.status === 'ONGOING' || rental?.status === 'CONFIRM' || rental?.status === 'OVERDUE'
   const isCompleted = rental.status === 'COMPLETED'
   const rentFee = rental?.rentFee || 0
   const reservationFee = rental?.reservationDeposit?.amount || 0
@@ -72,8 +89,11 @@ const RentalDetailPage = () => {
         <div>
           <h1 className='text-3xl font-bold'>Chi tiết Hợp đồng #{rental.id}</h1>
           <p className='text-muted-foreground mt-1'>Tạo lúc: {formatDateTime(rental.createdAt)}</p>
+          <p className='text-muted-foreground mt-1'>Kết thúc: {formatDateTime(rental.endTime)}</p>
         </div>
-        <Badge className={`text-base ${getStatusColor(rental.status)}`}>{rental.status}</Badge>
+        <div className='flex items-center gap-3'>
+          <Badge className={`text-base ${getStatusColor(rental.status)}`}>{rental.status}</Badge>
+        </div>
       </div>
 
       {rental.vehicle.images && <CarImageGallery car={rental.vehicle} />}
@@ -112,6 +132,31 @@ const RentalDetailPage = () => {
             <MapPin size={22} /> Thông tin trạm
           </h2>
           <DetailItem label='Tên trạm' value={rental.vehicle.station.name} />
+        </div>
+
+        <Separator />
+
+        <div className='space-y-4'>
+          <h2 className='flex items-center gap-2 text-2xl font-bold'>
+            <MapPin size={22} /> Thông tin hợp đồng
+          </h2>
+          <DetailItem label='Trạng thái hợp đồng' value={rental.contractStatus} />
+          <div className='space-y-1'>
+            {rental.contractDocumentUrl ? (
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-auto w-fit gap-2 px-3 py-1.5'
+                onClick={() => window.open(rental.contractDocumentUrl, '_blank')}
+              >
+                <FileText className='h-4 w-4' />
+                <span className='text-sm'>Xem hợp đồng</span>
+                <ExternalLink className='h-3 w-3' />
+              </Button>
+            ) : (
+              <p className='text-sm font-semibold'>Chưa có hợp đồng</p>
+            )}
+          </div>
         </div>
 
         <Separator />
@@ -219,6 +264,31 @@ const RentalDetailPage = () => {
             </div>
           )}
         </div>
+
+        <Separator />
+
+        {/* Action Buttons */}
+        {canExtend && (
+          <div className='flex justify-end'>
+            <Button
+              variant='outline'
+              onClick={() => setShowExtendDialog(true)}
+              className='hover:border-primary hover:bg-primary hover:text-primary-foreground w-full border-gray-400 transition-all duration-300 ease-in-out sm:w-auto'
+            >
+              <Clock className='mr-2 h-4 w-4' />
+              Gia hạn hợp đồng
+            </Button>
+          </div>
+        )}
+
+        {/* Extend Rental Dialog */}
+        <ExtendDialog
+          open={showExtendDialog}
+          onOpenChange={setShowExtendDialog}
+          data={rental}
+          type='rental'
+          onSuccess={handleExtendSuccess}
+        />
       </div>
     </div>
   )

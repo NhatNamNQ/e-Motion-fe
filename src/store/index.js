@@ -12,10 +12,16 @@ const searchPersistConfig = {
   whitelist: ['searchForm', 'startTime', 'endTime']
 }
 
+const carsPersistConfig = {
+  key: 'cars',
+  storage,
+  whitelist: ['selectedCar', 'fees']
+}
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    cars: carsReducer,
+    cars: persistReducer(carsPersistConfig, carsReducer),
     search: persistReducer(searchPersistConfig, searchReducer)
   },
   middleware: (getDefaultMiddleware) =>

@@ -1,15 +1,23 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
+import FilterPopover from './FilterPopover'
+import PriceFilter from './PriceFilter'
+import SeatsFilter from './SeatsFilter'
 
-const FilterSidebar = ({ onFilterChange, selectedBrands, selectedCategories }) => {
+const FilterSidebar = ({
+  onFilterChange,
+  selectedBrands,
+  selectedCategories,
+  priceRange = [],
+  selectedSeat = null
+}) => {
   const [brands, setBrands] = useState([])
   const [categories, setCategories] = useState([])
   const [localBrands, setLocalBrands] = useState(selectedBrands || [])
   const [localCategories, setLocalCategories] = useState(selectedCategories || [])
+  const [localPriceRange, setLocalPriceRange] = useState(priceRange)
+  const [localSeat, setLocalSeat] = useState(selectedSeat)
   const [openPopover, setOpenPopover] = useState(null)
 
   useEffect(() => {
@@ -17,21 +25,13 @@ const FilterSidebar = ({ onFilterChange, selectedBrands, selectedCategories }) =
       try {
         setBrands([
           { id: 1, name: 'HYUNDAI' },
-          { id: 2, name: 'KIA' },
-          { id: 3, name: 'HONDA' },
-          { id: 4, name: 'NISSAN' },
-          { id: 5, name: 'BMW' },
-          { id: 6, name: 'BYD' },
-          { id: 7, name: 'MITSUBISHI' },
-          { id: 8, name: 'VINFAST' },
-          { id: 9, name: 'MERCEDES_BENZ' },
-          { id: 10, name: 'SUZUKI' },
-          { id: 11, name: 'LEXUS' },
-          { id: 12, name: 'TOYOTA' },
-          { id: 13, name: 'PEUGEOT' },
-          { id: 14, name: 'TESLA' },
-          { id: 15, name: 'FORD' },
-          { id: 16, name: 'MAZDA' }
+          { id: 2, name: 'HONDA' },
+          { id: 3, name: 'BMW' },
+          { id: 4, name: 'BYD' },
+          { id: 5, name: 'VINFAST' },
+          { id: 6, name: 'MERCEDES_BENZ' },
+          { id: 7, name: 'TESLA' },
+          { id: 8, name: 'FORD' }
         ])
         setCategories([
           { id: 1, name: 'HATCHBACK' },
@@ -63,21 +63,52 @@ const FilterSidebar = ({ onFilterChange, selectedBrands, selectedCategories }) =
   const handleApplyFilters = () => {
     onFilterChange({
       brands: localBrands,
-      categories: localCategories
+      categories: localCategories,
+      priceRange: localPriceRange,
+      seat: localSeat
     })
     setOpenPopover(null)
+  }
+
+  const handlePriceChange = (newPriceRange) => {
+    setLocalPriceRange(newPriceRange)
+    onFilterChange({
+      brands: localBrands,
+      categories: localCategories,
+      priceRange: newPriceRange,
+      seat: localSeat
+    })
+  }
+
+  const handleSeatChange = (newSeat) => {
+    setLocalSeat(newSeat)
+    onFilterChange({
+      brands: localBrands,
+      categories: localCategories,
+      priceRange: localPriceRange,
+      seat: newSeat
+    })
   }
 
   const handleClearAll = () => {
     setLocalBrands([])
     setLocalCategories([])
+    setLocalPriceRange([0, 1000000])
+    setLocalSeat(null)
     onFilterChange({
       brands: [],
-      categories: []
+      categories: [],
+      priceRange: [0, 1000000],
+      seat: null
     })
   }
 
-  const hasActiveFilters = localBrands.length > 0 || localCategories.length > 0
+  const hasActiveFilters =
+    localBrands.length > 0 ||
+    localCategories.length > 0 ||
+    localPriceRange[0] > 0 ||
+    localPriceRange[1] < 1000000 ||
+    localSeat !== null
 
   return (
     <div className='flex flex-wrap items-center gap-3'>
@@ -93,131 +124,45 @@ const FilterSidebar = ({ onFilterChange, selectedBrands, selectedCategories }) =
         Tất cả
       </Button>
 
-      {/* Categories Popover */}
-      <Popover
-        open={openPopover === 'categories'}
+      {/* Categories Filter */}
+      <FilterPopover
+        label='Loại xe'
+        items={categories}
+        selectedItems={localCategories}
+        onItemChange={handleCategoryChange}
+        onClear={() => setLocalCategories([])}
+        onApply={handleApplyFilters}
+        isOpen={openPopover === 'categories'}
         onOpenChange={(open) => setOpenPopover(open ? 'categories' : null)}
-      >
-        <PopoverTrigger asChild>
-          <Button
-            variant='outline'
-            className={`flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-all ${
-              localCategories.length > 0
-                ? 'border-secondary bg-secondary/10 text-secondary'
-                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Loại xe
-            {localCategories.length > 0 && (
-              <span className='bg-secondary flex h-5 w-5 items-center justify-center rounded-full text-xs text-white'>
-                {localCategories.length}
-              </span>
-            )}
-            <ChevronDown className='h-4 w-4' />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className='w-80 p-4' align='start'>
-          <div className='space-y-4'>
-            <div className='flex items-center justify-between'>
-              <h3 className='font-semibold text-gray-800'>Chọn loại xe</h3>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => setLocalCategories([])}
-                className='text-sm text-gray-500 hover:text-gray-700'
-              >
-                Xóa
-              </Button>
-            </div>
-            <div className='max-h-80 space-y-3 overflow-y-auto'>
-              {categories.map((category) => (
-                <div key={category.id} className='flex items-center space-x-3'>
-                  <Checkbox
-                    id={`category-${category.id}`}
-                    checked={localCategories.includes(category.name)}
-                    onCheckedChange={(checked) => handleCategoryChange(category.name, checked)}
-                  />
-                  <Label
-                    htmlFor={`category-${category.id}`}
-                    className='flex-1 cursor-pointer text-sm font-normal'
-                  >
-                    {category.name}
-                  </Label>
-                </div>
-              ))}
-            </div>
-            <Button
-              onClick={handleApplyFilters}
-              className='bg-secondary hover:bg-secondary/80 w-full'
-            >
-              Áp dụng
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
+      />
 
-      {/* Brands Popover */}
-      <Popover
-        open={openPopover === 'brands'}
+      {/* Brands Filter */}
+      <FilterPopover
+        label='Hãng xe'
+        items={brands}
+        selectedItems={localBrands}
+        onItemChange={handleBrandChange}
+        onClear={() => setLocalBrands([])}
+        onApply={handleApplyFilters}
+        isOpen={openPopover === 'brands'}
         onOpenChange={(open) => setOpenPopover(open ? 'brands' : null)}
-      >
-        <PopoverTrigger asChild>
-          <Button
-            variant={localBrands.length > 0 ? 'outline' : 'outline'}
-            className={`flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-medium transition-all ${
-              localBrands.length > 0
-                ? 'border-secondary bg-secondary/10 text-secondary'
-                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Hãng xe
-            {localBrands.length > 0 && (
-              <span className='bg-secondary flex h-5 w-5 items-center justify-center rounded-full text-xs text-white'>
-                {localBrands.length}
-              </span>
-            )}
-            <ChevronDown className='h-4 w-4' />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className='w-80 p-4' align='start'>
-          <div className='space-y-4'>
-            <div className='flex items-center justify-between'>
-              <h3 className='font-semibold text-gray-800'>Chọn hãng xe</h3>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => setLocalBrands([])}
-                className='text-sm text-gray-500 hover:text-gray-700'
-              >
-                Xóa
-              </Button>
-            </div>
-            <div className='max-h-80 space-y-3 overflow-y-auto'>
-              {brands.map((brand) => (
-                <div key={brand.id} className='flex items-center space-x-3'>
-                  <Checkbox
-                    id={`brand-${brand.id}`}
-                    checked={localBrands.includes(brand.name)}
-                    onCheckedChange={(checked) => handleBrandChange(brand.name, checked)}
-                  />
-                  <Label
-                    htmlFor={`brand-${brand.id}`}
-                    className='flex-1 cursor-pointer text-sm font-normal'
-                  >
-                    {brand.name}
-                  </Label>
-                </div>
-              ))}
-            </div>
-            <Button
-              onClick={handleApplyFilters}
-              className='bg-secondary hover:bg-secondary/80 w-full'
-            >
-              Áp dụng
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
+      />
+
+      {/* Price Filter */}
+      <PriceFilter
+        priceRange={localPriceRange}
+        onPriceChange={handlePriceChange}
+        isOpen={openPopover === 'price'}
+        onOpenChange={(open) => setOpenPopover(open ? 'price' : null)}
+      />
+
+      {/* Seats Filter */}
+      <SeatsFilter
+        selectedSeat={localSeat}
+        onSeatChange={handleSeatChange}
+        isOpen={openPopover === 'seats'}
+        onOpenChange={(open) => setOpenPopover(open ? 'seats' : null)}
+      />
 
       {/* Clear All Button */}
       {hasActiveFilters && (

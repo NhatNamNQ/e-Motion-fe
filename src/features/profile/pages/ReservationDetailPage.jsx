@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, User, Car, MapPin, Bell } from 'lucide-react'
+import { ArrowLeft, User, Car, MapPin, Bell, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { profileService } from '../service/profileService'
@@ -10,28 +10,71 @@ import { toast } from 'sonner'
 import { getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import CarImageGallery from '@/features/cars/components/detail/CarImageGallery'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import { Spinner } from '@/components/ui/spinner'
+import ExtendDialog from '../components/ExtendDialog'
 
 const ReservationDetailPage = () => {
-  const { code } = useParams()
+  const { id } = useParams()
   const navigate = useNavigate()
   const [reservation, setReservation] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [cancelling, setCancelling] = useState(false)
+  const [showExtendDialog, setShowExtendDialog] = useState(false)
+
+  const fetchReservation = useCallback(async () => {
+    try {
+      setLoading(true)
+      const data = await profileService.getReservationDetail(id)
+      setReservation(data)
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [id])
 
   useEffect(() => {
-    const fetchReservation = async () => {
-      if (!code) return
-      try {
-        setLoading(true)
-        const data = await profileService.getReservationDetail(code)
-        setReservation(data)
-      } catch (error) {
-        toast.error(error.message)
-      } finally {
-        setLoading(false)
-      }
-    }
     fetchReservation()
-  }, [code])
+  }, [fetchReservation])
+
+  const handleCancelReservation = async () => {
+    try {
+      setCancelling(true)
+      await profileService.cancelReservation(reservation.code)
+      toast.success('Hủy đặt trước thành công')
+      fetchReservation()
+    } catch (error) {
+      toast.error(error.message || 'Không thể hủy đặt trước')
+    } finally {
+      setCancelling(false)
+    }
+  }
+
+  const handleExtendSuccess = async () => {
+    // Reload reservation data
+    try {
+      const data = await profileService.getReservationDetail(id)
+      setReservation(data)
+    } catch (error) {
+      console.error(error)
+      toast.error('Không thể tải lại thông tin đặt chỗ')
+    }
+  }
+
+  const canCancel = reservation?.status === 'CONFIRM'
+  const isPending = reservation?.status === 'PENDING'
+  const canExtend = reservation?.status === 'CONFIRM'
 
   if (loading) {
     return <Loader />
@@ -63,13 +106,21 @@ const ReservationDetailPage = () => {
       <div className='mb-4 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between'>
         <div>
           <h1 className='text-3xl font-bold'>Đơn đặt chỗ #{reservation.code}</h1>
-          <p className='text-muted-foreground mt-1'>
+          <p className='text-muted-foreground my-1'>
             Tạo lúc: {formatDateTime(reservation.createdAt)}
           </p>
+          <p className='text-muted-foreground mt-1'>
+            Bắt đầu: {formatDateTime(reservation.startTime)}
+          </p>
+          <p className='text-muted-foreground mt-1'>
+            Kết thúc: {formatDateTime(reservation.endTime)}
+          </p>
         </div>
-        <Badge className={`text-base ${getStatusColor(reservation.status)}`}>
-          {reservation.status}
-        </Badge>
+        <div className='flex items-center gap-3'>
+          <Badge className={`text-base ${getStatusColor(reservation.status)}`}>
+            {reservation.status}
+          </Badge>
+        </div>
       </div>
 
       {reservation.vehicle.images && <CarImageGallery car={reservation.vehicle} />}
@@ -101,24 +152,64 @@ const ReservationDetailPage = () => {
           </div>
         </div>
         <Separator />
-        <div className='space-y-4'>
-          <h2 className='flex items-center gap-2 text-2xl font-bold'>
-            <Bell size={22} /> Trạng thái thông báo
-          </h2>
-          <div className='flex items-center justify-between text-sm'>
-            <span>Sắp hết hạn:</span>
-            <Badge variant={reservation.expiringNotified ? 'default' : 'secondary'}>
-              {reservation.expiringNotified ? 'Đã gửi' : 'Chưa gửi'}
-            </Badge>
-          </div>
-          <div className='flex items-center justify-between text-sm'>
-            <span>Quá hạn:</span>
-            <Badge variant={reservation.overdueNotified ? 'default' : 'secondary'}>
-              {reservation.overdueNotified ? 'Đã gửi' : 'Chưa gửi'}
-            </Badge>
-          </div>
+
+        {/* Action Buttons Section */}
+        <div className='flex flex-col gap-3 sm:flex-row sm:justify-end'>
+          {isPending && (
+            <Button
+              variant='default'
+              className='w-full sm:w-auto'
+              onClick={() => (window.location.href = reservation.paymentUrl)}
+            >
+              Thanh toán lại
+            </Button>
+          )}
+          {canExtend && (
+            <Button
+              variant='outline'
+              className='hover:border-primary hover:bg-primary hover:text-primary-foreground w-full border-gray-400 transition-all duration-300 ease-in-out sm:w-auto'
+              onClick={() => setShowExtendDialog(true)}
+            >
+              <Clock className='mr-2 h-4 w-4' />
+              Gia hạn đặt chỗ
+            </Button>
+          )}
+          {canCancel && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant='destructive' className='w-full sm:w-auto' disabled={cancelling}>
+                  {cancelling ? <Spinner /> : 'Hủy đặt trước'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Xác nhận hủy đặt trước</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Bạn có chắc chắn muốn hủy đơn đặt chỗ #{reservation.code}? Hành động này không
+                    thể hoàn tác.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Không</AlertDialogCancel>
+                  <AlertDialogAction
+                    className='bg-destructive hover:bg-destructive/80'
+                    onClick={handleCancelReservation}
+                  >
+                    Đồng ý hủy
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </div>
+      <ExtendDialog
+        open={showExtendDialog}
+        onOpenChange={setShowExtendDialog}
+        data={reservation}
+        type='reservation'
+        onSuccess={handleExtendSuccess}
+      />
     </div>
   )
 }

@@ -1,13 +1,14 @@
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import MainLayout from '@/layout/MainLayout'
 import ProtectedRoute from './ProtectedRoute'
 import ErrorPage from '@/features/error/pages/ErrorPage'
 import Loader from '@/components/Loader'
-
-const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
-const CarListPage = lazy(() => import('@/features/cars/pages/CarListPage'))
-const CarDetailPage = lazy(() => import('@/features/cars/pages/CarDetailPage'))
-const BookingPage = lazy(() => import('@/features/booking/pages/BookingPage'))
+import PaymentResultPage from '@/features/booking/pages/PaymentResultPage'
+import AboutUsPage from '@/features/profile/pages/AboutUsPage'
+import CarListPage from '@/features/cars/pages/CarListPage'
+import CarDetailPage from '@/features/cars/pages/CarDetailPage'
+import HomePage from '@/features/home/pages/HomePage'
+import BookingPage from '@/features/booking/pages/BookingPage'
 
 const mainRoutes = {
   path: '/',
@@ -16,35 +17,29 @@ const mainRoutes = {
   children: [
     {
       path: '/',
-      element: (
-        <Suspense fallback={<Loader />}>
-          <HomePage />
-        </Suspense>
-      )
+      element: <HomePage />
     },
     {
       path: '/cars',
-      element: (
-        <Suspense fallback={<Loader />}>
-          <CarListPage />
-        </Suspense>
-      )
+      element: <CarListPage />
     },
     {
       path: '/cars/:id',
+      element: <CarDetailPage />
+    },
+    {
+      path: '/about-us',
       element: (
         <Suspense fallback={<Loader />}>
-          <CarDetailPage />
+          <AboutUsPage />
         </Suspense>
       )
     },
     {
       path: '/booking/confirm',
       element: (
-        <ProtectedRoute allowedRoles={['ROLE_USER']}>
-          <Suspense fallback={<Loader />}>
-            <BookingPage />
-          </Suspense>
+        <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
+          <BookingPage />
         </ProtectedRoute>
       )
     },
@@ -53,6 +48,14 @@ const mainRoutes = {
       element: (
         <Suspense fallback={<Loader />}>
           <BookingPage />
+        </Suspense>
+      )
+    },
+    {
+      path: '/payment-result',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <PaymentResultPage />
         </Suspense>
       )
     }
