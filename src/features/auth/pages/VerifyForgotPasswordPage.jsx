@@ -11,7 +11,6 @@ const VerifyForgotPasswordPage = () => {
   const navigate = useNavigate()
   const email = location?.state?.email
   const [isLoading, setIsLoading] = useState(false)
-  console.log(location)
   const handleVerifyForgotPassword = async (values) => {
     try {
       setIsLoading(true)

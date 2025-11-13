@@ -2,7 +2,16 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, User, Car, MapPin, FileText, CreditCard, Clock } from 'lucide-react'
+import {
+  ArrowLeft,
+  User,
+  Car,
+  MapPin,
+  FileText,
+  CreditCard,
+  Clock,
+  ExternalLink
+} from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { profileService } from '../service/profileService'
@@ -123,6 +132,31 @@ const RentalDetailPage = () => {
             <MapPin size={22} /> Thông tin trạm
           </h2>
           <DetailItem label='Tên trạm' value={rental.vehicle.station.name} />
+        </div>
+
+        <Separator />
+
+        <div className='space-y-4'>
+          <h2 className='flex items-center gap-2 text-2xl font-bold'>
+            <MapPin size={22} /> Thông tin hợp đồng
+          </h2>
+          <DetailItem label='Trạng thái hợp đồng' value={rental.contractStatus} />
+          <div className='space-y-1'>
+            {rental.contractDocumentUrl ? (
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-auto w-fit gap-2 px-3 py-1.5'
+                onClick={() => window.open(rental.contractDocumentUrl, '_blank')}
+              >
+                <FileText className='h-4 w-4' />
+                <span className='text-sm'>Xem hợp đồng</span>
+                <ExternalLink className='h-3 w-3' />
+              </Button>
+            ) : (
+              <p className='text-sm font-semibold'>Chưa có hợp đồng</p>
+            )}
+          </div>
         </div>
 
         <Separator />
