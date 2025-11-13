@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Car, CirclePlus, X } from 'lucide-react'
-import { userService } from '../services/userService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
 import CarForm from '../components/CarForm'
