@@ -114,13 +114,13 @@ const CarsPage = () => {
     }
   }
 
-  const handleSubmitEditUser = async (userData) => {
+  const handleSubmitEditCar = async (carData) => {
     setShowCarForm(false)
     setIsLoading(true)
     try {
-      await userService.editUser(userData)
+      await carService.updateCar(carData)
+      await fetchCars()
       toast.success('Edit user successfully!')
-      fetchCars()
     } catch (error) {
       setShowCarForm(true)
       toast.error('Error adding user: ' + error.message)
@@ -280,7 +280,7 @@ const CarsPage = () => {
         {showCarForm && (
           <CarForm
             mode={mode}
-            handleSubmitCar={mode.type === 'add' ? handleSubmitAddCar : handleSubmitEditUser}
+            handleSubmitCar={mode.type === 'add' ? handleSubmitAddCar : handleSubmitEditCar}
             setShowCarForm={setShowCarForm}
             stations={stations}
           />

@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select'
-import { Upload, X, Eye } from 'lucide-react'
+import { Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { carBrands, carCategories } from '../constants/carConfig'
@@ -153,18 +153,18 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
           const url = await uploadImage(file, 'cars', data.name)
           return {
             url,
-            main: parseFloat(id) === mainImageId,
-            isExisting: false
+            main: parseFloat(id) === mainImageId
           }
         })
       )
       const updatedUploadedImages = uploadedImages.map((img) => ({
-        ...img,
+        url: img.url,
         main: img.id === mainImageId
       }))
       const allImages = [...updatedUploadedImages, ...newImages]
       await handleSubmitCar({
         ...data,
+        id: mode.car.id,
         images: allImages.map(({ url, main }) => ({ url, main }))
       })
       toast.success(isAdd ? 'Thêm xe thành công' : 'Cập nhật xe thành công')
@@ -198,6 +198,7 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
                   Tên xe
                 </Label>
                 <Input
+                  disabled={mode.car}
                   id='name'
                   {...register('name')}
                   placeholder='VD: VinFast Evo200'
