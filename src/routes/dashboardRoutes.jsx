@@ -16,7 +16,6 @@ import CheckOutPage from '@/features/dashboard/pages/CheckOutPage'
 import CheckListDetailPage from '@/features/dashboard/pages/CheckListDetailPage'
 import VehicleLogsPage from '@/features/dashboard/pages/VehicleLogsPage'
 import VehicleLogDetailPage from '@/features/dashboard/pages/VehicleLogDetailPage'
-import SuccessPaymentPage from '@/features/dashboard/pages/SuccessPaymentPage'
 import RentalLogPage from '@/features/dashboard/pages/RentalLogPage'
 import StationsPage from '@/features/dashboard/pages/StationsPage'
 import StationDetailPage from '@/features/dashboard/pages/StationDetailPage'
@@ -154,16 +153,6 @@ export const dashboardRoutes = {
         <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
           <Suspense fallback={<Loader />}>
             <CheckListDetailPage />
-          </Suspense>
-        </ProtectedRoute>
-      )
-    },
-    {
-      path: '/dashboard/payment-result',
-      element: (
-        <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
-          <Suspense fallback={<Loader />}>
-            <SuccessPaymentPage />
           </Suspense>
         </ProtectedRoute>
       )

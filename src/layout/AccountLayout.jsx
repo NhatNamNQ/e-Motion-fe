@@ -2,6 +2,7 @@ import Header from './Header'
 import Footer from './Footer'
 import AccountSidebar from './AccountSidebar'
 import { Outlet } from 'react-router-dom'
+import { Toaster } from '@/components/ui/sonner'
 
 const AccountLayout = () => {
   return (
@@ -14,6 +15,7 @@ const AccountLayout = () => {
         </section>
       </main>
       <Footer />
+      <Toaster expand={true} richColors />
     </div>
   )
 }

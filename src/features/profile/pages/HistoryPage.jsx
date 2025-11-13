@@ -8,38 +8,47 @@ import { selectUser } from '@/store/selectors/authSelectors'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
-const HistoryPage = ({ user }) => {
+const HistoryPage = () => {
   const [reservations, setReservations] = useState([])
   const [rentals, setRentals] = useState([])
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [tab, setTab] = useState('reservations')
-
-  const currentUser = useSelector(selectUser)
-  if (user == null) {
-    user = currentUser
-  }
+  const user = useSelector(selectUser)
 
   useEffect(() => {
     const fetchData = async () => {
+      if (tab === 'reservations' && reservations.length > 0) {
+        return
+      }
+      if (tab === 'rentals' && rentals.length > 0) {
+        return
+      }
+
+      setLoading(true)
+      setError(null)
       try {
-        setLoading(true)
-        setError(null)
-        const [reservationsData, rentalsData] = await Promise.all([
-          profileService.viewReservationsHistory(user.email),
-          profileService.viewRentalsHistory(user.email)
-        ])
-        setReservations(reservationsData)
-        setRentals(rentalsData)
-      } catch (error) {
-        setError(error.message)
+        if (tab === 'reservations') {
+          const reservationsData = await profileService.viewReservationsHistory(user.email)
+          setRentals([])
+          setReservations(reservationsData)
+        } else if (tab === 'rentals') {
+          const rentalsData = await profileService.viewRentalsHistory(user.email)
+          setReservations([])
+          setRentals(rentalsData)
+        }
+      } catch (err) {
+        setError(err.message)
       } finally {
         setLoading(false)
       }
     }
-    fetchData()
-  }, [user.email])
+
+    if (user?.email) {
+      fetchData()
+    }
+  }, [tab, user.email, reservations.length, rentals.length])
 
   if (loading) return <Loader />
   if (error)
@@ -75,21 +84,21 @@ const HistoryPage = ({ user }) => {
 
       <div className='space-y-4'>
         {tab === 'reservations' ? (
-          reservations.length === 0 ? (
+          reservations.length === 0 && !loading ? (
             <div className='rounded-lg bg-white p-12 text-center shadow-sm'>
               <p className='text-lg text-gray-500'>Bạn chưa có đơn đặt chỗ nào.</p>
             </div>
           ) : (
             reservations.map((reservation) => (
               <HistoryCard
-                key={reservation.code}
-                image={reservation.vehicle.images[0]?.url || 'https://placehold.co/400x300'}
-                title={reservation.vehicle.name}
-                location={reservation.vehicle.station.name}
+                key={reservation.id}
+                image={reservation.vehicleImage || 'https://placehold.co/400x300'}
+                title={reservation.vehicleName}
+                location={reservation.stationName}
                 timeInfo={`Đặt lúc: ${formatHourDate(reservation.createdAt)}`}
                 status={reservation.status}
                 statusClass={getStatusColor(reservation.status)}
-                onClick={() => navigate(`/account/reservations/${reservation.code}`)}
+                onClick={() => navigate(`/account/reservations/${reservation.id}`)}
               />
             ))
           )
@@ -101,10 +110,10 @@ const HistoryPage = ({ user }) => {
           rentals.map((rental) => (
             <HistoryCard
               key={rental.id}
-              image={rental.vehicle.images[0]?.url || 'https://placehold.co/400x300'}
-              title={rental.vehicle.name}
-              location={rental.vehicle.station.name}
-              timeInfo={`${formatHourDate(rental.startTime)} - ${formatHourDate(rental.endTime)}`}
+              image={rental.vehicleImage || 'https://placehold.co/400x300'}
+              title={rental.vehicleName}
+              location={rental.stationName}
+              timeInfo={formatHourDate(rental.createdAt)}
               status={rental.status}
               statusClass={getStatusColor(rental.status)}
               onClick={() => navigate(`/account/rentals/${rental.id}`)}

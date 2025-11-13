@@ -20,8 +20,23 @@ export const carService = {
   },
   searchCars: async (searchValues) => {
     try {
-      const { data } = await instance.post('/vehicles/filter', searchValues)
-      return data
+      const [availableRes, unavailableRes] = await Promise.all([
+        instance.post('/vehicles/filter/available', searchValues),
+        instance.post('/vehicles/filter/unavailable', searchValues)
+      ])
+
+      return {
+        data: {
+          content: {
+            availableVehicles: availableRes.data.data.content || [],
+            unavailableVehicles: unavailableRes.data.data.content || []
+          },
+          totalPages: Math.max(
+            availableRes.data.data.totalPages || 1,
+            unavailableRes.data.data.totalPages || 1
+          )
+        }
+      }
     } catch (error) {
       throw handleError(error)
     }
@@ -43,6 +58,14 @@ export const carService = {
   getCarQuantityEachStatusOfStation: async (stationId) => {
     try {
       const { data } = await instance.get(`/vehicles/status/${stationId}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  viewCarSchedule: async (id) => {
+    try {
+      const { data } = await instance.get(`/vehicles/${id}/schedule`)
       return data.data
     } catch (error) {
       throw handleError(error)

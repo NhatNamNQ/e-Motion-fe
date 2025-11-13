@@ -8,6 +8,8 @@ import { clearError } from '../../../store/slices/authSlice'
 import { getCurrentUser, loginUser } from '@/store/actions/authActions'
 import { selectAuthLoading } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
+// eslint-disable-next-line
+import { motion } from 'framer-motion'
 
 const LoginPage = () => {
   usePageTitle('Login')
@@ -53,7 +55,12 @@ const LoginPage = () => {
   }
 
   return (
-    <div className='w-full max-w-md'>
+    <motion.div
+      className='w-full max-w-md'
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className='px-6 py-8'>
         <AuthForm
           isLoading={isLoading}
@@ -63,7 +70,7 @@ const LoginPage = () => {
           formType='login'
         />
       </div>
-    </div>
+    </motion.div>
   )
 }
 

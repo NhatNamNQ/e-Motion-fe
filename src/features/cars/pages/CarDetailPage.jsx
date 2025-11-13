@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Loader from '@/components/Loader'
@@ -24,6 +23,7 @@ import {
 } from '@/store/selectors/carsSelectors'
 import { selectEndTime, selectSearchForm, selectStartTime } from '@/store/selectors/searchSelectors'
 import { selectUser } from '@/store/selectors/authSelectors'
+import CarsSlider from '@/features/home/components/CarsSlider'
 
 const CarDetailPage = () => {
   const { id } = useParams()
@@ -106,12 +106,6 @@ const CarDetailPage = () => {
                   <PricingDisplay car={car} />
                   <RentalTime searchForm={searchForm} />
                   <PickupLocation car={car} />
-                  <div className='mb-6 flex items-center gap-3'>
-                    <Shield className='h-4 w-4 text-blue-500' />
-                    <span className='text-base font-bold text-gray-600'>
-                      Xe có bảo hiểm vật chất hai chiều
-                    </span>
-                  </div>
                   <PriceBreakdown car={car} bookingFees={bookingFees} />
                   <Button
                     onClick={handleRentCar}
@@ -131,6 +125,11 @@ const CarDetailPage = () => {
               </div>
             </div>
           </div>
+        </div>
+        <div className='mt-8'>
+          <h2 className='text-2xl text-gray-700'>Các loại xe tương tự </h2>
+          <div className='bg-secondary my-2 h-1 w-10 rounded-full' />{' '}
+          <CarsSlider cars={car.similarVehicleList} />
         </div>
       </div>
     </div>

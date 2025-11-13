@@ -1,5 +1,3 @@
-import { Car } from 'lucide-react'
-
 const Footer = () => {
   return (
     <footer className='text-foreground bg-gray-100 py-12'>

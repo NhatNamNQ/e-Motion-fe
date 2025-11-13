@@ -106,6 +106,15 @@ const ReservationDetailPage = () => {
               <div className='grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2'>
                 <div className='space-y-4'>
                   <h3 className='flex items-center gap-2 font-semibold'>
+                    <Calendar size={18} /> Thời gian
+                  </h3>
+                  <div className='flex gap-4'>
+                    <InfoRow label='Bắt đầu'>{formatDateTime(reservation.startTime)}</InfoRow>
+                    <InfoRow label='Kết thúc'>{formatDateTime(reservation.endTime)}</InfoRow>
+                  </div>
+                </div>
+                <div className='space-y-4'>
+                  <h3 className='flex items-center gap-2 font-semibold'>
                     <User size={18} /> Thông tin người thuê
                   </h3>
                   <InfoRow label='Email'>{reservation.userEmail}</InfoRow>

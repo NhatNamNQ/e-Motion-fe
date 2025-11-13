@@ -18,9 +18,9 @@ export const profileService = {
       throw handleError(error)
     }
   },
-  getReservationDetail: async (code) => {
+  getReservationDetail: async (id) => {
     try {
-      const { data } = await instance.get(`/reservations/me/${code}`)
+      const { data } = await instance.get(`/reservations/me/${id}`)
       return data.data
     } catch (error) {
       throw handleError(error)
@@ -29,6 +29,64 @@ export const profileService = {
   getRentalDetail: async (id) => {
     try {
       const { data } = await instance.get(`/rentals/me/details/${id}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  cancelReservation: async (code) => {
+    try {
+      const { data } = await instance.post(`/reservations/${code}/cancel`, code)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getVehicleSchedule: async (vehicleId) => {
+    try {
+      const { data } = await instance.get(`/vehicles/${vehicleId}/schedule`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  extendReservation: async (reservationCode, newReturnTime) => {
+    try {
+      const formatLocalDateTime = (date) => {
+        const pad = (num) => String(num).padStart(2, '0')
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+      }
+
+      const formattedDateTime = formatLocalDateTime(newReturnTime)
+
+      const { data } = await instance.post(
+        `/reservations/${reservationCode}/extend`,
+        formattedDateTime,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  extendRental: async (rentalId, newReturnTime) => {
+    try {
+      const formatLocalDateTime = (date) => {
+        const pad = (num) => String(num).padStart(2, '0')
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+      }
+
+      const formattedDateTime = formatLocalDateTime(newReturnTime)
+
+      const { data } = await instance.post(`/rentals/${rentalId}/extend`, formattedDateTime, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       return data.data
     } catch (error) {
       throw handleError(error)

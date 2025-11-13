@@ -1,9 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const FailedPaymentCard = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const currentUrl = location.pathname
+
   return (
     <Card className='shadow-lg'>
       <CardContent className='p-8 text-center'>
@@ -16,12 +19,14 @@ const FailedPaymentCard = () => {
         </p>
 
         <div className='flex justify-center gap-4'>
-          <Button
-            className='bg-secondary hover:bg-secondary/80'
-            onClick={() => navigate('/booking/confirm')}
-          >
-            Thử lại
-          </Button>
+          {currentUrl === '/booking/payment-result' && (
+            <Button
+              className='bg-secondary hover:bg-secondary/80'
+              onClick={() => navigate('/booking/confirm')}
+            >
+              Thử lại
+            </Button>
+          )}
           <Button variant='outline' onClick={() => navigate('/')}>
             Về trang chủ
           </Button>

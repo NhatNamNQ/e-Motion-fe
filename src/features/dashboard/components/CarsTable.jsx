@@ -19,9 +19,7 @@ const CarsTable = ({
   setCurrentPage,
   totalPages,
   setMode,
-  setShowCarForm,
-  setIsLoading,
-  fetchCars
+  setShowCarForm
 }) => {
   const paginationProps = { limitPerPage, setLimitPerPage, currentPage, setCurrentPage, totalPages }
 

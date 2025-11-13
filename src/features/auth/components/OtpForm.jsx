@@ -17,7 +17,7 @@ import { authService } from '../services/authService'
 import { toast } from 'sonner'
 import { Spinner } from '@/components/ui/spinner'
 
-const OtpForm = ({ onSubmit, isLoading, email }) => {
+const OtpForm = ({ onSubmit, isLoading, email, type }) => {
   const [countdown, setCountDown] = useState(30)
   const [canResend, setCanResend] = useState(false)
   const form = useForm({
@@ -88,7 +88,9 @@ const OtpForm = ({ onSubmit, isLoading, email }) => {
         </Button>
       </form>
       <div className='my-3 text-center'>
-        <p className='text-sm text-gray-600'>Không nhận được mã?</p>
+        {!type === 'verifyForgotPassword' && (
+          <p className='text-sm text-gray-600'>Không nhận được mã?</p>
+        )}
         <Button
           type='button'
           variant='outline'
@@ -96,7 +98,11 @@ const OtpForm = ({ onSubmit, isLoading, email }) => {
           disabled={!canResend || isLoading}
           className='border-none shadow-none'
         >
-          {canResend ? 'Gửi lại mã OTP' : `Gửi lại sau ${countdown}s`}
+          {!type === 'verifyForgotPassword'
+            ? canResend
+              ? 'Gửi lại mã OTP'
+              : `Gửi lại sau ${countdown}s`
+            : ''}
         </Button>
       </div>
     </Form>

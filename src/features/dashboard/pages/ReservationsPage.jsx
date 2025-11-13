@@ -46,6 +46,10 @@ const ReservationsPage = () => {
       header: 'Ngày tạo',
       cell: (info) => new Date(info.getValue()).toLocaleDateString('vi-VN')
     }),
+    columnHelper.accessor('startTime', {
+      header: 'Ngày bắt đầu',
+      cell: (info) => new Date(info.getValue()).toLocaleDateString('vi-VN')
+    }),
     columnHelper.accessor('endTime', {
       header: 'Ngày kết thúc',
       cell: (info) => new Date(info.getValue()).toLocaleDateString('vi-VN')

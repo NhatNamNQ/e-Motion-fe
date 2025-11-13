@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import CarList from '../components/CarList'
 import SkeletonCard from '@/components/SkeletonCard'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,6 +13,10 @@ import SearchDialog from '@/components/Search/SearchDialog'
 import SearchBar from '@/components/Search/SearchBar'
 import { searchCars } from '@/store/actions/searchActions'
 import FilterSidebar from '../components/FilterSidebar'
+import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
+import { carService } from '../services/carService'
+import SchedulePopup from '../components/SchedulePopup'
 
 const CarListPage = () => {
   const dispatch = useDispatch()
@@ -23,26 +27,35 @@ const CarListPage = () => {
   const isSearchLoading = useSelector(selectSearchLoading)
 
   const [currentPage, setCurrentPage] = useState(1)
-  const [cars, setCars] = useState([])
   const [totalPages, setTotalPages] = useState(1)
   const [selectedBrands, setSelectedBrands] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
+  const [priceRange, setPriceRange] = useState([])
+  const [selectedSeat, setSelectedSeat] = useState(null)
+  const [availableCars, setAvailableCars] = useState([])
+  const [unavailableCars, setUnavailableCars] = useState([])
+  const [schedulePopup, setSchedulePopup] = useState({
+    open: false,
+    carId: null,
+    data: null,
+    loading: false,
+    error: null
+  })
 
   useEffect(() => {
-    if (searchResults?.content) {
-      setTotalPages(searchResults?.totalPages || 1)
-      setCars((prev) =>
-        currentPage === 1 ? searchResults.content : [...prev, ...searchResults.content]
-      )
-    }
-    // eslint-disable-next-line
-  }, [searchResults])
+    setCurrentPage(1)
+    setAvailableCars([])
+    setUnavailableCars([])
+  }, [city, startTime, endTime, selectedBrands, selectedCategories, priceRange, selectedSeat])
 
   useEffect(() => {
     dispatch(
       searchCars({
         brands: selectedBrands,
         categories: selectedCategories,
+        minPrice: priceRange[0] || 0.1,
+        maxPrice: priceRange[1] || 100000000,
+        seats: selectedSeat || null,
         page: currentPage,
         limit: 8,
         search: '',
@@ -51,40 +64,94 @@ const CarListPage = () => {
         endTime
       })
     )
-    // eslint-disable-next-line
-  }, [currentPage, selectedBrands, selectedCategories, dispatch])
+  }, [
+    currentPage,
+    selectedBrands,
+    selectedCategories,
+    priceRange,
+    selectedSeat,
+    city,
+    startTime,
+    endTime,
+    dispatch
+  ])
 
   useEffect(() => {
-    setCurrentPage(1)
-    setCars([])
-  }, [city, startTime, endTime, selectedBrands, selectedCategories])
+    if (searchResults?.content?.availableVehicles && searchResults?.content?.unavailableVehicles) {
+      setTotalPages(searchResults?.totalPages || 1)
 
-  const handleFilterChange = ({ brands, categories }) => {
+      if (currentPage === 1) {
+        setAvailableCars(searchResults.content.availableVehicles)
+        setUnavailableCars(searchResults.content.unavailableVehicles)
+      } else {
+        setAvailableCars((prev) => {
+          const newCars = searchResults.content.availableVehicles.filter(
+            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
+          )
+          return [...prev, ...newCars]
+        })
+        setUnavailableCars((prev) => {
+          const newCars = searchResults.content.unavailableVehicles.filter(
+            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
+          )
+          return [...prev, ...newCars]
+        })
+      }
+    } else if (searchResults?.content) {
+      setTotalPages(searchResults?.totalPages || 1)
+
+      if (currentPage === 1) {
+        setAvailableCars(searchResults.content)
+        setUnavailableCars([])
+      } else {
+        setAvailableCars((prev) => {
+          const newCars = searchResults.content.filter(
+            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
+          )
+          return [...prev, ...newCars]
+        })
+        setUnavailableCars([])
+      }
+    }
+  }, [searchResults, currentPage])
+
+  const handleFilterChange = ({ brands, categories, priceRange: newPriceRange, seat }) => {
     setSelectedBrands(brands)
     setSelectedCategories(categories)
-    setCurrentPage(1)
-    setCars([])
+    setPriceRange(newPriceRange)
+    setSelectedSeat(seat)
   }
 
-  const handleScroll = useCallback(() => {
-    if (
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
-      !isSearchLoading &&
-      currentPage < totalPages
-    ) {
-      setCurrentPage((prev) => {
-        setCurrentPage(prev + 1)
+  const handleLoadMore = () => {
+    if (currentPage < totalPages && !isSearchLoading) {
+      setCurrentPage((prev) => prev + 1)
+    }
+  }
+
+  const handleViewSchedule = async (carId) => {
+    setSchedulePopup({ open: true, carId, data: null, loading: true, error: null })
+    try {
+      const data = await carService.viewCarSchedule(carId)
+      setSchedulePopup({ open: true, carId, data, loading: false, error: null })
+    } catch (error) {
+      setSchedulePopup({
+        open: true,
+        carId,
+        data: null,
+        loading: false,
+        error: error.message || 'Lỗi khi tải lịch trình'
       })
     }
-  }, [isSearchLoading, currentPage, totalPages])
+  }
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
+  const closeSchedulePopup = () =>
+    setSchedulePopup({ open: false, carId: null, data: null, loading: false, error: null })
+
+  const totalCars = availableCars.length + unavailableCars.length
+  const hasMorePages = currentPage < totalPages
 
   return (
-    <div className='container mx-auto p-4'>
+    <div className='container mx-auto mb-12 h-full p-4'>
       <SearchDialog
         triggerChildren={({ form, onSubmit }) => <SearchBar form={form} onSubmit={onSubmit} />}
       />
@@ -95,35 +162,70 @@ const CarListPage = () => {
             onFilterChange={handleFilterChange}
             selectedBrands={selectedBrands}
             selectedCategories={selectedCategories}
+            priceRange={priceRange}
+            selectedSeat={selectedSeat}
           />
         </div>
 
         {/* Car List */}
         <div>
-          {cars.length === 0 && isSearchLoading ? (
+          {isSearchLoading && currentPage === 1 ? (
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
               {Array.from({ length: 8 }).map((_, index) => (
                 <SkeletonCard key={index} />
               ))}
             </div>
-          ) : cars.length > 0 ? (
+          ) : totalCars > 0 ? (
             <>
-              <CarList cars={cars} />
-              {isSearchLoading && currentPage > 1 && (
-                <div className='mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <SkeletonCard key={index} />
-                  ))}
+              <CarList cars={availableCars} />
+
+              {hasMorePages && !isSearchLoading && (
+                <div className='mt-8 mb-8 flex justify-center'>
+                  <Button
+                    onClick={handleLoadMore}
+                    disabled={isSearchLoading}
+                    className='bg-secondary text-background hover:bg-secondary/80 min-w-[200px]'
+                    size='lg'
+                  >
+                    {isSearchLoading ? '' : 'Xem thêm xe'}
+                  </Button>
                 </div>
+              )}
+
+              {isSearchLoading && (
+                <div className='mt-8 mb-8 flex w-full justify-center'>
+                  <Spinner className='text-secondary size-10' />
+                </div>
+              )}
+
+              {unavailableCars.length > 0 && (
+                <>
+                  <h2 className='mt-8 mb-4 text-xl font-semibold text-gray-600'>
+                    Xe đang thuê trong thời gian tìm kiếm
+                  </h2>
+                  <CarList
+                    cars={unavailableCars}
+                    isUnavailabel={true}
+                    handleViewSchedule={handleViewSchedule}
+                  />
+                </>
               )}
             </>
           ) : (
-            <div className='py-12 text-center'>
+            <div className='h-full py-12 text-center'>
               <p className='text-lg text-gray-500'>Không tìm thấy xe nào phù hợp.</p>
             </div>
           )}
         </div>
       </div>
+
+      <SchedulePopup
+        isOpen={schedulePopup.open}
+        onClose={closeSchedulePopup}
+        loading={schedulePopup.loading}
+        error={schedulePopup.error}
+        data={schedulePopup.data}
+      />
     </div>
   )
 }

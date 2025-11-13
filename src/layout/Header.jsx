@@ -26,7 +26,7 @@ const Header = () => {
           <img src='/logo.svg' alt='e-Motion' className='h-[60px] w-[150px] cursor-pointer' />
         </Link>
         <nav className='flex items-center space-x-4'>
-          <Link to='/cars'>Xem danh sách xe</Link>
+          <Link to='/about-us'>Về chúng tôi</Link>
           {isAuthenticated ? (
             <ProfileDropdown />
           ) : (

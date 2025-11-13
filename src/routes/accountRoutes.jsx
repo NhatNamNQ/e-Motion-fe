@@ -47,7 +47,7 @@ const accountRoutes = {
       )
     },
     {
-      path: '/account/reservations/:code',
+      path: '/account/reservations/:id',
       element: (
         <ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}>
           <ReservationDetailPage />
