@@ -48,21 +48,21 @@ const CarBasicInfo = ({ car }) => {
             <BatteryFull className='text-secondary h-5 w-5' />
             <div>
               <p className='text-sm text-gray-500'>Dung lượng pin</p>
-              <p className='font-bold text-gray-800'>{car.batteryCapacity}</p>
+              <p className='font-bold text-gray-800'>{car.batteryCapacity} kWh</p>
             </div>
           </div>
           <div className='flex items-center space-x-3'>
             <Fuel className='text-secondary h-5 w-5' />
             <div>
               <p className='text-sm text-gray-500'>Tiêu hao</p>
-              <p className='font-bold text-gray-800'>{car.consumptionRate}</p>
+              <p className='font-bold text-gray-800'>{car.consumptionRate} Wh/km</p>
             </div>
           </div>
           <div className='flex items-center space-x-3'>
             <BatteryCharging className='text-secondary h-5 w-5' />
             <div>
-              <p className='text-sm text-gray-500'>Mức pin hiện tại (%)</p>
-              <p className='font-bold text-gray-800'>{car.batteryLevel}</p>
+              <p className='text-sm text-gray-500'>Mức pin hiện tại</p>
+              <p className='font-bold text-gray-800'>{car.batteryLevel}%</p>
             </div>
           </div>
           <div className='flex items-center space-x-3'>

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, User, Car, MapPin, Bell, Clock } from 'lucide-react'
@@ -32,28 +32,28 @@ const ReservationDetailPage = () => {
   const [cancelling, setCancelling] = useState(false)
   const [showExtendDialog, setShowExtendDialog] = useState(false)
 
-  useEffect(() => {
-    const fetchReservation = async () => {
-      try {
-        setLoading(true)
-        const data = await profileService.getReservationDetail(id)
-        setReservation(data)
-      } catch (error) {
-        toast.error(error.message)
-      } finally {
-        setLoading(false)
-      }
+  const fetchReservation = useCallback(async () => {
+    try {
+      setLoading(true)
+      const data = await profileService.getReservationDetail(id)
+      setReservation(data)
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setLoading(false)
     }
-    fetchReservation()
   }, [id])
+
+  useEffect(() => {
+    fetchReservation()
+  }, [fetchReservation])
 
   const handleCancelReservation = async () => {
     try {
       setCancelling(true)
       await profileService.cancelReservation(reservation.code)
       toast.success('Hủy đặt trước thành công')
-      const data = await profileService.getReservationDetail(reservation.code)
-      setReservation(data)
+      fetchReservation()
     } catch (error) {
       toast.error(error.message || 'Không thể hủy đặt trước')
     } finally {

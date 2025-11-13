@@ -50,11 +50,14 @@ function HomePage() {
         <div className="absolute inset-0 bg-[url('/backgroundHero.webp')] bg-cover bg-center" />
         <div className='absolute inset-0 bg-black/30' />
         <div
-          className={`z-10 container ${
+          className={`z-10 container transition-all duration-500 ease-in-out ${
             isFixed
-              ? 'fixed top-0 left-1/2 -translate-x-1/2'
-              : 'absolute top-4 left-1/2 -translate-x-1/2'
+              ? 'top-0 left-1/2 -translate-x-1/2 opacity-100 md:fixed'
+              : 'absolute top-4 left-1/2 -translate-x-1/2 opacity-100'
           }`}
+          style={{
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}
         >
           <SearchDialog
             triggerChildren={({ form, onSubmit }) => <SearchBar form={form} onSubmit={onSubmit} />}
@@ -63,11 +66,11 @@ function HomePage() {
       </section>
 
       <div>
-        <section className='min-h-screen bg-[#F6F6F6] py-16'>
+        <section className='bg-[#F6F6F6] py-16'>
           <Advantages />
         </section>
 
-        <section className='min-h-screen w-full py-16'>
+        <section className='w-full py-16'>
           <div className='container mx-auto'>
             <h2 className='text-secondary mb-8 text-center text-4xl font-bold md:text-5xl'>
               Danh sách xe
@@ -81,13 +84,13 @@ function HomePage() {
           </div>
         </section>
 
-        <section className='min-h-screen bg-[#F6F6F6] py-16'>
+        <section className='bg-[#F6F6F6] py-16'>
           <div className='container mx-auto'>
             <HowItWorksSection />
           </div>
         </section>
 
-        <section className='min-h-screen py-16'>
+        <section className='py-16'>
           <div className='container mx-auto'>
             <FaqSection />
           </div>
