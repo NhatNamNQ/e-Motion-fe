@@ -75,16 +75,6 @@ const RentalDetailPage = () => {
     await fetchRentalDetail()
   }
 
-  const handleViewContract = async (rentalId) => {
-    try {
-      const data = await profileService.getContract(rentalId)
-      console.log(data)
-      // window.open(data, '_blank')
-    } catch (error) {
-      toast.error(error.message)
-    }
-  }
-
   const canExtend =
     rental?.status === 'ONGOING' || rental?.status === 'CONFIRM' || rental?.status === 'OVERDUE'
   const isCompleted = rental.status === 'COMPLETED'
