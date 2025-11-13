@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, User, Car, Calendar, Plus, MapPin, Bell } from 'lucide-react'
+import { ArrowLeft, User, Car, Calendar, Plus, MapPin, Bell, X } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { reservationService } from '../services/reservationService'
@@ -13,6 +13,7 @@ import { selectUser } from '@/store/selectors/authSelectors'
 import { toast } from 'sonner'
 import { getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
+import { Spinner } from '@/components/ui/spinner'
 
 const InfoRow = ({ label, children }) => (
   <div>
@@ -28,6 +29,7 @@ const ReservationDetailPage = () => {
   const [reservation, setReservation] = useState(null)
   const [loading, setLoading] = useState(true)
   const [submitLoading, setSubmitLoading] = useState(false)
+  const [cancelLoading, setCancelLoading] = useState(false)
 
   useEffect(() => {
     const fetchReservation = async () => {
@@ -54,6 +56,20 @@ const ReservationDetailPage = () => {
       toast.error(error.message)
     } finally {
       setSubmitLoading(false)
+    }
+  }
+
+  const handleCancelReservation = async () => {
+    try {
+      setCancelLoading(true)
+      await reservationService.cancelReservation(code)
+      toast.success('Hủy đơn đặt chỗ thành công')
+      const updatedData = await reservationService.getReservationByCode(code)
+      setReservation(updatedData)
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setCancelLoading(false)
     }
   }
 
@@ -163,15 +179,36 @@ const ReservationDetailPage = () => {
               <CardTitle>Hành động</CardTitle>
               <CardDescription>Tạo hợp đồng thuê xe từ thông tin đặt chỗ này.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className='space-y-3'>
               {reservation.status === 'CONFIRM' ? (
+                <>
+                  <Button
+                    onClick={handleCreateRental}
+                    className='bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full'
+                    disabled={submitLoading || cancelLoading}
+                  >
+                    <Plus className='mr-2 h-4 w-4' />
+                    {submitLoading ? <Spinner /> : 'Tạo hợp đồng thuê'}
+                  </Button>
+                  <Button
+                    onClick={handleCancelReservation}
+                    variant='destructive'
+                    className='w-full'
+                    disabled={submitLoading || cancelLoading}
+                  >
+                    <X className='mr-2 h-4 w-4' />
+                    {cancelLoading ? <Spinner /> : 'Hủy đơn đặt chỗ'}
+                  </Button>
+                </>
+              ) : reservation.status === 'PENDING' ? (
                 <Button
-                  onClick={handleCreateRental}
-                  className='bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full'
-                  disabled={submitLoading}
+                  onClick={handleCancelReservation}
+                  variant='destructive'
+                  className='w-full'
+                  disabled={cancelLoading}
                 >
-                  <Plus className='mr-2 h-4 w-4' />
-                  {submitLoading ? 'Đang xử lý...' : 'Tạo hợp đồng thuê'}
+                  <X className='mr-2 h-4 w-4' />
+                  {cancelLoading ? 'Đang hủy...' : 'Hủy đơn đặt chỗ'}
                 </Button>
               ) : reservation.status === 'COMPLETED' ? (
                 <Badge className={getStatusColor(reservation.status)}>Đã tạo hợp đồng</Badge>
@@ -180,9 +217,7 @@ const ReservationDetailPage = () => {
                   <p className='text-muted-foreground text-sm'>
                     {reservation.status === 'CANCELLED'
                       ? 'Đơn đặt chỗ này đã bị hủy.'
-                      : reservation.status === 'PENDING'
-                        ? 'Đơn đặt chỗ này đang chờ xử lý.'
-                        : `Không thể tạo hợp đồng cho trạng thái "${reservation.status}".`}
+                      : `Không thể thực hiện hành động cho trạng thái "${reservation.status}".`}
                   </p>
                 </div>
               )}

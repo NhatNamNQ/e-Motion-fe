@@ -19,6 +19,7 @@ import { formatCurrency, getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import CarImageGallery from '@/features/cars/components/detail/CarImageGallery'
 import ExtendDialog from '../components/ExtendDialog'
+import { toast } from 'sonner'
 
 const RentalDetailPage = () => {
   const { id } = useParams()
@@ -72,6 +73,15 @@ const RentalDetailPage = () => {
 
   const handleExtendSuccess = async () => {
     await fetchRentalDetail()
+  }
+
+  const handleViewContract = async (rentalId) => {
+    try {
+      const data = await profileService.getContract(rentalId)
+      window.open(data, '_blank')
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   const canExtend =
@@ -142,20 +152,16 @@ const RentalDetailPage = () => {
           </h2>
           <DetailItem label='Trạng thái hợp đồng' value={rental.contractStatus} />
           <div className='space-y-1'>
-            {rental.contractDocumentUrl ? (
-              <Button
-                variant='outline'
-                size='sm'
-                className='h-auto w-fit gap-2 px-3 py-1.5'
-                onClick={() => window.open(rental.contractDocumentUrl, '_blank')}
-              >
-                <FileText className='h-4 w-4' />
-                <span className='text-sm'>Xem hợp đồng</span>
-                <ExternalLink className='h-3 w-3' />
-              </Button>
-            ) : (
-              <p className='text-sm font-semibold'>Chưa có hợp đồng</p>
-            )}
+            <Button
+              variant='outline'
+              size='sm'
+              className='h-auto w-fit gap-2 px-3 py-1.5'
+              onClick={() => handleViewContract(rental.id)}
+            >
+              <FileText className='h-4 w-4' />
+              <span className='text-sm'>Xem hợp đồng</span>
+              <ExternalLink className='h-3 w-3' />
+            </Button>
           </div>
         </div>
 

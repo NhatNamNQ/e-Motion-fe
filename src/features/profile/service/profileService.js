@@ -50,6 +50,14 @@ export const profileService = {
       throw handleError(error)
     }
   },
+  getContract: async (rentalId) => {
+    try {
+      const { data } = await instance.get(`/contracts/view/${rentalId}`, { rentalId })
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
   extendReservation: async (reservationCode, newReturnTime) => {
     try {
       const formatLocalDateTime = (date) => {
