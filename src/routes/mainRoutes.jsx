@@ -3,6 +3,7 @@ import MainLayout from '@/layout/MainLayout'
 import ProtectedRoute from './ProtectedRoute'
 import ErrorPage from '@/features/error/pages/ErrorPage'
 import Loader from '@/components/Loader'
+import PaymentResultPage from '@/features/booking/pages/PaymentResultPage'
 
 const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
 const CarListPage = lazy(() => import('@/features/cars/pages/CarListPage'))
@@ -41,11 +42,9 @@ const mainRoutes = {
     {
       path: '/booking/confirm',
       element: (
-        <ProtectedRoute allowedRoles={['ROLE_USER']}>
-          <Suspense fallback={<Loader />}>
-            <BookingPage />
-          </Suspense>
-        </ProtectedRoute>
+        <Suspense fallback={<Loader />}>
+          <BookingPage />
+        </Suspense>
       )
     },
     {
@@ -53,6 +52,14 @@ const mainRoutes = {
       element: (
         <Suspense fallback={<Loader />}>
           <BookingPage />
+        </Suspense>
+      )
+    },
+    {
+      path: '/payment-result',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <PaymentResultPage />
         </Suspense>
       )
     }

@@ -84,5 +84,31 @@ export const authService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  forgotPassword: async (email) => {
+    try {
+      const { data } = await instance.post(`/auth/forgotPassword/sendVerify/${email}`, {
+        email
+      })
+      return data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  verifyForgotPassword: async (forgotPasswordData) => {
+    try {
+      const { data } = await instance.post(`/auth/forgotPassword/verify`, forgotPasswordData)
+      return data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  updateForgotPassword: async (forgotPasswordData) => {
+    try {
+      const { data } = await instance.post(`/auth/forgotPassword/update`, forgotPasswordData)
+      return data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

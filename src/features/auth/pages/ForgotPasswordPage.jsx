@@ -6,15 +6,30 @@ import { forgotPasswordConfig } from '../constants'
 import { forgotPasswordSchema } from '../schemas/authSchemas'
 // eslint-disable-next-line
 import { motion } from 'framer-motion'
+import { authService } from '../services/authService'
+import { toast } from 'sonner'
+import { useState } from 'react'
 
 const ForgotPasswordPage = () => {
   usePageTitle('Forgot Password')
-
+  const [isLoading, setIsloading] = useState(false)
   const navigate = useNavigate()
 
-  const onSubmit = (values) => {
-    console.log('Forgot password for email:', values.email)
-    navigate('/auth/reset-password')
+  const onSubmit = async (values) => {
+    try {
+      setIsloading(true)
+      const data = await authService.forgotPassword(values.email)
+      toast.success(data.message)
+      navigate('/auth/verify-forgot-password', {
+        state: {
+          email: values.email
+        }
+      })
+    } catch (error) {
+      toast.error(error.message || 'Gửi yêu cầu thất bại')
+    } finally {
+      setIsloading(false)
+    }
   }
 
   return (
@@ -30,6 +45,7 @@ const ForgotPasswordPage = () => {
           formSchema={forgotPasswordSchema}
           onSubmit={onSubmit}
           formType='forgotPassword'
+          isLoading={isLoading}
         />
         <p className='mt-6 text-center text-sm'>
           <Link

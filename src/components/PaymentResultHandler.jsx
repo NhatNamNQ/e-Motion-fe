@@ -12,20 +12,22 @@ const PaymentResultHandler = () => {
   const status = searchParams.get('status')
 
   useEffect(() => {
-    if (status === 'failed' && type === 'RENTAL') {
-      navigate('/dashboard/payment-result', {
-        state: {
-          status
-        }
-      })
-      return
-    }
-    if (status === 'failed' && type === 'RESERVATION') {
-      navigate('/booking/payment-result', {
-        state: {
-          status
-        }
-      })
+    if (status === 'failed') {
+      if (type === 'RESERVATION') {
+        navigate('/booking/payment-result', {
+          state: {
+            status
+          }
+        })
+      } else {
+        navigate('/payment-result', {
+          state: {
+            type,
+            txnRef,
+            status
+          }
+        })
+      }
       return
     }
     const getPaymentAndNavigate = async () => {
@@ -38,8 +40,8 @@ const PaymentResultHandler = () => {
             navigate('/booking/payment-result', {
               state: { payment: paymentData }
             })
-          } else if (type === 'RENTAL') {
-            navigate('/dashboard/payment-result', {
+          } else {
+            navigate('/payment-result', {
               state: { payment: paymentData }
             })
           }

@@ -2,17 +2,33 @@ import usePageTitle from '@/hooks/usePageTitle'
 import AuthForm from '../components/AuthForm'
 import { resetPasswordSchema } from '../schemas/authSchemas'
 import { resetPasswordConfig } from '../constants'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 // eslint-disable-next-line
 import { motion } from 'framer-motion'
+import { authService } from '../services/authService'
+import { toast } from 'sonner'
+import { useState } from 'react'
 
 const ResetPasswordPage = () => {
   usePageTitle('Reset Password')
   const navigate = useNavigate()
-
-  const onSubmit = (values) => {
-    console.log('New password submitted:', values.password)
-    navigate('auth/login')
+  const location = useLocation()
+  const email = location?.state?.email
+  const [isLoading, setIsloading] = useState(false)
+  const onSubmit = async (values) => {
+    try {
+      setIsloading(true)
+      const data = await authService.updateForgotPassword({
+        email: email,
+        newPassword: values.password
+      })
+      toast.success(data.message)
+      navigate('/auth/login')
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setIsloading(false)
+    }
   }
 
   return (
@@ -28,6 +44,7 @@ const ResetPasswordPage = () => {
           formSchema={resetPasswordSchema}
           onSubmit={onSubmit}
           formType='resetPassword'
+          isLoading={isLoading}
         />
       </div>
     </motion.div>
