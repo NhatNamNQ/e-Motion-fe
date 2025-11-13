@@ -21,16 +21,8 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select'
-import { useSelector } from 'react-redux'
-import { selectUser } from '@/store/selectors/authSelectors'
 
 const UserForm = ({ mode, handleSubmitUser, setShowUserForm, stations }) => {
-  const currentUser = useSelector(selectUser)
-  const filteredRoleOptions =
-    currentUser?.role === 'ROLE_ADMIN'
-      ? roleOptions
-      : roleOptions.filter((r) => r.value === 'ROLE_USER')
-
   const isAdd = mode.type === 'add'
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -59,7 +51,7 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm, stations }) => {
       email: mode.user?.email || '',
       password: '',
       confirmPassword: '',
-      role: mode.user?.role || (currentUser?.role === 'ROLE_ADMIN' ? 'ROLE_STAFF' : 'ROLE_USER'),
+      role: mode.user?.role || 'ROLE_STAFF',
       stationId: mode.user?.station?.id || 1
     }
   })
@@ -143,12 +135,11 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm, stations }) => {
               >
                 <SelectTrigger>
                   <SelectValue>
-                    {filteredRoleOptions.find((r) => r.value === watch('role'))?.label ||
-                      'Select a role'}
+                    {roleOptions.find((r) => r.value === watch('role'))?.label || 'Select a role'}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {filteredRoleOptions.map((role) => (
+                  {roleOptions.map((role) => (
                     <SelectItem key={role.value} value={role.value}>
                       {role.label}
                     </SelectItem>

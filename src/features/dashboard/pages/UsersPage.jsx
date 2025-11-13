@@ -4,7 +4,7 @@ import { userService } from '../services/userService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
 import UserForm from '../components/UserForm'
-import { userStatusOptions, roleOptions } from '../constants/userConfig'
+import { statusOptions, roleOptions } from '../constants/userConfig'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,7 +31,6 @@ import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
 
 const UsersPage = () => {
-  console.log(roleOptions)
   const currentUser = useSelector(selectUser)
   const isAdmin = currentUser.role === 'ROLE_ADMIN'
 
@@ -107,7 +106,6 @@ const UsersPage = () => {
   const clearFilters = () => {
     setSelectedStatuses([])
     setSelectedRoles([])
-    setSelectedStation(null)
   }
 
   const handleCLickAddUserBtn = () => {
@@ -193,7 +191,7 @@ const UsersPage = () => {
         <div className='mb-8'>
           <div className='mb-2 flex items-start justify-between'>
             <div>
-              <h1 className='text-3xl font-bold text-gray-900'>Manage Users</h1>
+              <h1 className='text-3xl font-bold text-gray-900'>User List</h1>
               <p className='mt-1 text-gray-500'>Manage your users and their roles here.</p>
             </div>
             <Button onClick={handleCLickAddUserBtn}>
@@ -232,7 +230,7 @@ const UsersPage = () => {
                             key={status}
                             className='rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700'
                           >
-                            {userStatusOptions.find((s) => s.value === status)?.label || status}
+                            {statusOptions.find((s) => s.value === status)?.label || status}
                           </span>
                         ))}
                       </span>
@@ -246,7 +244,7 @@ const UsersPage = () => {
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
-                  {userStatusOptions.map((status) => (
+                  {statusOptions.map((status) => (
                     <Label>
                       <DropdownMenuItem className='w-full'>
                         <Checkbox

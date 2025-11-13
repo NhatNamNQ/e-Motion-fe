@@ -1,6 +1,6 @@
 import { User, Clipboard, UserCheck } from 'lucide-react'
 
-export const userStatusOptions = [
+export const statusOptions = [
   { value: false, label: 'Active', color: 'bg-teal-50 text-teal-700' },
   { value: true, label: 'Blocked', color: 'bg-red-50 text-red-700' }
 ]
