@@ -119,6 +119,15 @@ const RentalDetailPage = () => {
     return format(new Date(dateTimeString), 'dd/MM/yyyy HH:mm')
   }
 
+  const handleViewContract = async (rentalId) => {
+    try {
+      const data = await rentalService.getContract(rentalId)
+      window.open(data, '_blank')
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   const isPending = rental.status === 'PENDING'
   const isConfirm = rental.status === 'CONFIRM'
   const isOngoing = rental.status === 'ONGOING'
@@ -163,23 +172,18 @@ const RentalDetailPage = () => {
                 <InfoRow label='Tình trạng hợp đồng'>{rental.contractStatus}</InfoRow>
 
                 <div className='space-y-1'>
-                  {rental.contractDocumentUrl ? (
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      className='h-auto w-fit gap-2 px-3 py-1.5'
-                      onClick={() => window.open(rental.contractDocumentUrl, '_blank')}
-                    >
-                      <FileText className='h-4 w-4' />
-                      <span className='text-sm'>Xem hợp đồng</span>
-                      <ExternalLink className='h-3 w-3' />
-                    </Button>
-                  ) : (
-                    <p className='text-sm font-semibold'>Chưa có hợp đồng</p>
-                  )}
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    className='h-auto w-fit gap-2 px-3 py-1.5'
+                    onClick={() => handleViewContract(rental.id)}
+                  >
+                    <FileText className='h-4 w-4' />
+                    <span className='text-sm'>Xem hợp đồng</span>
+                    <ExternalLink className='h-3 w-3' />
+                  </Button>
                 </div>
               </div>
-
               {/* Vehicle Log Details */}
               {rental.vehicleLog && (
                 <>
