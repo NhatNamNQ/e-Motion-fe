@@ -7,10 +7,13 @@ const PublicRoute = ({ children }) => {
   const user = useSelector(selectUser)
 
   if (isAuthenticated && user) {
-    if (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_STAFF') {
+    if (user.role === 'ROLE_ADMIN') {
       return <Navigate to='/dashboard' replace />
+    } else if (user.role === 'ROLE_STAFF') {
+      return <Navigate to={`/dashboard/stations/${user.station.id}`} replace />
+    } else {
+      return <Navigate to='/' replace />
     }
-    return <Navigate to='/' replace />
   }
   return children
 }
