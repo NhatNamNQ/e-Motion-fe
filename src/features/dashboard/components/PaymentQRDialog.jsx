@@ -69,11 +69,7 @@ const PaymentQRDialog = ({ open, onOpenChange, qrCode, rentalId, onPaymentSucces
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className='sm:max-w-md'
-        onInteractOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-      >
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>Thanh toán nhận xe</DialogTitle>
           <DialogDescription>Quét mã QR bên dưới để thanh toán</DialogDescription>
