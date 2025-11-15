@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Car, CirclePlus, X } from 'lucide-react'
-import { userService } from '../services/userService'
 import { toast } from 'sonner'
 import Loader from '@/components/Loader'
 import CarForm from '../components/CarForm'
@@ -114,13 +113,13 @@ const CarsPage = () => {
     }
   }
 
-  const handleSubmitEditUser = async (userData) => {
+  const handleSubmitEditCar = async (carData) => {
     setShowCarForm(false)
     setIsLoading(true)
     try {
-      await carService.(userData)
+      await carService.updateCar(carData)
+      await fetchCars()
       toast.success('Edit user successfully!')
-      fetchCars()
     } catch (error) {
       setShowCarForm(true)
       toast.error('Error adding user: ' + error.message)
@@ -280,7 +279,7 @@ const CarsPage = () => {
         {showCarForm && (
           <CarForm
             mode={mode}
-            handleSubmitCar={mode.type === 'add' ? handleSubmitAddCar : handleSubmitEditUser}
+            handleSubmitCar={mode.type === 'add' ? handleSubmitAddCar : handleSubmitEditCar}
             setShowCarForm={setShowCarForm}
             stations={stations}
           />

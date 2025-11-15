@@ -145,6 +145,7 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
     }
 
     setIsLoading(true)
+    console.log(data)
     try {
       // Upload các ảnh mới (không phải ảnh có sẵn)
       const newImages = await Promise.all(
@@ -165,7 +166,8 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
       const allImages = [...updatedUploadedImages, ...newImages]
       await handleSubmitCar({
         ...data,
-        images: allImages.map(({ url, main }) => ({ url, main }))
+        images: allImages.map(({ url, main }) => ({ url, main })),
+        id: mode?.car.id
       })
       toast.success(isAdd ? 'Thêm xe thành công' : 'Cập nhật xe thành công')
       setShowCarForm(false)
@@ -198,6 +200,7 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
                   Tên xe
                 </Label>
                 <Input
+                  disabled={mode.car}
                   id='name'
                   {...register('name')}
                   placeholder='VD: VinFast Evo200'
@@ -517,9 +520,9 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
                   className='hidden'
                 />
               </label>
-              <p className='mt-2 text-xs text-gray-500'>💡 Click vào ảnh để chọn làm ảnh chính</p>
+              <p className='mt-2 text-xs text-gray-500'>Click vào ảnh để chọn làm ảnh chính</p>
               {!mainImageId && Object.keys(imagePreviews).length + uploadedImages.length > 0 && (
-                <p className='mt-2 text-xs text-red-500'>⚠️ Vui lòng chọn 1 ảnh làm ảnh chính</p>
+                <p className='mt-2 text-xs text-red-500'>Vui lòng chọn 1 ảnh làm ảnh chính</p>
               )}
             </div>
 
