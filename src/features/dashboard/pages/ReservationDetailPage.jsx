@@ -202,7 +202,6 @@ const ReservationDetailPage = () => {
                     className='bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full'
                     disabled={submitLoading || cancelLoading}
                   >
-                    <Plus className='mr-2 h-4 w-4' />
                     {submitLoading ? <Spinner /> : 'Tạo hợp đồng thuê'}
                   </Button>
                   <Button
@@ -211,7 +210,6 @@ const ReservationDetailPage = () => {
                     className='w-full'
                     disabled={submitLoading || cancelLoading}
                   >
-                    <X className='mr-2 h-4 w-4' />
                     {cancelLoading ? <Spinner /> : 'Hủy đơn đặt chỗ'}
                   </Button>
                 </>

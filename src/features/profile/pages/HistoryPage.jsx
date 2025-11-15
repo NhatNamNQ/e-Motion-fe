@@ -1,42 +1,78 @@
 import { useEffect, useState } from 'react'
 import { profileService } from '../service/profileService'
-import { formatHourDate, getStatusColor } from '@/lib/utils'
-import Loader from '@/components/Loader'
-import HistoryCard from '../components/HistoryCard'
 import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Search, X } from 'lucide-react'
+import HistoryList from '../components/HistoryList'
+import { useDebounce } from 'use-debounce'
 
 const HistoryPage = () => {
   const [reservations, setReservations] = useState([])
   const [rentals, setRentals] = useState([])
-  const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [tab, setTab] = useState('reservations')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedStatuses, setSelectedStatuses] = useState([])
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const user = useSelector(selectUser)
+
+  // Debounce search term
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 500)
+
+  const RESERVATION_STATUSES = ['PENDING', 'CONFIRM', 'COMPLETED', 'CANCELLED', 'OVERDUE']
+
+  const RENTAL_STATUSES = ['CONTRACTING', 'CONFIRM', 'ONGOING', 'OVERDUE', 'COMPLETED', 'CANCELLED']
+
+  const statusLabels = {
+    PENDING: 'Chờ xác nhận',
+    CONFIRM: 'Đã xác nhận',
+    COMPLETED: 'Hoàn thành',
+    CANCELLED: 'Đã hủy',
+    CONTRACTING: 'Chờ ký hợp đồng',
+    ONGOING: 'Đang thuê',
+    OVERDUE: 'Quá hạn'
+  }
+
+  useEffect(() => {
+    setReservations([])
+    setRentals([])
+    setPage(1)
+    setTotalPages(1)
+  }, [tab, selectedStatuses, debouncedSearchTerm])
 
   useEffect(() => {
     const fetchData = async () => {
-      if (tab === 'reservations' && reservations.length > 0) {
-        return
-      }
-      if (tab === 'rentals' && rentals.length > 0) {
-        return
-      }
-
       setLoading(true)
       setError(null)
       try {
+        const filterParams = {
+          status: selectedStatuses,
+          page: page,
+          limit: 10,
+          search: debouncedSearchTerm
+        }
+
         if (tab === 'reservations') {
-          const reservationsData = await profileService.viewReservationsHistory(user.email)
-          setRentals([])
-          setReservations(reservationsData)
+          const response = await profileService.viewReservationsHistory(user.email, filterParams)
+          if (page === 1) {
+            setReservations(response.data)
+          } else {
+            setReservations((prev) => [...prev, ...response.data])
+          }
+          setTotalPages(response.totalPages)
         } else if (tab === 'rentals') {
-          const rentalsData = await profileService.viewRentalsHistory(user.email)
-          setReservations([])
-          setRentals(rentalsData)
+          const response = await profileService.viewRentalsHistory(user.email, filterParams)
+          if (page === 1) {
+            setRentals(response.data)
+          } else {
+            setRentals((prev) => [...prev, ...response.data])
+          }
+          setTotalPages(response.totalPages)
         }
       } catch (err) {
         setError(err.message)
@@ -48,9 +84,27 @@ const HistoryPage = () => {
     if (user?.email) {
       fetchData()
     }
-  }, [tab, user.email, reservations.length, rentals.length])
+  }, [tab, user.email, page, selectedStatuses, debouncedSearchTerm])
 
-  if (loading) return <Loader />
+  const toggleStatus = (status) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    )
+  }
+
+  const clearFilters = () => {
+    setSelectedStatuses([])
+    setSearchTerm('')
+  }
+
+  const loadMore = () => {
+    setPage((prev) => prev + 1)
+  }
+
+  const currentStatuses = tab === 'reservations' ? RESERVATION_STATUSES : RENTAL_STATUSES
+  const currentData = tab === 'reservations' ? reservations : rentals
+  const hasMore = page < totalPages
+
   if (error)
     return (
       <div className='flex min-h-screen items-center justify-center'>
@@ -61,6 +115,8 @@ const HistoryPage = () => {
   return (
     <div className='w-full py-8'>
       <h1 className='mb-6 text-3xl font-bold'>Lịch sử của tôi</h1>
+
+      {/* Tab Buttons */}
       <div className='mb-6 flex gap-3'>
         <Button
           variant={tab === 'reservations' ? 'default' : 'outline'}
@@ -82,45 +138,58 @@ const HistoryPage = () => {
         </Button>
       </div>
 
-      <div className='space-y-4'>
-        {tab === 'reservations' ? (
-          reservations.length === 0 && !loading ? (
-            <div className='rounded-lg bg-white p-12 text-center shadow-sm'>
-              <p className='text-lg text-gray-500'>Bạn chưa có đơn đặt chỗ nào.</p>
-            </div>
-          ) : (
-            reservations.map((reservation) => (
-              <HistoryCard
-                key={reservation.id}
-                image={reservation.vehicleImage || 'https://placehold.co/400x300'}
-                title={reservation.vehicleName}
-                location={reservation.stationName}
-                timeInfo={`Đặt lúc: ${formatHourDate(reservation.createdAt)}`}
-                status={reservation.status}
-                statusClass={getStatusColor(reservation.status)}
-                onClick={() => navigate(`/account/reservations/${reservation.id}`)}
-              />
-            ))
-          )
-        ) : rentals.length === 0 ? (
-          <div className='rounded-lg bg-white p-12 text-center shadow-sm'>
-            <p className='text-lg text-gray-500'>Bạn chưa có hợp đồng thuê xe nào.</p>
-          </div>
-        ) : (
-          rentals.map((rental) => (
-            <HistoryCard
-              key={rental.id}
-              image={rental.vehicleImage || 'https://placehold.co/400x300'}
-              title={rental.vehicleName}
-              location={rental.stationName}
-              timeInfo={formatHourDate(rental.createdAt)}
-              status={rental.status}
-              statusClass={getStatusColor(rental.status)}
-              onClick={() => navigate(`/account/rentals/${rental.id}`)}
-            />
-          ))
-        )}
+      {/* Search Bar */}
+      <div className='mb-4'>
+        <div className='relative'>
+          <Search className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400' />
+          <Input
+            type='text'
+            placeholder='Tìm kiếm theo tên xe'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className='pr-4 pl-10'
+          />
+        </div>
       </div>
+
+      {/* Status Filter */}
+      <div className='mb-6'>
+        <div className='mb-3 flex items-center justify-between'>
+          <h3 className='text-sm font-medium'>Lọc theo trạng thái:</h3>
+          {(selectedStatuses.length > 0 || searchTerm) && (
+            <Button variant='ghost' size='sm' onClick={clearFilters} className='h-8 px-2 text-xs'>
+              <X className='mr-1 h-3 w-3' />
+              Xóa bộ lọc
+            </Button>
+          )}
+        </div>
+        <div className='flex flex-wrap gap-2'>
+          {currentStatuses.map((status) => (
+            <Badge
+              key={status}
+              variant={selectedStatuses.includes(status) ? 'default' : 'outline'}
+              className={`cursor-pointer transition-all ${
+                selectedStatuses.includes(status)
+                  ? 'bg-secondary text-background hover:bg-secondary/90'
+                  : 'hover:bg-gray-100'
+              }`}
+              onClick={() => toggleStatus(status)}
+            >
+              {statusLabels[status] || status}
+            </Badge>
+          ))}
+        </div>
+      </div>
+
+      {/* History List */}
+      <HistoryList
+        data={currentData}
+        tab={tab}
+        loading={loading}
+        hasMore={hasMore}
+        onLoadMore={loadMore}
+        isInitialLoad={page === 1}
+      />
     </div>
   )
 }
