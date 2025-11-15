@@ -11,6 +11,7 @@ import { formatCurrency, getStatusColor } from '@/lib/utils'
 import { toast } from 'sonner'
 import { Separator } from '@/components/ui/separator'
 import PaymentQRDialog from '../components/PaymentQRDialog'
+import { Spinner } from '@/components/ui/spinner'
 
 const InfoRow = ({ label, children }) => (
   <div className='space-y-1'>
@@ -27,6 +28,7 @@ const RentalDetailPage = () => {
   const [error, setError] = useState(null)
   const [showPaymentDialog, setShowPaymentDialog] = useState(false)
   const [qrCode, setQrCode] = useState(null)
+  const [isContractLoading, setIsContractLoading] = useState(false)
 
   const rentFee = rental?.rentFee || 0
   const reservationFee = rental?.reservationDeposit?.amount || 0
@@ -59,8 +61,6 @@ const RentalDetailPage = () => {
       const { qrCode } = await rentalService.checkInRental(id)
       setQrCode(qrCode)
       setShowPaymentDialog(true)
-      // Không redirect nữa, hiển thị popup thay vì
-      // window.location.href = url
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -69,7 +69,6 @@ const RentalDetailPage = () => {
   }
 
   const handlePaymentSuccess = () => {
-    // Reload lại thông tin rental sau khi thanh toán thành công
     fetchRentalDetail()
   }
 
@@ -128,7 +127,21 @@ const RentalDetailPage = () => {
     }
   }
 
+  const handleSendContract = async () => {
+    try {
+      setIsContractLoading(true)
+      const res = await rentalService.sendContract(id)
+      toast.success(res.message)
+      fetchRentalDetail()
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setIsContractLoading(false)
+    }
+  }
+
   const isPending = rental.status === 'PENDING'
+  const isContracting = rental.status === 'CONTRACTING'
   const isConfirm = rental.status === 'CONFIRM'
   const isOngoing = rental.status === 'ONGOING'
   const isPendingFee = rental.status === 'PENDING_FEE'
@@ -299,8 +312,15 @@ const RentalDetailPage = () => {
               ) : (
                 <div className='grid grid-cols-1 gap-3'>
                   <Button
-                    onClick={handleCreateCheckInPayment}
+                    onClick={handleSendContract}
                     disabled={!isPending}
+                    className='bg-secondary hover:bg-secondary/90 w-full text-sm'
+                  >
+                    {isContractLoading ? <Spinner /> : 'Gửi hợp đồng'}
+                  </Button>
+                  <Button
+                    onClick={handleCreateCheckInPayment}
+                    disabled={!isContracting}
                     className='bg-secondary hover:bg-secondary/90 w-full text-sm'
                   >
                     Thanh toán nhận xe

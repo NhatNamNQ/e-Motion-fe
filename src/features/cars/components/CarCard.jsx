@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
-import { BatteryCharging, CarFront, UsersRound, Battery, BatteryFull } from 'lucide-react'
+import { BatteryCharging, CarFront, UsersRound, Battery, BatteryFull, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const CarCard = ({ car, isUnavailabel, handleViewSchedule }) => {
@@ -17,9 +17,12 @@ const CarCard = ({ car, isUnavailabel, handleViewSchedule }) => {
             className='h-56 w-full rounded-t-md object-cover'
           />
           <div
-            className={`text-destructive absolute top-2 right-2 rounded-sm bg-white px-2 py-1 text-center text-sm`}
+            className={`absolute top-2 right-2 rounded-sm bg-white px-2 py-1 text-center text-sm`}
           >
-            Giảm {car.point}%
+            <div className='flex items-center justify-center gap-2'>
+              <Star size={16} className='fill-amber-300 text-amber-300' />
+              {car.point}
+            </div>
           </div>
         </div>
         <div className='p-4 text-sm'>

@@ -10,7 +10,8 @@ import {
   FileText,
   CreditCard,
   Clock,
-  ExternalLink
+  ExternalLink,
+  PenLine
 } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
@@ -75,6 +76,23 @@ const RentalDetailPage = () => {
     await fetchRentalDetail()
   }
 
+  const handleSignContract = () => {
+    if (rental.submissionUrl) window.location.href = rental.submissionUrl
+  }
+
+  const handleContinuePayment = () => {
+    if (rental.paymentUrl) window.location.href = rental.paymentUrl
+  }
+
+  const handleViewContract = async (rentalId) => {
+    try {
+      const data = await profileService.getContract(rentalId)
+      window.open(data, '_blank')
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   const canExtend =
     rental?.status === 'ONGOING' || rental?.status === 'CONFIRM' || rental?.status === 'OVERDUE'
   const isCompleted = rental.status === 'COMPLETED'
@@ -83,6 +101,8 @@ const RentalDetailPage = () => {
   const rentalFee = rental?.rentalDeposit?.amount || 0
   const checkOutFee = rental?.rentalCheckLists[1]?.fee || 0
   const vehicleLogFee = rental?.vehicleLog?.cost || 0
+  const isPending = rental?.status === 'PENDING'
+  const isPendingExtendFee = rental?.status === 'PENDING_EXTEND_FEE'
 
   return (
     <div className='container mx-auto p-4 md:p-6'>
@@ -142,17 +162,28 @@ const RentalDetailPage = () => {
             <MapPin size={22} /> Thông tin hợp đồng
           </h2>
           <DetailItem label='Trạng thái hợp đồng' value={rental.contractStatus} />
-          <div className='space-y-1'>
-            <Button
-              variant='outline'
-              size='sm'
-              className='h-auto w-fit gap-2 px-3 py-1.5'
-              onClick={() => handleViewContract(rental.id)}
-            >
-              <FileText className='h-4 w-4' />
-              <span className='text-sm'>Xem hợp đồng</span>
-              <ExternalLink className='h-3 w-3' />
-            </Button>
+          <div className='flex flex-wrap gap-2'>
+            {isPending ? (
+              <Button
+                size='sm'
+                className='bg-secondary hover:bg-secondary/90 h-auto w-fit gap-2 px-3 py-1.5'
+                onClick={handleSignContract}
+              >
+                <PenLine className='h-4 w-4' />
+                <span className='text-sm'>Ký hợp đồng</span>
+              </Button>
+            ) : (
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-auto w-fit gap-2 px-3 py-1.5'
+                onClick={() => handleViewContract(rental.id)}
+              >
+                <FileText className='h-4 w-4' />
+                <span className='text-sm'>Xem hợp đồng</span>
+                <ExternalLink className='h-3 w-3' />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -274,6 +305,19 @@ const RentalDetailPage = () => {
             >
               <Clock className='mr-2 h-4 w-4' />
               Gia hạn hợp đồng
+            </Button>
+          </div>
+        )}
+
+        {isPendingExtendFee && (
+          <div className='flex justify-end'>
+            <Button
+              size='sm'
+              className='bg-secondary hover:bg-secondary/90 h-auto w-fit gap-2 px-3 py-1.5'
+              onClick={handleContinuePayment}
+            >
+              <CreditCard className='h-4 w-4' />
+              <span className='text-sm'>Tiếp tục thanh toán</span>
             </Button>
           </div>
         )}

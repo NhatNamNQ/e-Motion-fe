@@ -2,18 +2,36 @@ import instance from '@/lib/axios'
 import { handleError } from '@/lib/handleError'
 
 export const profileService = {
-  viewReservationsHistory: async (email) => {
+  viewReservationsHistory: async (email, filterParams = {}) => {
     try {
-      const { data } = await instance.get(`/reservations/email/${email}`)
-      return data.data
+      const { data } = await instance.post(`/reservations/email`, {
+        status: filterParams.status || [],
+        page: filterParams.page || 1,
+        limit: filterParams.limit || 10,
+        search: filterParams.search || '',
+        email: email
+      })
+      return {
+        data: data.data.content,
+        totalPages: data.data.totalPages
+      }
     } catch (error) {
       throw handleError(error)
     }
   },
-  viewRentalsHistory: async (email) => {
+  viewRentalsHistory: async (email, filterParams = {}) => {
     try {
-      const { data } = await instance.get(`/rentals/email/${email}`)
-      return data.data
+      const { data } = await instance.post(`/rentals/email`, {
+        status: filterParams.status || [],
+        page: filterParams.page || 1,
+        limit: filterParams.limit || 10,
+        search: filterParams.search || '',
+        email: email
+      })
+      return {
+        data: data.data.content,
+        totalPages: data.data.totalPages
+      }
     } catch (error) {
       throw handleError(error)
     }

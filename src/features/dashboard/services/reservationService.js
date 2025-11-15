@@ -31,9 +31,9 @@ export const reservationService = {
       throw handleError(error)
     }
   },
-  cancelReservation: async (code) => {
+  cancelReservation: async (code, isRefunded) => {
     try {
-      const { data } = await instance.put(`/reservations/${code}/cancel`)
+      const { data } = await instance.post(`/reservations/manage/${code}/cancel`, isRefunded)
       return data.data
     } catch (error) {
       throw handleError(error)

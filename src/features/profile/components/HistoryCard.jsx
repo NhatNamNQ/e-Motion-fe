@@ -1,6 +1,17 @@
 import { Badge } from '@/components/ui/badge'
 import { Calendar, MapPin } from 'lucide-react'
 
+const statusLabels = {
+  PENDING: 'Chờ xác nhận',
+  CONFIRM: 'Đã xác nhận',
+  COMPLETED: 'Hoàn thành',
+  CANCELLED: 'Đã hủy',
+  EXPIRED: 'Hết hạn',
+  CONTRACTING: 'Chờ ký hợp đồng',
+  ONGOING: 'Đang thuê',
+  OVERDUE: 'Quá hạn'
+}
+
 const HistoryCard = ({ image, title, location, timeInfo, status, statusClass, onClick }) => (
   <div
     className='mb-4 flex cursor-pointer flex-col overflow-hidden rounded-lg bg-white shadow-sm transition hover:shadow-md md:flex-row'
@@ -20,7 +31,9 @@ const HistoryCard = ({ image, title, location, timeInfo, status, statusClass, on
         </div>
       </div>
       <div className='flex items-center justify-end'>
-        <Badge className={`${statusClass} rounded-full px-4 py-1`}>{status}</Badge>
+        <Badge className={`${statusClass} rounded-full px-4 py-1`}>
+          {statusLabels[status] || status}
+        </Badge>
       </div>
     </div>
   </div>

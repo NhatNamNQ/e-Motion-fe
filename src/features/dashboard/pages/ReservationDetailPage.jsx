@@ -14,6 +14,17 @@ import { toast } from 'sonner'
 import { getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const InfoRow = ({ label, children }) => (
   <div>
@@ -30,6 +41,8 @@ const ReservationDetailPage = () => {
   const [loading, setLoading] = useState(true)
   const [submitLoading, setSubmitLoading] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
+  const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const [isRefunded, setIsRefunded] = useState(true)
 
   useEffect(() => {
     const fetchReservation = async () => {
@@ -62,10 +75,12 @@ const ReservationDetailPage = () => {
   const handleCancelReservation = async () => {
     try {
       setCancelLoading(true)
-      await reservationService.cancelReservation(code)
+      setShowCancelDialog(false)
+      await reservationService.cancelReservation(code, isRefunded)
       toast.success('Hủy đơn đặt chỗ thành công')
       const updatedData = await reservationService.getReservationByCode(code)
       setReservation(updatedData)
+      setIsRefunded(true) // Reset về mặc định
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -187,29 +202,17 @@ const ReservationDetailPage = () => {
                     className='bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full'
                     disabled={submitLoading || cancelLoading}
                   >
-                    <Plus className='mr-2 h-4 w-4' />
                     {submitLoading ? <Spinner /> : 'Tạo hợp đồng thuê'}
                   </Button>
                   <Button
-                    onClick={handleCancelReservation}
+                    onClick={() => setShowCancelDialog(true)}
                     variant='destructive'
                     className='w-full'
                     disabled={submitLoading || cancelLoading}
                   >
-                    <X className='mr-2 h-4 w-4' />
                     {cancelLoading ? <Spinner /> : 'Hủy đơn đặt chỗ'}
                   </Button>
                 </>
-              ) : reservation.status === 'PENDING' ? (
-                <Button
-                  onClick={handleCancelReservation}
-                  variant='destructive'
-                  className='w-full'
-                  disabled={cancelLoading}
-                >
-                  <X className='mr-2 h-4 w-4' />
-                  {cancelLoading ? 'Đang hủy...' : 'Hủy đơn đặt chỗ'}
-                </Button>
               ) : reservation.status === 'COMPLETED' ? (
                 <Badge className={getStatusColor(reservation.status)}>Đã tạo hợp đồng</Badge>
               ) : (
@@ -225,6 +228,36 @@ const ReservationDetailPage = () => {
           </Card>
         </div>
       </div>
+
+      {/* Cancel Confirmation Dialog */}
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xác nhận hủy đơn đặt chỗ</AlertDialogTitle>
+            <AlertDialogDescription className='space-y-4'>
+              <p>Bạn có chắc chắn muốn hủy đơn đặt chỗ #{reservation?.code}?</p>
+              <div className='flex items-center space-x-2'>
+                <Checkbox id='refund' checked={isRefunded} onCheckedChange={setIsRefunded} />
+                <label
+                  htmlFor='refund'
+                  className='text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+                >
+                  Hoàn tiền cho khách hàng
+                </label>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy bỏ</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelReservation}
+              className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+            >
+              Xác nhận hủy
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
