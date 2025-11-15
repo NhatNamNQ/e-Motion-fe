@@ -1,5 +1,14 @@
 import { formatDateResponse } from '@/lib/utils'
-import { User, Clipboard, MoreHorizontal, UserCheck, Edit2, Lock, Unlock } from 'lucide-react'
+import {
+  User,
+  Clipboard,
+  MoreHorizontal,
+  UserCheck,
+  Edit2,
+  Lock,
+  Unlock,
+  Navigation
+} from 'lucide-react'
 import Pagination from '@/components/Pagination'
 import { userService } from '../services/userService'
 import { toast } from 'sonner'
@@ -133,9 +142,7 @@ const UsersTable = ({
                         >
                           Edit <Edit2 className='h-4 w-4' />
                         </DropdownMenuItem>
-
                         <DropdownMenuSeparator />
-
                         <DropdownMenuItem
                           className={`${user.blocked ? 'text-teal-600 focus:text-teal-600' : 'text-red-600 focus:text-red-600'} flex justify-between`}
                           onClick={() => handleToggleBlock(user)}

@@ -118,7 +118,7 @@ const CarsPage = () => {
     setShowCarForm(false)
     setIsLoading(true)
     try {
-      await userService.editUser(userData)
+      await carService.(userData)
       toast.success('Edit user successfully!')
       fetchCars()
     } catch (error) {

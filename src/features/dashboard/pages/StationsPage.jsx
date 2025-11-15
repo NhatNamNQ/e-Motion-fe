@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { History, ArrowDown, Building2, Car, User, Activity, Navigation } from 'lucide-react'
+import { History, Building2, Car, User, Activity } from 'lucide-react'
 import CardDashboard from '@/components/CardDashboard'
-import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -27,7 +26,6 @@ import { useNavigate } from 'react-router-dom'
 const StationsPage = () => {
   const [stations, setStations] = useState([])
   const [showHistoryModal, setShowHistoryModal] = useState(false)
-  const [showDispatchModal, setShowDispatchModal] = useState(false)
   const [selectedStation, setSelectedStation] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [loadingRevenue, setLoadingRevenue] = useState(false)
@@ -40,31 +38,6 @@ const StationsPage = () => {
   const [rentals, setRentals] = useState([])
 
   const navigate = useNavigate()
-
-  // Dispatch form state
-  const [dispatchForm, setDispatchForm] = useState({
-    fromStation: '',
-    toStation: '',
-    type: 'vehicles',
-    quantity: 1,
-    selectedItem: ''
-  })
-
-  const vehicles = [
-    { id: 1, name: 'Xe tải 01 - BMW' },
-    { id: 2, name: 'Xe tải 02 - Mercedes' },
-    { id: 3, name: 'Xe tải 03 - Volvo' },
-    { id: 4, name: 'Xe tải 04 - Ford' },
-    { id: 5, name: 'Xe tải 05 - Isuzu' }
-  ]
-
-  const staff = [
-    { id: 1, name: 'Nguyễn Văn A - Tài xế' },
-    { id: 2, name: 'Trần Thị B - Kỹ thuật viên' },
-    { id: 3, name: 'Lê Văn C - Phục vụ' },
-    { id: 4, name: 'Phạm Văn D - Tài xế' },
-    { id: 5, name: 'Hoàng Thị E - Quản lý' }
-  ]
 
   const totalVehicles = stations.reduce((sum, s) => sum + s.quantityCar, 0)
   const totalStaff = stations.reduce((sum, s) => sum + s.quantityStaff, 0)
@@ -93,17 +66,6 @@ const StationsPage = () => {
     }
   ]
 
-  const handleOpenDispatchModal = () => {
-    setDispatchForm({
-      fromStation: '',
-      toStation: '',
-      type: 'vehicles',
-      quantity: 1,
-      selectedItem: ''
-    })
-    setShowDispatchModal(true)
-  }
-
   const handleViewHistory = async (station) => {
     setShowHistoryModal(true)
     setLoadingHistory(true)
@@ -116,21 +78,6 @@ const StationsPage = () => {
     } finally {
       setLoadingHistory(false)
     }
-  }
-
-  const handleDispatchChange = (field, value) => {
-    setDispatchForm((prev) => ({
-      ...prev,
-      [field]: value
-    }))
-  }
-
-  const handleSubmitDispatch = () => {
-    console.log('Dispatch:', dispatchForm)
-    alert(
-      `Điều phối ${dispatchForm.quantity} ${dispatchForm.type === 'vehicles' ? 'xe' : 'nhân viên'} từ ${stations.find((s) => s.id == dispatchForm.fromStation)?.name} sang ${stations.find((s) => s.id == dispatchForm.toStation)?.name}`
-    )
-    setShowDispatchModal(false)
   }
 
   const handleNavigateToStationDetail = (stationId) => {
@@ -185,13 +132,6 @@ const StationsPage = () => {
                 Manage stations and coordinate vehicles and staff.
               </p>
             </div>
-            <Button
-              onClick={handleOpenDispatchModal}
-              className='gap-2 bg-blue-600 hover:bg-blue-700'
-            >
-              <Navigation className='h-4 w-4' />
-              Điều phối
-            </Button>
           </div>
         </div>
 
@@ -472,136 +412,6 @@ const StationsPage = () => {
 
           <DialogFooter>
             <DialogClose>Cancel</DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dispatch Modal */}
-      <Dialog open={showDispatchModal} onOpenChange={setShowDispatchModal}>
-        <DialogContent className='max-w-md'>
-          <DialogHeader>
-            <DialogTitle>Điều phối xe / Nhân viên</DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            {/* Trạm đi */}
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-900'>Trạm đi</label>
-              <Select
-                value={dispatchForm.fromStation}
-                onValueChange={(value) => handleDispatchChange('fromStation', value)}
-              >
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder='Chọn trạm đi' />
-                </SelectTrigger>
-                <SelectContent>
-                  {stations.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Arrow */}
-            <div className='flex justify-center'>
-              <ArrowDown className='h-5 w-5 text-gray-400' />
-            </div>
-
-            {/* Trạm đến */}
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-900'>Trạm đến</label>
-              <Select
-                value={dispatchForm.toStation}
-                onValueChange={(value) => handleDispatchChange('toStation', value)}
-              >
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder='Chọn trạm đến' />
-                </SelectTrigger>
-                <SelectContent>
-                  {stations.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Loại điều phối */}
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-900'>Loại điều phối</label>
-              <div className='flex gap-4'>
-                <label className='flex cursor-pointer items-center gap-2'>
-                  <input
-                    type='radio'
-                    name='type'
-                    value='vehicles'
-                    checked={dispatchForm.type === 'vehicles'}
-                    onChange={(e) => handleDispatchChange('type', e.target.value)}
-                    className='h-4 w-4'
-                  />
-                  <span className='text-sm'>🚗 Xe</span>
-                </label>
-                <label className='flex cursor-pointer items-center gap-2'>
-                  <input
-                    type='radio'
-                    name='type'
-                    value='staff'
-                    checked={dispatchForm.type === 'staff'}
-                    onChange={(e) => handleDispatchChange('type', e.target.value)}
-                    className='h-4 w-4'
-                  />
-                  <span className='text-sm'>👥 Nhân viên</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Chọn xe hoặc nhân viên */}
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-900'>
-                {dispatchForm.type === 'vehicles' ? 'Chọn xe' : 'Chọn nhân viên'}
-              </label>
-              <select
-                value={dispatchForm.selectedItem}
-                onChange={(e) => handleDispatchChange('selectedItem', e.target.value)}
-                className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm'
-              >
-                <option value=''>
-                  {dispatchForm.type === 'vehicles' ? 'Chọn xe' : 'Chọn nhân viên'}
-                </option>
-                {(dispatchForm.type === 'vehicles' ? vehicles : staff).map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Số lượng */}
-            <div className='space-y-2'>
-              <label className='text-sm font-medium text-gray-900'>Số lượng</label>
-              <input
-                type='number'
-                min='1'
-                value={dispatchForm.quantity}
-                onChange={(e) => handleDispatchChange('quantity', parseInt(e.target.value))}
-                className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm'
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <DialogClose>Hủy</DialogClose>
-            <Button
-              onClick={handleSubmitDispatch}
-              disabled={
-                !dispatchForm.fromStation || !dispatchForm.toStation || !dispatchForm.selectedItem
-              }
-              className='bg-blue-600 hover:bg-blue-700 disabled:opacity-50'
-            >
-              Xác nhận
-            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

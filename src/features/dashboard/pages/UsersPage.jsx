@@ -298,7 +298,10 @@ const UsersPage = () => {
 
                   <DropdownMenuSeparator />
                   {roleOptions
-                    .filter((role) => !isAdmin && role.value !== 'ROLE_ADMIN')
+                    .filter((role) => {
+                      if (isAdmin) return true
+                      return role.value !== 'ROLE_ADMIN'
+                    })
                     .map((role) => (
                       <Label>
                         <DropdownMenuItem className='w-full'>
