@@ -16,7 +16,7 @@ const processQueue = (error, token = null) => {
 }
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://e-motion-be-production.up.railway.app/api',
   timeout: 60000,
   headers: {
     'Content-Type': 'application/json'
