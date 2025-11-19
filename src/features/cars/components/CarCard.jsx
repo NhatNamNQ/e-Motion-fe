@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
-import { BatteryCharging, CarFront, UsersRound, Battery, BatteryFull, Star } from 'lucide-react'
+import { BatteryCharging, CarFront, UsersRound, BatteryFull, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const CarCard = ({ car, isUnavailabel, handleViewSchedule }) => {

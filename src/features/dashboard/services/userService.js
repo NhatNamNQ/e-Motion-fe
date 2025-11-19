@@ -65,6 +65,14 @@ export const userService = {
       throw handleError(error)
     }
   },
+  getRenterByEmail: async (userEmail) => {
+    try {
+      const { data } = await instance.get(`users/renter/${userEmail}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
   getStaffTransactions: async (staffId) => {
     try {
       const { data } = await instance.get(`users/transactions/${staffId}`)

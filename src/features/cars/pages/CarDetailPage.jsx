@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -24,6 +24,8 @@ import {
 import { selectEndTime, selectSearchForm, selectStartTime } from '@/store/selectors/searchSelectors'
 import { selectUser } from '@/store/selectors/authSelectors'
 import CarsSlider from '@/features/home/components/CarsSlider'
+import { carService } from '../services/carService'
+import SchedulePopup from '../components/SchedulePopup'
 
 const CarDetailPage = () => {
   const { id } = useParams()
@@ -37,6 +39,13 @@ const CarDetailPage = () => {
   const bookingFees = useSelector(selectBookingFees)
   const isLoading = useSelector(selectCarDetailLoading)
   const error = useSelector(selectCarError)
+  const [schedulePopup, setSchedulePopup] = useState({
+    open: false,
+    carId: null,
+    data: null,
+    loading: false,
+    error: null
+  })
 
   useEffect(() => {
     const loadCarDetail = async () => {
@@ -66,6 +75,25 @@ const CarDetailPage = () => {
     }
   }
 
+  const handleViewSchedule = async (carId) => {
+    setSchedulePopup({ open: true, carId, data: null, loading: true, error: null })
+    try {
+      const data = await carService.viewCarSchedule(carId)
+      setSchedulePopup({ open: true, carId, data, loading: false, error: null })
+    } catch (error) {
+      setSchedulePopup({
+        open: true,
+        carId,
+        data: null,
+        loading: false,
+        error: error.message || 'Lỗi khi tải lịch trình'
+      })
+    }
+  }
+
+  const closeSchedulePopup = () =>
+    setSchedulePopup({ open: false, carId: null, data: null, loading: false, error: null })
+
   if (error) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
@@ -86,7 +114,7 @@ const CarDetailPage = () => {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 py-8'>
+    <div className='min-h-screen'>
       <div className='container mx-auto px-4'>
         <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
           {/* Left Column - Car Details */}
@@ -113,6 +141,12 @@ const CarDetailPage = () => {
                   >
                     Thuê xe
                   </Button>
+                  <Button
+                    onClick={() => handleViewSchedule(car.id)}
+                    className='bg-secondary mt-4 w-full hover:bg-blue-600'
+                  >
+                    Xem lịch thuê
+                  </Button>
                 </CardContent>
               </Card>
 
@@ -132,6 +166,13 @@ const CarDetailPage = () => {
           <CarsSlider cars={car.similarVehicleList} />
         </div>
       </div>
+      <SchedulePopup
+        isOpen={schedulePopup.open}
+        onClose={closeSchedulePopup}
+        loading={schedulePopup.loading}
+        error={schedulePopup.error}
+        data={schedulePopup.data}
+      />
     </div>
   )
 }

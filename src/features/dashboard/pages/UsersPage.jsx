@@ -31,7 +31,6 @@ import { useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
 
 const UsersPage = () => {
-  console.log(roleOptions)
   const currentUser = useSelector(selectUser)
   const isAdmin = currentUser.role === 'ROLE_ADMIN'
 

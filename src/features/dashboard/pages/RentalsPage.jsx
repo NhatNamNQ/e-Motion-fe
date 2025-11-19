@@ -10,16 +10,33 @@ import DataTableToolbar from '../components/DataTableToolbar'
 import { useNavigate } from 'react-router-dom'
 import { useDebounce } from 'use-debounce'
 import Pagination from '@/components/Pagination'
-import { Plus } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import Loader from '@/components/Loader'
+import { userService } from '../services/userService'
+import { useDispatch } from 'react-redux'
+import { setRenter } from '@/store/slices/renterSlice'
 
 const columnHelper = createColumnHelper()
 
 const RentalsPage = () => {
+  const dispatch = useDispatch()
+
   const [rentals, setRentals] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [emailLoading, setEmailLoading] = useState(false)
   const [searchKey, setSearchKey] = useState('')
   const [debouncedFilter] = useDebounce(searchKey, 500)
   const [statusFilter, setStatusFilter] = useState([])
+  const [email, setEmail] = useState('')
+  const [showRenterForm, setShowRenterForm] = useState(false)
 
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
@@ -65,8 +82,16 @@ const RentalsPage = () => {
     navigate(`/dashboard/rentals/${row.id}`)
   }
 
-  const handleCreateRental = () => {
-    navigate('/dashboard/rentals/create')
+  const handleSubmit = async () => {
+    setEmailLoading(true)
+    try {
+      const renter = await userService.getRenterByEmail(email)
+      dispatch(setRenter(renter))
+      setEmailLoading(false)
+    } catch (e) {
+      setEmailLoading(false)
+      toast.error('lỗi: ' + e.message)
+    }
   }
 
   useEffect(() => {
@@ -99,8 +124,11 @@ const RentalsPage = () => {
           <h2 className='text-2xl font-bold tracking-tight'>Rentals</h2>
           <p className='text-muted-foreground'>Manage your rental operations</p>
         </div>
-        <Button className='bg-secondary hover:bg-secondary/80' onClick={handleCreateRental}>
-          Tạo rental mới
+        <Button
+          className='bg-secondary hover:bg-secondary/80'
+          onClick={() => setShowRenterForm(true)}
+        >
+          + Tạo đơn thuê
         </Button>
       </div>
 
@@ -134,6 +162,39 @@ const RentalsPage = () => {
             setCurrentPage={setCurrentPage}
           />
         </div>
+
+        <Dialog open={showRenterForm} onOpenChange={setShowRenterForm}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Renter</DialogTitle>
+              <DialogDescription>Fill email's renter</DialogDescription>
+            </DialogHeader>
+            {emailLoading ? (
+              <Loader />
+            ) : (
+              <div className='px-6 py-4'>
+                <div className='space-y-3'>
+                  <div className='flex items-start gap-4'>
+                    <Label className='mt-3 w-32' htmlFor='email'>
+                      Email's Renter
+                    </Label>
+                    <div className='flex-1 flex-col'>
+                      <Input
+                        id='email'
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder='john.doe@gmail.com'
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div onClick={handleSubmit} className='mt-6 flex justify-end'>
+                  <Button>Xác nhận</Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )

@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './slices/authSlice'
 import carsReducer from './slices/carsSlice'
 import searchReducer from './slices/searchSlice'
+import renterReducer from './slices/renterSlice'
 import persistReducer from 'redux-persist/es/persistReducer'
 import persistStore from 'redux-persist/es/persistStore'
 import storage from 'redux-persist/lib/storage'
@@ -22,7 +23,8 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     cars: persistReducer(carsPersistConfig, carsReducer),
-    search: persistReducer(searchPersistConfig, searchReducer)
+    search: persistReducer(searchPersistConfig, searchReducer),
+    renter: renterReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

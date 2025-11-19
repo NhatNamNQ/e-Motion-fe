@@ -21,6 +21,7 @@ import StationsPage from '@/features/dashboard/pages/StationsPage'
 import StationDetailPage from '@/features/dashboard/pages/StationDetailPage'
 import UserDetailPage from '@/features/dashboard/pages/UserDetailPage'
 import CarsPage from '@/features/dashboard/pages/CarsPage'
+import CarDetailPage from '@/features/cars/pages/CarDetailPage'
 
 export const dashboardRoutes = {
   path: '/dashboard',
@@ -213,6 +214,16 @@ export const dashboardRoutes = {
         <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
           <Suspense fallback={<Loader />}>
             <CarsPage />
+          </Suspense>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/dashboard/cars/:id',
+      element: (
+        <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+          <Suspense fallback={<Loader />}>
+            <CarDetailPage />
           </Suspense>
         </ProtectedRoute>
       )

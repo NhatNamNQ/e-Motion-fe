@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { carStatusOptions } from '../constants/carConfig'
 import { carService } from '@/features/cars/services/carService'
+import { useNavigate } from 'react-router-dom'
 
 const CarsTable = ({
   cars,
@@ -23,6 +24,8 @@ const CarsTable = ({
 }) => {
   const paginationProps = { limitPerPage, setLimitPerPage, currentPage, setCurrentPage, totalPages }
 
+  const navigate = useNavigate()
+
   const handleClickEdit = async (cid) => {
     try {
       const car = await carService.getUpdateCar(cid)
@@ -32,6 +35,10 @@ const CarsTable = ({
       setShowCarForm(false)
       toast.error('Lỗi: ' + error.message)
     }
+  }
+
+  const handleNavigateToCarDetail = (cid) => {
+    navigate(`/dashboard/cars/${cid}`)
   }
 
   return (
@@ -53,7 +60,11 @@ const CarsTable = ({
           </thead>
           <tbody className='divide-y divide-gray-200'>
             {cars.map((car, index) => (
-              <tr key={index} className='transition hover:cursor-pointer hover:bg-gray-50'>
+              <tr
+                key={index}
+                onClick={() => handleNavigateToCarDetail(car.id)}
+                className='transition hover:cursor-pointer hover:bg-gray-50'
+              >
                 <td className='px-6 py-4 text-sm text-gray-900'>{car.name}</td>
                 <td className='px-6 py-4 text-sm text-gray-600'>{car.plate}</td>
                 <td className='px-6 py-4 text-sm text-gray-600'>{car.brand}</td>

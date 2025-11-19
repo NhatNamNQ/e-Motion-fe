@@ -37,6 +37,7 @@ import { selectUser } from '@/store/selectors/authSelectors'
 import { carService } from '@/features/cars/services/carService'
 
 const StationDetailPage = () => {
+  console.log('ok')
   const { stationId } = useParams()
   const navigate = useNavigate()
   const [station, setStation] = useState([])

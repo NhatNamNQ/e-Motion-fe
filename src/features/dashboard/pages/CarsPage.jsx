@@ -22,17 +22,30 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select'
+import { useForm, FormProvider } from 'react-hook-form'
+import DatePicker from '@/components/DatePicker'
+import TimePicker from '@/components/TimePicker'
 
 import CarsTable from '../components/CarsTable'
 import { useDebounce } from 'use-debounce'
 import { stationService } from '../services/stationService'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
+import { setSearchForm } from '@/store/slices/searchSlice'
 import { carService } from '@/features/cars/services/carService'
 
 const CarsPage = () => {
+  const dispatch = useDispatch()
   const currentUser = useSelector(selectUser)
   const isAdmin = currentUser.role === 'ROLE_ADMIN'
+  const form = useForm({
+    defaultValues: {
+      startDate: null,
+      startTime: null,
+      endDate: null,
+      endTime: null
+    }
+  })
 
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
@@ -49,6 +62,48 @@ const CarsPage = () => {
   const [searchKey, setSearchKey] = useState('')
   const [debouncedSearch] = useDebounce(searchKey, 500)
   const [stations, setStations] = useState([])
+
+  const handleStartDateChange = (date) => {
+    form.setValue('startDate', date)
+    const formattedDate = date
+      ? date.toLocaleDateString('en-CA').split('-').reverse().join('/')
+      : null
+    dispatch(
+      setSearchForm({
+        startDate: formattedDate
+      })
+    )
+  }
+
+  const handleStartTimeChange = (time) => {
+    form.setValue('startTime', time)
+    dispatch(
+      setSearchForm({
+        startHour: time
+      })
+    )
+  }
+
+  const handleEndDateChange = (date) => {
+    form.setValue('endDate', date)
+    const formattedDate = date
+      ? date.toLocaleDateString('en-CA').split('-').reverse().join('/')
+      : null
+    dispatch(
+      setSearchForm({
+        endDate: formattedDate
+      })
+    )
+  }
+
+  const handleEndTimeChange = (time) => {
+    form.setValue('endTime', time)
+    dispatch(
+      setSearchForm({
+        endHour: time
+      })
+    )
+  }
 
   const fetchCars = useCallback(async () => {
     setIsLoading(true)
@@ -90,6 +145,15 @@ const CarsPage = () => {
   const clearFilters = () => {
     setSelectedStatuses([])
     setSelectedStation(null)
+    form.reset()
+    dispatch(
+      setSearchForm({
+        startDate: null,
+        startHour: null,
+        endDate: null,
+        endHour: null
+      })
+    )
   }
 
   const handleCLickAddUserBtn = () => {
@@ -177,113 +241,180 @@ const CarsPage = () => {
         </div>
 
         {/* Filters */}
-        <div className='mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>
-          <div className='flex items-center justify-between'>
-            <div className='flex flex-1 items-center gap-4'>
-              <Input
-                placeholder='Filter car name...'
-                value={searchKey ?? ''}
-                onChange={(e) => setSearchKey(e.target.value)}
-                className='h-8 w-[150px] pl-8 lg:w-[250px]'
-              />
-              {/* Status Filter */}
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className={`flex items-center gap-2 rounded-lg border px-4 py-1 transition ${
-                      selectedStatuses.length > 0
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <CirclePlus className='size-4' />
-                    Status
-                    {selectedStatuses.length > 0 && (
-                      <span className='ml-2 flex flex-wrap gap-1'>
-                        {selectedStatuses.map((status) => (
-                          <span
-                            key={status}
-                            className='rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700'
-                          >
-                            {carStatusOptions.find((s) => s.value === status)?.value || status}
+        <FormProvider {...form}>
+          <div className='mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>
+            <div className='flex flex-col gap-4'>
+              <div className='flex items-center justify-between'>
+                <div className='flex flex-1 items-center gap-4'>
+                  <Input
+                    placeholder='Filter car name...'
+                    value={searchKey ?? ''}
+                    onChange={(e) => setSearchKey(e.target.value)}
+                    className='h-8 w-[150px] pl-8 lg:w-[250px]'
+                  />
+                  {/* Status Filter */}
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={`flex items-center gap-2 rounded-lg border px-4 py-1 transition ${
+                          selectedStatuses.length > 0
+                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                            : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <CirclePlus className='size-4' />
+                        Status
+                        {selectedStatuses.length > 0 && (
+                          <span className='ml-2 flex flex-wrap gap-1'>
+                            {selectedStatuses.map((status) => (
+                              <span
+                                key={status}
+                                className='rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700'
+                              >
+                                {carStatusOptions.find((s) => s.value === status)?.value || status}
+                              </span>
+                            ))}
                           </span>
-                        ))}
-                      </span>
-                    )}
-                  </button>
-                </DropdownMenuTrigger>
+                        )}
+                      </button>
+                    </DropdownMenuTrigger>
 
-                <DropdownMenuContent align='start' className='w-60'>
-                  <DropdownMenuItem>
-                    <h3 className='font-semibold text-gray-900'>Filter by Status</h3>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSeparator />
-                  {carStatusOptions.map((status) => (
-                    <Label>
-                      <DropdownMenuItem className='w-full'>
-                        <Checkbox
-                          checked={selectedStatuses.includes(status.value)}
-                          onCheckedChange={() => handleClickFilterStatus(status.value)}
-                          className='data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 [&_svg]:!text-white'
-                        />
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${status.color}`}
-                        >
-                          {status.value}
-                        </span>
+                    <DropdownMenuContent align='start' className='w-60'>
+                      <DropdownMenuItem>
+                        <h3 className='font-semibold text-gray-900'>Filter by Status</h3>
                       </DropdownMenuItem>
-                    </Label>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
 
-              {isAdmin && (
-                <Select
-                  onValueChange={(stationId) => {
-                    const station = stations.find((s) => s.id === stationId)
-                    handleFilterStation(station)
-                  }}
-                  value={selectedStation?.id || ''}
-                >
-                  <SelectTrigger className='w-60'>
-                    <SelectValue placeholder='Select Station' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stations.map((station) => (
-                      <SelectItem key={station.id} value={station.id}>
-                        {station.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                      <DropdownMenuSeparator />
+                      {carStatusOptions.map((status) => (
+                        <Label>
+                          <DropdownMenuItem className='w-full'>
+                            <Checkbox
+                              checked={selectedStatuses.includes(status.value)}
+                              onCheckedChange={() => handleClickFilterStatus(status.value)}
+                              className='data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 [&_svg]:!text-white'
+                            />
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-xs font-medium ${status.color}`}
+                            >
+                              {status.value}
+                            </span>
+                          </DropdownMenuItem>
+                        </Label>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
-              {(selectedStatuses.length > 0 || selectedStation != null) && (
-                <button
-                  onClick={clearFilters}
-                  className='flex items-center gap-2 rounded-lg p-3 px-4 py-2 hover:cursor-pointer hover:bg-gray-200'
-                >
-                  Reset
-                  <X className='h-5 w-5' />
-                </button>
-              )}
+                  {isAdmin && (
+                    <Select
+                      onValueChange={(stationId) => {
+                        const station = stations.find((s) => s.id === stationId)
+                        handleFilterStation(station)
+                      }}
+                      value={selectedStation?.id || ''}
+                    >
+                      <SelectTrigger className='w-60'>
+                        <SelectValue placeholder='Select Station' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {stations.map((station) => (
+                          <SelectItem key={station.id} value={station.id}>
+                            {station.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+
+                  {(selectedStatuses.length > 0 || selectedStation != null) && (
+                    <button
+                      onClick={clearFilters}
+                      className='flex items-center gap-2 rounded-lg p-3 px-4 py-2 hover:cursor-pointer hover:bg-gray-200'
+                    >
+                      Reset
+                      <X className='h-5 w-5' />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Date and Time Range Filter */}
+              <div className='flex flex-wrap items-center gap-3'>
+                <div className='w-40'>
+                  <DatePicker
+                    form={form}
+                    handleSelect={handleStartDateChange}
+                    title='Start Date'
+                    name='startDate'
+                  />
+                </div>
+                <div className='w-32'>
+                  <TimePicker
+                    form={form}
+                    handleSelect={handleStartTimeChange}
+                    title='Start Time'
+                    name='startTime'
+                    selectedDate={form.watch('startDate')?.toLocaleDateString('en-CA')}
+                    type='startHour'
+                  />
+                </div>
+                <span className='text-gray-500'>→</span>
+                <div className='w-40'>
+                  <DatePicker
+                    form={form}
+                    handleSelect={handleEndDateChange}
+                    title='End Date'
+                    name='endDate'
+                  />
+                </div>
+                <div className='w-32'>
+                  <TimePicker
+                    form={form}
+                    handleSelect={handleEndTimeChange}
+                    title='End Time'
+                    name='endTime'
+                    selectedDate={form.watch('endDate')?.toLocaleDateString('en-CA')}
+                    type='endHour'
+                  />
+                </div>
+                {(form.watch('startDate') ||
+                  form.watch('startTime') ||
+                  form.watch('endDate') ||
+                  form.watch('endTime')) && (
+                  <button
+                    onClick={() => {
+                      form.reset()
+                      dispatch(
+                        setSearchForm({
+                          startDate: null,
+                          startHour: null,
+                          endDate: null,
+                          endHour: null
+                        })
+                      )
+                    }}
+                    className='flex items-center gap-2 rounded-lg p-2 px-3 hover:cursor-pointer hover:bg-gray-200'
+                  >
+                    Clear
+                    <X className='h-4 w-4' />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Table */}
-        {isLoading ? <Loader /> : <CarsTable {...tableProps} />}
+          {/* Table */}
+          {isLoading ? <Loader /> : <CarsTable {...tableProps} />}
 
-        {/* Add User Modal */}
-        {showCarForm && (
-          <CarForm
-            mode={mode}
-            handleSubmitCar={mode.type === 'add' ? handleSubmitAddCar : handleSubmitEditCar}
-            setShowCarForm={setShowCarForm}
-            stations={stations}
-          />
-        )}
+          {/* Add User Modal */}
+          {showCarForm && (
+            <CarForm
+              mode={mode}
+              handleSubmitCar={mode.type === 'add' ? handleSubmitAddCar : handleSubmitEditCar}
+              setShowCarForm={setShowCarForm}
+              stations={stations}
+            />
+          )}
+        </FormProvider>
       </div>
     </div>
   )

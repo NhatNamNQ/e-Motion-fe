@@ -15,7 +15,7 @@ const ProtectedRoute = ({ children, allowedRoles = [], allowOwnStationOnly = fal
   if (!user) return <Loader />
 
   if (allowOwnStationOnly && user.role === 'ROLE_STAFF') {
-    if (!user.station?.id || user.station.id !== stationId) {
+    if (!user.station?.id || user.station.id != stationId) {
       return <Navigate to={`/dashboard/stations/${user.station?.id}`} replace />
     }
   }
