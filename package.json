@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "dotenvx run -f .env -f .env.development -- vite",
+    "build": "dotenvx run -f .env -f .env.production -- vite build",
+    "preview": "dotenvx run -f .env -f .env.production -- vite preview",
     "format": "prettier --write .",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "format:check": "prettier --check .",
@@ -63,6 +63,7 @@
     "zod": "^4.1.9"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.51.1",
     "@eslint/js": "^9.33.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
