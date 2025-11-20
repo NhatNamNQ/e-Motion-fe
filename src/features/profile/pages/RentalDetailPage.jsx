@@ -2,17 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import {
-  ArrowLeft,
-  User,
-  Car,
-  MapPin,
-  FileText,
-  CreditCard,
-  Clock,
-  ExternalLink,
-  PenLine
-} from 'lucide-react'
+import { User, Car, MapPin, FileText, CreditCard, Clock, ExternalLink, PenLine } from 'lucide-react'
 import { format } from 'date-fns'
 import Loader from '@/components/Loader'
 import { profileService } from '../service/profileService'
@@ -20,7 +10,6 @@ import { formatCurrency, getStatusColor } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'
 import CarImageGallery from '@/features/cars/components/detail/CarImageGallery'
 import ExtendDialog from '../components/ExtendDialog'
-import { toast } from 'sonner'
 
 const RentalDetailPage = () => {
   const { id } = useParams()
@@ -76,21 +65,8 @@ const RentalDetailPage = () => {
     await fetchRentalDetail()
   }
 
-  const handleSignContract = () => {
-    if (rental.submissionUrl) window.location.href = rental.submissionUrl
-  }
-
   const handleContinuePayment = () => {
     if (rental.paymentUrl) window.location.href = rental.paymentUrl
-  }
-
-  const handleViewContract = async (rentalId) => {
-    try {
-      const data = await profileService.getContract(rentalId)
-      window.open(data, '_blank')
-    } catch (error) {
-      toast.error(error.message)
-    }
   }
 
   const canExtend =
@@ -101,8 +77,10 @@ const RentalDetailPage = () => {
   const rentalFee = rental?.rentalDeposit?.amount || 0
   const checkOutFee = rental?.rentalCheckLists[1]?.fee || 0
   const vehicleLogFee = rental?.vehicleLog?.cost || 0
-  const isPending = rental?.status === 'PENDING'
   const isPendingExtendFee = rental?.status === 'PENDING_EXTEND_FEE'
+  const isViewContract =
+    rental.status === 'PENDING' ||
+    (rental.status === 'CONTRACTING' && rental.contractStatus === 'PENDING')
 
   return (
     <div className='container mx-auto p-4 md:p-6'>
@@ -163,11 +141,11 @@ const RentalDetailPage = () => {
           </h2>
           <DetailItem label='Trạng thái hợp đồng' value={rental.contractStatus} />
           <div className='flex flex-wrap gap-2'>
-            {isPending ? (
+            {isViewContract ? (
               <Button
                 size='sm'
                 className='bg-secondary hover:bg-secondary/90 h-auto w-fit gap-2 px-3 py-1.5'
-                onClick={handleSignContract}
+                onClick={() => window.open(rental.contractUrl, '_blank')}
               >
                 <PenLine className='h-4 w-4' />
                 <span className='text-sm'>Ký hợp đồng</span>
@@ -177,7 +155,7 @@ const RentalDetailPage = () => {
                 variant='outline'
                 size='sm'
                 className='h-auto w-fit gap-2 px-3 py-1.5'
-                onClick={() => handleViewContract(rental.id)}
+                onClick={() => window.open(rental.submissionUrl, '_blank')}
               >
                 <FileText className='h-4 w-4' />
                 <span className='text-sm'>Xem hợp đồng</span>

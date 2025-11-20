@@ -118,15 +118,6 @@ const RentalDetailPage = () => {
     return format(new Date(dateTimeString), 'dd/MM/yyyy HH:mm')
   }
 
-  const handleViewContract = async (rentalId) => {
-    try {
-      const data = await rentalService.getContract(rentalId)
-      window.open(data, '_blank')
-    } catch (error) {
-      toast.error(error.message)
-    }
-  }
-
   const handleSendContract = async () => {
     try {
       setIsContractLoading(true)
@@ -148,6 +139,9 @@ const RentalDetailPage = () => {
   const hasVehicleLog = !!rental.vehicleLog
   const isCompleted = rental.status === 'COMPLETED'
   const isOverdue = rental.status === 'OVERDUE'
+  const isViewContract =
+    rental.status === 'PENDING' ||
+    (rental.status === 'CONTRACTING' && rental.contractStatus === 'PENDING')
 
   return (
     <div className='container mx-auto p-4 md:p-6'>
@@ -185,16 +179,18 @@ const RentalDetailPage = () => {
                 <InfoRow label='Tình trạng hợp đồng'>{rental.contractStatus}</InfoRow>
 
                 <div className='space-y-1'>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    className='h-auto w-fit gap-2 px-3 py-1.5'
-                    onClick={() => handleViewContract(rental.id)}
-                  >
-                    <FileText className='h-4 w-4' />
-                    <span className='text-sm'>Xem hợp đồng</span>
-                    <ExternalLink className='h-3 w-3' />
-                  </Button>
+                  {!isViewContract && (
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      className='h-auto w-fit gap-2 px-3 py-1.5'
+                      onClick={() => window.location.href(rental.submissionUrl, '_blank')}
+                    >
+                      <FileText className='h-4 w-4' />
+                      <span className='text-sm'>Xem hợp đồng</span>
+                      <ExternalLink className='h-3 w-3' />
+                    </Button>
+                  )}
                 </div>
               </div>
               {/* Vehicle Log Details */}

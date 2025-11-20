@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 import CarList from '../components/CarList'
 import SkeletonCard from '@/components/SkeletonCard'
 import { useDispatch, useSelector } from 'react-redux'
@@ -17,6 +17,124 @@ import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { carService } from '../services/carService'
 import SchedulePopup from '../components/SchedulePopup'
+import CarNameSearchBar from '../components/CarNameSearchBar'
+
+const initialState = {
+  currentPage: 1,
+  totalPages: 1,
+  selectedBrands: [],
+  selectedCategories: [],
+  priceRange: [],
+  selectedSeat: null,
+  search: '',
+  availableCars: [],
+  unavailableCars: [],
+  schedulePopup: {
+    open: false,
+    carId: null,
+    data: null,
+    loading: false,
+    error: null
+  }
+}
+
+// Reducer
+const carListReducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_CURRENT_PAGE':
+      return { ...state, currentPage: action.payload }
+    case 'SET_TOTAL_PAGES':
+      return { ...state, totalPages: action.payload }
+    case 'SET_FILTERS':
+      return {
+        ...state,
+        selectedBrands: action.payload.brands,
+        selectedCategories: action.payload.categories,
+        priceRange: action.payload.priceRange,
+        selectedSeat: action.payload.seat,
+        currentPage: 1,
+        availableCars: [],
+        unavailableCars: []
+      }
+    case 'SET_SEARCH':
+      return { ...state, search: action.payload }
+    case 'SET_AVAILABLE_CARS':
+      return { ...state, availableCars: action.payload }
+    case 'SET_UNAVAILABLE_CARS':
+      return { ...state, unavailableCars: action.payload }
+    case 'APPEND_AVAILABLE_CARS':
+      return {
+        ...state,
+        availableCars: [
+          ...state.availableCars,
+          ...action.payload.filter(
+            (newCar) => !state.availableCars.some((prevCar) => prevCar.id === newCar.id)
+          )
+        ]
+      }
+    case 'APPEND_UNAVAILABLE_CARS':
+      return {
+        ...state,
+        unavailableCars: [
+          ...state.unavailableCars,
+          ...action.payload.filter(
+            (newCar) => !state.unavailableCars.some((prevCar) => prevCar.id === newCar.id)
+          )
+        ]
+      }
+    case 'RESET_CARS':
+      return {
+        ...state,
+        currentPage: 1,
+        availableCars: [],
+        unavailableCars: []
+      }
+    case 'OPEN_SCHEDULE_POPUP':
+      return {
+        ...state,
+        schedulePopup: {
+          open: true,
+          carId: action.payload,
+          data: null,
+          loading: true,
+          error: null
+        }
+      }
+    case 'SET_SCHEDULE_DATA':
+      return {
+        ...state,
+        schedulePopup: {
+          ...state.schedulePopup,
+          data: action.payload,
+          loading: false,
+          error: null
+        }
+      }
+    case 'SET_SCHEDULE_ERROR':
+      return {
+        ...state,
+        schedulePopup: {
+          ...state.schedulePopup,
+          data: null,
+          loading: false,
+          error: action.payload
+        }
+      }
+    case 'CLOSE_SCHEDULE_POPUP':
+      return {
+        ...state,
+        schedulePopup: {
+          open: false,
+          carId: null,
+          data: null,
+          loading: false,
+          error: null
+        }
+      }
+    default:
+      return state
+  }
+}
 
 const CarListPage = () => {
   const dispatch = useDispatch()
@@ -26,50 +144,44 @@ const CarListPage = () => {
   const endTime = useSelector(selectEndTime)
   const isSearchLoading = useSelector(selectSearchLoading)
 
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [selectedBrands, setSelectedBrands] = useState([])
-  const [selectedCategories, setSelectedCategories] = useState([])
-  const [priceRange, setPriceRange] = useState([])
-  const [selectedSeat, setSelectedSeat] = useState(null)
-  const [availableCars, setAvailableCars] = useState([])
-  const [unavailableCars, setUnavailableCars] = useState([])
-  const [schedulePopup, setSchedulePopup] = useState({
-    open: false,
-    carId: null,
-    data: null,
-    loading: false,
-    error: null
-  })
+  const [state, localDispatch] = useReducer(carListReducer, initialState)
 
   useEffect(() => {
-    setCurrentPage(1)
-    setAvailableCars([])
-    setUnavailableCars([])
-  }, [city, startTime, endTime, selectedBrands, selectedCategories, priceRange, selectedSeat])
+    localDispatch({ type: 'RESET_CARS' })
+  }, [
+    city,
+    startTime,
+    endTime,
+    state.search,
+    state.selectedBrands,
+    state.selectedCategories,
+    state.priceRange,
+    state.selectedSeat
+  ])
 
   useEffect(() => {
     dispatch(
       searchCars({
-        brands: selectedBrands,
-        categories: selectedCategories,
-        minPrice: priceRange[0] || 0.1,
-        maxPrice: priceRange[1] || 100000000,
-        seats: selectedSeat || null,
-        page: currentPage,
+        brands: state.selectedBrands,
+        categories: state.selectedCategories,
+        minPrice: state.priceRange[0] || 0.1,
+        maxPrice: state.priceRange[1] || 100000000,
+        seats: state.selectedSeat || null,
+        page: state.currentPage,
         limit: 8,
-        search: '',
+        search: state.search,
         city,
         startTime,
         endTime
       })
     )
   }, [
-    currentPage,
-    selectedBrands,
-    selectedCategories,
-    priceRange,
-    selectedSeat,
+    state.currentPage,
+    state.selectedBrands,
+    state.selectedCategories,
+    state.priceRange,
+    state.selectedSeat,
+    state.search,
     city,
     startTime,
     endTime,
@@ -78,77 +190,81 @@ const CarListPage = () => {
 
   useEffect(() => {
     if (searchResults?.content?.availableVehicles && searchResults?.content?.unavailableVehicles) {
-      setTotalPages(searchResults?.totalPages || 1)
+      localDispatch({ type: 'SET_TOTAL_PAGES', payload: searchResults?.totalPages || 1 })
 
-      if (currentPage === 1) {
-        setAvailableCars(searchResults.content.availableVehicles)
-        setUnavailableCars(searchResults.content.unavailableVehicles)
-      } else {
-        setAvailableCars((prev) => {
-          const newCars = searchResults.content.availableVehicles.filter(
-            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
-          )
-          return [...prev, ...newCars]
+      if (state.currentPage === 1) {
+        localDispatch({
+          type: 'SET_AVAILABLE_CARS',
+          payload: searchResults.content.availableVehicles
         })
-        setUnavailableCars((prev) => {
-          const newCars = searchResults.content.unavailableVehicles.filter(
-            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
-          )
-          return [...prev, ...newCars]
+        localDispatch({
+          type: 'SET_UNAVAILABLE_CARS',
+          payload: searchResults.content.unavailableVehicles
+        })
+      } else {
+        localDispatch({
+          type: 'APPEND_AVAILABLE_CARS',
+          payload: searchResults.content.availableVehicles
+        })
+        localDispatch({
+          type: 'APPEND_UNAVAILABLE_CARS',
+          payload: searchResults.content.unavailableVehicles
         })
       }
     } else if (searchResults?.content) {
-      setTotalPages(searchResults?.totalPages || 1)
+      localDispatch({ type: 'SET_TOTAL_PAGES', payload: searchResults?.totalPages || 1 })
 
-      if (currentPage === 1) {
-        setAvailableCars(searchResults.content)
-        setUnavailableCars([])
+      if (state.currentPage === 1) {
+        localDispatch({ type: 'SET_AVAILABLE_CARS', payload: searchResults.content })
+        localDispatch({ type: 'SET_UNAVAILABLE_CARS', payload: [] })
       } else {
-        setAvailableCars((prev) => {
-          const newCars = searchResults.content.filter(
-            (newCar) => !prev.some((prevCar) => prevCar.id === newCar.id)
-          )
-          return [...prev, ...newCars]
-        })
-        setUnavailableCars([])
+        localDispatch({ type: 'APPEND_AVAILABLE_CARS', payload: searchResults.content })
+        localDispatch({ type: 'SET_UNAVAILABLE_CARS', payload: [] })
       }
     }
-  }, [searchResults, currentPage])
+  }, [searchResults, state.currentPage])
 
   const handleFilterChange = ({ brands, categories, priceRange: newPriceRange, seat }) => {
-    setSelectedBrands(brands)
-    setSelectedCategories(categories)
-    setPriceRange(newPriceRange)
-    setSelectedSeat(seat)
+    localDispatch({
+      type: 'SET_FILTERS',
+      payload: {
+        brands,
+        categories,
+        priceRange: newPriceRange,
+        seat
+      }
+    })
   }
 
+  const handeSearchCarName = useCallback((search) => {
+    localDispatch({ type: 'SET_SEARCH', payload: search })
+  }, [])
+
   const handleLoadMore = () => {
-    if (currentPage < totalPages && !isSearchLoading) {
-      setCurrentPage((prev) => prev + 1)
+    if (state.currentPage < state.totalPages && !isSearchLoading) {
+      localDispatch({ type: 'SET_CURRENT_PAGE', payload: state.currentPage + 1 })
     }
   }
 
   const handleViewSchedule = async (carId) => {
-    setSchedulePopup({ open: true, carId, data: null, loading: true, error: null })
+    localDispatch({ type: 'OPEN_SCHEDULE_POPUP', payload: carId })
     try {
       const data = await carService.viewCarSchedule(carId)
-      setSchedulePopup({ open: true, carId, data, loading: false, error: null })
+      localDispatch({ type: 'SET_SCHEDULE_DATA', payload: data })
     } catch (error) {
-      setSchedulePopup({
-        open: true,
-        carId,
-        data: null,
-        loading: false,
-        error: error.message || 'Lỗi khi tải lịch trình'
+      localDispatch({
+        type: 'SET_SCHEDULE_ERROR',
+        payload: error.message || 'Lỗi khi tải lịch trình'
       })
     }
   }
 
-  const closeSchedulePopup = () =>
-    setSchedulePopup({ open: false, carId: null, data: null, loading: false, error: null })
+  const closeSchedulePopup = () => {
+    localDispatch({ type: 'CLOSE_SCHEDULE_POPUP' })
+  }
 
-  const totalCars = availableCars.length + unavailableCars.length
-  const hasMorePages = currentPage < totalPages
+  const totalCars = state.availableCars.length + state.unavailableCars.length
+  const hasMorePages = state.currentPage < state.totalPages
 
   return (
     <div className='container mx-auto mb-12 h-full p-4'>
@@ -157,19 +273,20 @@ const CarListPage = () => {
       />
 
       <div className='mt-6'>
-        <div className='mb-6'>
+        <div className='mb-6 flex justify-between'>
           <FilterSidebar
             onFilterChange={handleFilterChange}
-            selectedBrands={selectedBrands}
-            selectedCategories={selectedCategories}
-            priceRange={priceRange}
-            selectedSeat={selectedSeat}
+            selectedBrands={state.selectedBrands}
+            selectedCategories={state.selectedCategories}
+            priceRange={state.priceRange}
+            selectedSeat={state.selectedSeat}
           />
+          <CarNameSearchBar onSearch={handeSearchCarName} />
         </div>
 
         {/* Car List */}
         <div>
-          {isSearchLoading && currentPage === 1 ? (
+          {isSearchLoading && state.currentPage === 1 ? (
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
               {Array.from({ length: 8 }).map((_, index) => (
                 <SkeletonCard key={index} />
@@ -177,7 +294,7 @@ const CarListPage = () => {
             </div>
           ) : totalCars > 0 ? (
             <>
-              <CarList cars={availableCars} />
+              <CarList cars={state.availableCars} />
 
               {hasMorePages && !isSearchLoading && (
                 <div className='mt-8 mb-8 flex justify-center'>
@@ -198,13 +315,13 @@ const CarListPage = () => {
                 </div>
               )}
 
-              {unavailableCars.length > 0 && (
+              {state.unavailableCars.length > 0 && (
                 <>
                   <h2 className='mt-8 mb-4 text-xl font-semibold text-gray-600'>
                     Xe đang thuê trong thời gian tìm kiếm
                   </h2>
                   <CarList
-                    cars={unavailableCars}
+                    cars={state.unavailableCars}
                     isUnavailabel={true}
                     handleViewSchedule={handleViewSchedule}
                   />
@@ -220,11 +337,11 @@ const CarListPage = () => {
       </div>
 
       <SchedulePopup
-        isOpen={schedulePopup.open}
+        isOpen={state.schedulePopup.open}
         onClose={closeSchedulePopup}
-        loading={schedulePopup.loading}
-        error={schedulePopup.error}
-        data={schedulePopup.data}
+        loading={state.schedulePopup.loading}
+        error={state.schedulePopup.error}
+        data={state.schedulePopup.data}
       />
     </div>
   )

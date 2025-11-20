@@ -97,14 +97,6 @@ export const rentalService = {
       throw handleError(error)
     }
   },
-  getContract: async (rentalId) => {
-    try {
-      const { data } = await instance.get(`/contracts/view/${rentalId}`, { rentalId })
-      return data.data
-    } catch (error) {
-      throw handleError(error)
-    }
-  },
   sendContract: async (rentalId) => {
     try {
       const { data } = await instance.post(`/rentals/${rentalId}/contract`, { rentalId })
