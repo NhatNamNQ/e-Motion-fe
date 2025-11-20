@@ -190,7 +190,11 @@ const CarDetailPage = () => {
           <div className='mt-8'>
             <h2 className='text-2xl text-gray-700'>Các loại xe tương tự </h2>
             <div className='bg-secondary my-2 h-1 w-10 rounded-full' />{' '}
-            <CarsSlider cars={car.similarVehicleList} />
+            {car.similarVehicleList ? (
+              <CarsSlider cars={car.similarVehicleList} />
+            ) : (
+              'Không có xe tương tự'
+            )}
           </div>
         )}
       </div>

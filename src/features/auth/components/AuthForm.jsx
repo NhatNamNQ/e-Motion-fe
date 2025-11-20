@@ -52,12 +52,26 @@ const AuthForm = ({ config, formSchema, onSubmit, formType, isLoading }) => {
             control={form.control}
             name='agreeToTerms'
             label={
-              <span>
+              <div className='text-center text-sm text-gray-500'>
                 Tôi đồng ý với{' '}
-                <Link to='/terms' className='hover:underline'>
-                  Điều khoản và Hợp đồng
+                <Link
+                  to='/term-of-use'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='font-semibold text-blue-500 hover:underline'
+                >
+                  Điều khoản sử dụng
+                </Link>{' '}
+                và{' '}
+                <Link
+                  to='/rental-policy'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='font-semibold text-blue-500 hover:underline'
+                >
+                  Chính sách thuê xe
                 </Link>
-              </span>
+              </div>
             }
           />
         )}
