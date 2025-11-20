@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Loader from '@/components/Loader'
@@ -163,8 +163,23 @@ const CarDetailPage = () => {
               {/* Terms Agreement */}
               <div className='text-center text-sm text-gray-500'>
                 Bằng việc chuyển giữ chỗ và thuê xe, bạn đồng ý với{' '}
-                <span className='font-bold text-blue-500'>Điều khoản sử dụng</span> và{' '}
-                <span className='font-bold text-blue-500'>Chính sách bảo mật</span>
+                <Link
+                  to='/term-of-use'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='font-bold text-blue-500 hover:underline'
+                >
+                  Điều khoản sử dụng
+                </Link>{' '}
+                và{' '}
+                <Link
+                  to='/rental-policy'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='font-bold text-blue-500 hover:underline'
+                >
+                  Chính sách thuê xe
+                </Link>
               </div>
             </div>
           </div>

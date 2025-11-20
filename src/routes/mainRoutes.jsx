@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, lazy } from 'react'
 import MainLayout from '@/layout/MainLayout'
 import ProtectedRoute from './ProtectedRoute'
 import ErrorPage from '@/features/error/pages/ErrorPage'
@@ -9,6 +9,9 @@ import CarListPage from '@/features/cars/pages/CarListPage'
 import CarDetailPage from '@/features/cars/pages/CarDetailPage'
 import HomePage from '@/features/home/pages/HomePage'
 import BookingPage from '@/features/booking/pages/BookingPage'
+
+const TermOfUsePage = lazy(() => import('@/features/home/pages/TermOfUsePage'))
+const RentalPolicyPage = lazy(() => import('@/features/home/pages/RentalPolicyPage'))
 
 const mainRoutes = {
   path: '/',
@@ -32,6 +35,22 @@ const mainRoutes = {
       element: (
         <Suspense fallback={<Loader />}>
           <AboutUsPage />
+        </Suspense>
+      )
+    },
+    {
+      path: '/term-of-use',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <TermOfUsePage />
+        </Suspense>
+      )
+    },
+    {
+      path: '/rental-policy',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <RentalPolicyPage />
         </Suspense>
       )
     },

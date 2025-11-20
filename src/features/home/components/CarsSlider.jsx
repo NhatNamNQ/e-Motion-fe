@@ -46,7 +46,7 @@ const CarsSlider = ({ cars, isLoading }) => {
         <SwiperSlide>
           <Link
             to='/cars'
-            className='border-secondary bg-secondary/5 hover:bg-secondary/10 flex h-[440px] min-h-[400px] flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed transition-all hover:border-solid'
+            className='border-secondary bg-secondary/5 hover:bg-secondary/10 flex h-[458px] min-h-[400px] flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed transition-all hover:border-solid'
           >
             <div className='bg-secondary/10 flex h-20 w-20 items-center justify-center rounded-full'>
               <ArrowRight className='text-secondary h-10 w-10' />
