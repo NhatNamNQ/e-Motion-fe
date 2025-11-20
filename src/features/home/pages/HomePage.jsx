@@ -47,7 +47,7 @@ function HomePage() {
   return (
     <main>
       <section className='relative h-[calc(100vh-7.5rem)] w-full'>
-        <div className="absolute inset-0 bg-[url('/backgroundHero.webp')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-[url('/backgroundHero.png')] bg-cover bg-center" />
         <div className='absolute inset-0 bg-black/30' />
         <div
           className={`z-10 container transition-all duration-500 ease-in-out ${
