@@ -49,7 +49,6 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
 
     if (mainImgIndex !== -1) {
       const mainId = `existing-${mainImgIndex}`
-      console.log('✅ Tìm thấy ảnh main tại index:', mainImgIndex, '-> ID:', mainId)
       return mainId
     }
     const firstId = `existing-0`

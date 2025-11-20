@@ -147,5 +147,25 @@ export const carService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  updateCarStatus: async (id, status) => {
+    try {
+      await instance.put('/vehicles/status', {
+        vehicleId: id,
+        status: status
+      })
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  updateCarBattery: async (id, pin) => {
+    try {
+      await instance.put('/vehicles/battery-level', {
+        vehicleId: id,
+        batteryLevel: pin
+      })
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

@@ -8,9 +8,20 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { carStatusOptions } from '../constants/carConfig'
 import { carService } from '@/features/cars/services/carService'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 const CarsTable = ({
   cars,
@@ -27,6 +38,10 @@ const CarsTable = ({
   const paginationProps = { limitPerPage, setLimitPerPage, currentPage, setCurrentPage, totalPages }
 
   const navigate = useNavigate()
+
+  const [showPinForm, setShowPinForm] = useState(false)
+  const [pin, setPin] = useState('')
+  const [carUpdate, setCarUpdate] = useState(null)
 
   const handleClickEdit = async (cid) => {
     try {
@@ -48,6 +63,39 @@ const CarsTable = ({
     } catch (error) {
       toast.error('Lỗi khi xóa xe: ' + error.message)
     } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleUpdateStatusCar = async (cid, status) => {
+    setIsLoading(true)
+    try {
+      await carService.updateCarStatus(cid, status)
+      toast.success('Cập nhật trạng thái xe thành công!')
+      cars.forEach((car) => {
+        if (car.id === cid) {
+          car.status = status
+        }
+      })
+    } catch (error) {
+      toast.error('Lỗi khi cập nhật trạng thái xe: ' + error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleUpdatePin = async () => {
+    setIsLoading(true)
+    try {
+      await carService.updateCarBattery(carUpdate.id, pin)
+      toast.success('Cập nhật pin xe thành công!')
+      await fetchCars()
+    } catch (error) {
+      setShowPinForm(true)
+      setIsLoading(false)
+      toast.error('Lỗi khi cập nhật pin xe: ' + error.message)
+    } finally {
+      setShowPinForm(false)
       setIsLoading(false)
     }
   }
@@ -114,8 +162,26 @@ const CarsTable = ({
                       {car.status == 'Sẵn sàng' && car.battery < 80 && (
                         <>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className='flex justify-between text-green-600 hover:text-green-700'>
+                          <DropdownMenuItem
+                            onClick={() => handleUpdateStatusCar(car.id, 'Đang xạc pin')}
+                            className='flex justify-between text-green-600 hover:text-green-700'
+                          >
                             Xạc pin <BatteryCharging className='h-4 w-4' />
+                          </DropdownMenuItem>
+                        </>
+                      )}
+
+                      {car.status == 'Đang xạc pin' && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setCarUpdate(car)
+                              setShowPinForm(true)
+                            }}
+                            className='flex justify-between text-green-600 hover:text-green-700'
+                          >
+                            Xạc hoàn tất <BatteryCharging className='h-4 w-4' />
                           </DropdownMenuItem>
                         </>
                       )}
@@ -123,7 +189,10 @@ const CarsTable = ({
                       {car.status == 'Đang kiểm tra' && (
                         <>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className='flex justify-between text-orange-600 hover:text-orange-700'>
+                          <DropdownMenuItem
+                            onClick={() => handleUpdateStatusCar(car.id, 'Đang bảo trì')}
+                            className='flex justify-between text-orange-600 hover:text-orange-700'
+                          >
                             Bảo trì <Wrench className='h-4 w-4' />
                           </DropdownMenuItem>
                         </>
@@ -132,7 +201,10 @@ const CarsTable = ({
                       {car.status == 'Đang bảo trì' && (
                         <>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className='flex justify-between text-green-600 hover:text-green-700'>
+                          <DropdownMenuItem
+                            onClick={() => handleUpdateStatusCar(car.id, 'Sẵn sàng')}
+                            className='flex justify-between text-green-600 hover:text-green-700'
+                          >
                             Hoàn thành bảo trì
                             <Wrench className='h-4 w-4' />
                           </DropdownMenuItem>
@@ -155,6 +227,36 @@ const CarsTable = ({
       </div>
 
       <Pagination {...paginationProps} />
+
+      <Dialog open={showPinForm} onOpenChange={setShowPinForm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cập nhật pin</DialogTitle>
+            <DialogDescription>Fill battery of vehicle</DialogDescription>
+          </DialogHeader>
+          <div className='px-6 py-4'>
+            <div className='space-y-3'>
+              <div className='flex items-start gap-4'>
+                <Label className='mt-3 w-32' htmlFor='pin'>
+                  Pin (%)
+                </Label>
+                <div className='flex-1 flex-col'>
+                  <Input
+                    id='pin'
+                    type='number'
+                    value={pin}
+                    onChange={(e) => setPin(e.target.value)}
+                    placeholder='100'
+                  />
+                </div>
+              </div>
+            </div>
+            <div onClick={handleUpdatePin} className='mt-6 flex justify-end'>
+              <Button>Xác nhận</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
