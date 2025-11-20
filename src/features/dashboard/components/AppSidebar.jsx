@@ -17,7 +17,8 @@ import {
   Package,
   ClipboardPenLine,
   MapPin,
-  Car
+  Car,
+  Flag
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -27,45 +28,51 @@ export function AppSidebar() {
   const user = useSelector(selectUser)
   const menuItems = [
     {
-      title: 'Dashboard',
+      title: 'Trang chủ',
       url: user?.role === 'ROLE_STAFF' ? `/dashboard/stations/${user.station?.id}` : '/dashboard',
       icon: LayoutDashboard
     },
     {
-      title: 'Stations',
+      title: 'Trạm',
       url: '/dashboard/stations',
       icon: MapPin,
       role: 'ROLE_ADMIN'
     },
     {
-      title: 'Reservations',
+      title: 'Đặt chỗ',
       url: '/dashboard/reservations',
       icon: BookOpen
     },
     {
-      title: 'Rentals',
+      title: 'Hợp đồng',
       url: '/dashboard/rentals',
       icon: Package
     },
     {
-      title: 'Check List',
+      title: 'Biên bản',
       url: '/dashboard/check-list',
       icon: SquarePen
     },
     {
-      title: 'Vehicle logs',
+      title: 'Nhật ký xe',
       url: '/dashboard/vehicle-logs',
       icon: ClipboardPenLine
     },
     {
-      title: 'Users',
+      title: 'Người dùng',
       url: '/dashboard/users',
       icon: User2
     },
     {
-      title: 'Cars',
+      title: 'Xe',
       url: '/dashboard/cars',
       icon: Car
+    },
+    {
+      title: 'Báo cáo',
+      url: '/dashboard/reports',
+      icon: Flag,
+      role: 'ROLE_ADMIN'
     }
   ]
 
