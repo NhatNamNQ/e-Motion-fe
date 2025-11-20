@@ -145,7 +145,6 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
     }
 
     setIsLoading(true)
-    console.log(data)
     try {
       // Upload các ảnh mới (không phải ảnh có sẵn)
       const newImages = await Promise.all(
@@ -164,11 +163,15 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
         main: img.id === mainImageId
       }))
       const allImages = [...updatedUploadedImages, ...newImages]
-      await handleSubmitCar({
+      const submitData = {
         ...data,
-        images: allImages.map(({ url, main }) => ({ url, main })),
-        id: mode?.car.id
-      })
+        images: allImages.map(({ url, main }) => ({ url, main }))
+      }
+      if (!isAdd && mode?.car?.id) {
+        submitData.id = mode.car.id
+      }
+      await handleSubmitCar(submitData)
+
       toast.success(isAdd ? 'Thêm xe thành công' : 'Cập nhật xe thành công')
       setShowCarForm(false)
     } catch (error) {
