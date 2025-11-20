@@ -50,14 +50,14 @@ const RentalDetailPage = () => {
   }
 
   const formatDateTime = (dateTimeString) => {
-    if (!dateTimeString) return 'N/A'
+    if (!dateTimeString) return 'Chưa có'
     return format(new Date(dateTimeString), 'dd/MM/yyyy HH:mm')
   }
 
   const DetailItem = ({ label, value }) => (
     <div>
       <p className='text-sm font-medium text-gray-500'>{label}</p>
-      <p className='text-lg'>{value || 'N/A'}</p>
+      <p className='text-lg'>{value || 'Chưa có'}</p>
     </div>
   )
 
@@ -78,9 +78,10 @@ const RentalDetailPage = () => {
   const checkOutFee = rental?.rentalCheckLists[1]?.fee || 0
   const vehicleLogFee = rental?.vehicleLog?.cost || 0
   const isPendingExtendFee = rental?.status === 'PENDING_EXTEND_FEE'
-  const isViewContract =
-    rental.status === 'PENDING' ||
-    (rental.status === 'CONTRACTING' && rental.contractStatus === 'PENDING')
+  const isPending = rental?.status === 'PENDING'
+  const isCanceled = rental.status === 'CANCELLED'
+  const isContractPending = rental.status === 'CONTRACTING' && rental.contractStatus === 'PENDING'
+  const isViewContract = !isContractPending && !isPending && !isCanceled
 
   return (
     <div className='container mx-auto p-4 md:p-6'>
@@ -141,7 +142,7 @@ const RentalDetailPage = () => {
           </h2>
           <DetailItem label='Trạng thái hợp đồng' value={rental.contractStatus} />
           <div className='flex flex-wrap gap-2'>
-            {isViewContract ? (
+            {isContractPending ? (
               <Button
                 size='sm'
                 className='bg-secondary hover:bg-secondary/90 h-auto w-fit gap-2 px-3 py-1.5'
@@ -151,16 +152,18 @@ const RentalDetailPage = () => {
                 <span className='text-sm'>Ký hợp đồng</span>
               </Button>
             ) : (
-              <Button
-                variant='outline'
-                size='sm'
-                className='h-auto w-fit gap-2 px-3 py-1.5'
-                onClick={() => window.open(rental.submissionUrl, '_blank')}
-              >
-                <FileText className='h-4 w-4' />
-                <span className='text-sm'>Xem hợp đồng</span>
-                <ExternalLink className='h-3 w-3' />
-              </Button>
+              isViewContract && (
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='h-auto w-fit gap-2 px-3 py-1.5'
+                  onClick={() => window.open(rental.submissionUrl, '_blank')}
+                >
+                  <FileText className='h-4 w-4' />
+                  <span className='text-sm'>Xem hợp đồng</span>
+                  <ExternalLink className='h-3 w-3' />
+                </Button>
+              )
             )}
           </div>
         </div>

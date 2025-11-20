@@ -118,5 +118,13 @@ export const rentalService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  cancelRental: async (rentalId) => {
+    try {
+      const { data } = await instance.post(`/rentals/manage/${rentalId}/cancel`, { rentalId })
+      return data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }
