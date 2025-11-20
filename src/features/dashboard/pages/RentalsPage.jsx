@@ -29,6 +29,8 @@ const columnHelper = createColumnHelper()
 const RentalsPage = () => {
   const dispatch = useDispatch()
 
+  const navigate = useNavigate()
+
   const [rentals, setRentals] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [emailLoading, setEmailLoading] = useState(false)
@@ -41,8 +43,6 @@ const RentalsPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [limitPerPage, setLimitPerPage] = useState(10)
-
-  const navigate = useNavigate()
 
   const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING_FEE', 'CONFIRM', 'OVERDUE']
 
@@ -87,6 +87,7 @@ const RentalsPage = () => {
     try {
       const renter = await userService.getRenterByEmail(email)
       dispatch(setRenter(renter))
+      navigate('/dashboard/cars?model=rental')
       setEmailLoading(false)
     } catch (e) {
       setEmailLoading(false)
@@ -124,12 +125,7 @@ const RentalsPage = () => {
           <h2 className='text-2xl font-bold tracking-tight'>Rentals</h2>
           <p className='text-muted-foreground'>Manage your rental operations</p>
         </div>
-        <Button
-          className='bg-secondary hover:bg-secondary/80'
-          onClick={() => setShowRenterForm(true)}
-        >
-          + Tạo đơn thuê
-        </Button>
+        <Button onClick={() => setShowRenterForm(true)}>+ Tạo đơn thuê</Button>
       </div>
 
       <DataTableToolbar

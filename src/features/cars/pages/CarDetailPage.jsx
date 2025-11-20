@@ -32,6 +32,8 @@ const CarDetailPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const user = useSelector(selectUser)
+  const rental = user && user.role !== 'ROLE_USER'
+  const renter = useSelector((state) => state.renter.user)
   const startTime = useSelector(selectStartTime)
   const endTime = useSelector(selectEndTime)
   const car = useSelector(selectSelectedCar)
@@ -60,18 +62,25 @@ const CarDetailPage = () => {
         calculateBookingFees({
           id,
           startTime,
-          endTime
+          endTime,
+          rental
         })
       )
     }
     loadBookingFees()
-  }, [id, dispatch, startTime, endTime])
+  }, [id, dispatch, startTime, endTime, rental])
 
   const handleRentCar = () => {
     if (!user) {
       navigate('/auth/login')
-    } else {
+    } else if (user.role === 'ROLE_USER') {
       navigate('/booking/confirm')
+    } else {
+      if (!renter) {
+        navigate('/dashboard/rentals')
+      } else {
+        navigate('/dashboard/booking/confirm')
+      }
     }
   }
 

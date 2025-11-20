@@ -13,6 +13,20 @@ export const rentalService = {
       throw handleError(error)
     }
   },
+  createRental: async (startTime, endTime, vehicleId, email, staffId) => {
+    try {
+      const { data } = await instance.post('/rentals', {
+        startTime,
+        endTime,
+        vehicleId,
+        email,
+        staffId
+      })
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
   getRentalById: async (id) => {
     try {
       const { data } = await instance.get(`/rentals/${id}/details`)

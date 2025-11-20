@@ -27,9 +27,9 @@ export const getCarDetail = createAsyncThunk(
 
 export const calculateBookingFees = createAsyncThunk(
   'cars/calculateFee',
-  async ({ id, startTime, endTime }, { rejectWithValue }) => {
+  async ({ id, startTime, endTime, rental }, { rejectWithValue }) => {
     try {
-      const res = await carService.calculateFees({ id, startTime, endTime })
+      const res = await carService.calculateFees({ id, startTime, endTime, rental })
       return res.data
     } catch (error) {
       return rejectWithValue(error.message || 'Tính toán phí xe thất bại')

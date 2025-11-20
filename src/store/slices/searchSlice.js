@@ -3,7 +3,7 @@ import { searchCars } from '../actions/searchActions'
 import { addHours, format } from 'date-fns'
 import { formatDate } from '@/lib/utils'
 
-const createDefaultTimes = () => {
+export const createDefaultTimes = () => {
   const now = new Date()
   const currentHour = now.getHours()
   const currentMinutes = now.getMinutes()

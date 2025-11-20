@@ -41,14 +41,13 @@ export const carService = {
       throw handleError(error)
     }
   },
-  calculateFees: async ({ id, startTime, endTime }) => {
+  calculateFees: async ({ id, startTime, endTime, rental }) => {
     try {
-      const { data } = await instance.get('/vehicles/booking', {
-        params: {
-          id,
-          startTime,
-          endTime
-        }
+      const { data } = await instance.post('/vehicles/booking', {
+        vehicleId: id,
+        startTime: startTime,
+        endTime: endTime,
+        rental: rental
       })
       return data
     } catch (error) {
@@ -71,14 +70,16 @@ export const carService = {
       throw handleError(error)
     }
   },
-  getManageCars: async (page, limit, statusList, search, stationId) => {
+  getManageCars: async (page, limit, statusList, search, stationId, startTime, endTime) => {
     try {
       const { data } = await instance.post('vehicles/manage', {
         page: page,
         limit: limit,
         status: statusList,
         search: search,
-        stationId: stationId
+        stationId: stationId,
+        startTime: startTime,
+        endTime: endTime
       })
       return data.data
     } catch (error) {

@@ -1,10 +1,10 @@
-import { Calendar, MapPin, User, Shield, CheckCircle } from 'lucide-react'
+import { Calendar, MapPin, Mail } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 
-const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) => {
+const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading, user }) => {
   const { startDate, startHour, endDate, endHour } = searchForm
   const { deposit, total, holdCar, booking } = bookingFees
   return (
@@ -43,12 +43,22 @@ const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading }) 
           </div>
 
           {/* Location Info */}
-          <div className='flex items-center gap-3'>
+          <div className='mb-4 flex items-center gap-3'>
             <MapPin className='text-secondary h-5 w-5' />
             <div>
               <div className='text-sm text-gray-600'>Nhận xe tại địa chỉ cửa hàng</div>
               <div className='font-medium text-gray-800'>
                 {car.station.address || 'Địa chỉ sẽ được cập nhật'}
+              </div>
+            </div>
+          </div>
+
+          <div className='flex items-center gap-3'>
+            <Mail className='text-secondary h-5 w-5' />
+            <div>
+              <div className='text-sm text-gray-600'>Email người thuê</div>
+              <div className='font-medium text-gray-800'>
+                {user.email || 'email sẽ được cập nhật'}
               </div>
             </div>
           </div>

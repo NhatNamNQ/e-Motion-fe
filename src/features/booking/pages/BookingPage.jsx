@@ -20,7 +20,11 @@ const BookingPage = () => {
   const status = payment?.status || location?.state?.status
   const txnRef = payment?.txnRef
 
-  const user = useSelector(selectUser)
+  const authUser = useSelector(selectUser)
+  const renterUser = useSelector((state) => state.renter.user)
+  const user = authUser.role !== 'ROLE_USER' ? renterUser : authUser
+  console.log('BookingPage user:', user)
+
   const car = useSelector(selectSelectedCar)
   const bookingFees = useSelector(selectBookingFees)
   const searchForm = useSelector(selectSearchForm)
@@ -89,6 +93,7 @@ const BookingPage = () => {
             bookingFees={bookingFees}
             car={car}
             searchForm={searchForm}
+            user={user}
           />
         )}
       </div>

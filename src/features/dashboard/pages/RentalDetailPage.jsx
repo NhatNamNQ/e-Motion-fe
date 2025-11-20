@@ -169,14 +169,18 @@ const RentalDetailPage = () => {
             <CardContent>
               <Separator className='my-4' />
               <div className='grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2'>
-                <InfoRow label='Mã đặt chỗ'>{rental.reservationCode}</InfoRow>
+                {rental.reservationCode && (
+                  <InfoRow label='Mã đặt chỗ'>{rental.reservationCode}</InfoRow>
+                )}
                 <InfoRow label='Email khách hàng'>{rental.userEmail}</InfoRow>
                 <InfoRow label='Bắt đầu thuê'>{formatDateTime(rental.startTime)}</InfoRow>
                 <InfoRow label='Kết thúc thuê'>{formatDateTime(rental.endTime)}</InfoRow>
                 <InfoRow label='Tên xe'>{rental.vehicle.name}</InfoRow>
-                <InfoRow label='Tên nhân viên'>{rental.staff.fullName}</InfoRow>
+                <InfoRow label='Nhân viên phụ trách'>{rental.staff.fullName}</InfoRow>
                 <InfoRow label='Tên trạm'>{rental.vehicle.station.name}</InfoRow>
-                <InfoRow label='Tình trạng hợp đồng'>{rental.contractStatus}</InfoRow>
+                {rental.contractStatus && (
+                  <InfoRow label='Tình trạng hợp đồng'>{rental.contractStatus}</InfoRow>
+                )}
 
                 <div className='space-y-1'>
                   {!isViewContract && (
@@ -251,14 +255,16 @@ const RentalDetailPage = () => {
                       {formatCurrency(rentFee)}
                     </span>
                   </div>
+                  {reservationFee > 0 && (
+                    <div className='flex items-start justify-between gap-2'>
+                      <span className='flex-1 text-sm text-gray-700'>Phí giữ chỗ:</span>
+                      <span className='flex-shrink-0 text-right text-sm font-semibold text-green-900'>
+                        {formatCurrency(reservationFee)}
+                      </span>
+                    </div>
+                  )}
                   <div className='flex items-start justify-between gap-2'>
-                    <span className='flex-1 text-sm text-gray-700'>Phí cọc giữ xe:</span>
-                    <span className='flex-shrink-0 text-right text-sm font-semibold text-green-900'>
-                      {formatCurrency(reservationFee)}
-                    </span>
-                  </div>
-                  <div className='flex items-start justify-between gap-2'>
-                    <span className='flex-1 text-sm text-gray-700'>Phí cọc cuốc xe:</span>
+                    <span className='flex-1 text-sm text-gray-700'>Phí cọc xe:</span>
                     <span className='flex-shrink-0 text-right text-sm font-semibold text-gray-900'>
                       {formatCurrency(rentalFee)}
                     </span>

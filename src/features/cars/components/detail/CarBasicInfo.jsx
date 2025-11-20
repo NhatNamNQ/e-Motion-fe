@@ -6,7 +6,8 @@ import {
   BatteryCharging,
   Car,
   Tag,
-  CreditCard
+  CreditCard,
+  Star
 } from 'lucide-react'
 
 const CarBasicInfo = ({ car }) => {
@@ -80,7 +81,7 @@ const CarBasicInfo = ({ car }) => {
             </div>
           </div>
           <div className='flex items-center space-x-3'>
-            <Tag className='text-secondary h-5 w-5' />
+            <Star className='text-secondary h-5 w-5' />
             <div>
               <p className='text-sm text-gray-500'>Điểm/H</p>
               <p className='font-bold text-gray-800'>{car.point}</p>

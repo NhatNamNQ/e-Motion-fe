@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import Loader from '@/components/Loader'
 import CarForm from '../components/CarForm'
 import { carStatusOptions } from '../constants/carConfig'
+import { createDefaultTimes } from '@/store/slices/searchSlice'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -33,8 +34,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectUser } from '@/store/selectors/authSelectors'
 import { setSearchForm } from '@/store/slices/searchSlice'
 import { carService } from '@/features/cars/services/carService'
+import { useSearchParams } from 'react-router-dom'
 
 const CarsPage = () => {
+  const [searchParams] = useSearchParams()
+  const model = searchParams.get('model')
+
   const dispatch = useDispatch()
   const currentUser = useSelector(selectUser)
   const isAdmin = currentUser.role === 'ROLE_ADMIN'
@@ -52,7 +57,7 @@ const CarsPage = () => {
   const [limitPerPage, setLimitPerPage] = useState(10)
   const [isLoading, setIsLoading] = useState(false)
   const [cars, setCars] = useState([])
-  const [selectedStatuses, setSelectedStatuses] = useState([])
+  const [selectedStatuses, setSelectedStatuses] = useState(model === 'rental' ? ['Sẵn sàng'] : [])
   const [selectedStation, setSelectedStation] = useState(null)
   const [mode, setMode] = useState({
     type: 'add',
@@ -108,12 +113,25 @@ const CarsPage = () => {
   const fetchCars = useCallback(async () => {
     setIsLoading(true)
     try {
+      // Check if date/time are selected, otherwise pass null
+      const startDateTime =
+        form.watch('startDate') && form.watch('startTime')
+          ? `${form.watch('startDate').toLocaleDateString('en-CA')}T${form.watch('startTime')}:00`
+          : null
+
+      const endDateTime =
+        form.watch('endDate') && form.watch('endTime')
+          ? `${form.watch('endDate').toLocaleDateString('en-CA')}T${form.watch('endTime')}:00`
+          : null
+
       const res = await carService.getManageCars(
         currentPage,
         limitPerPage,
         selectedStatuses,
         debouncedSearch,
-        selectedStation?.id
+        selectedStation?.id,
+        startDateTime,
+        endDateTime
       )
 
       const carData = res.content.map((car) => ({
@@ -133,7 +151,7 @@ const CarsPage = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [currentPage, debouncedSearch, limitPerPage, selectedStation?.id, selectedStatuses])
+  }, [currentPage, debouncedSearch, limitPerPage, selectedStation?.id, selectedStatuses, form])
   const handleClickFilterStatus = (status) => {
     if (selectedStatuses.includes(status)) {
       setSelectedStatuses(selectedStatuses.filter((s) => s !== status))
@@ -145,7 +163,12 @@ const CarsPage = () => {
   const clearFilters = () => {
     setSelectedStatuses([])
     setSelectedStation(null)
-    form.reset()
+    form.reset({
+      startDate: null,
+      startTime: null,
+      endDate: null,
+      endTime: null
+    })
     dispatch(
       setSearchForm({
         startDate: null,
@@ -162,7 +185,6 @@ const CarsPage = () => {
   }
 
   const handleSubmitAddCar = async (carData) => {
-    console.log(carData)
     setShowCarForm(false)
     setIsLoading(true)
     try {
@@ -204,11 +226,26 @@ const CarsPage = () => {
         setStations(res)
       } catch (error) {
         toast.error('Error get users: ' + error.message)
-      } finally {
-        fetchCars()
       }
     }
     fetchStationNames()
+  }, [])
+
+  useEffect(() => {
+    if (model === 'rental') {
+      const defaultTimes = createDefaultTimes()
+      form.reset({
+        startDate: new Date(defaultTimes.startDate.split('/').reverse().join('-')),
+        startTime: defaultTimes.startHour,
+        endDate: new Date(defaultTimes.endDate.split('/').reverse().join('-')),
+        endTime: defaultTimes.endHour
+      })
+      dispatch(setSearchForm(defaultTimes))
+    }
+  }, [model, form, dispatch])
+
+  useEffect(() => {
+    fetchCars()
   }, [currentPage, limitPerPage, fetchCars, selectedStatuses, debouncedSearch, selectedStation])
 
   const tableProps = {
@@ -343,7 +380,11 @@ const CarsPage = () => {
                   <DatePicker
                     form={form}
                     handleSelect={handleStartDateChange}
-                    title='Start Date'
+                    title={
+                      form.watch('startDate')
+                        ? form.watch('startDate').toLocaleDateString('vi-VN')
+                        : 'Start Date'
+                    }
                     name='startDate'
                   />
                 </div>
@@ -351,7 +392,7 @@ const CarsPage = () => {
                   <TimePicker
                     form={form}
                     handleSelect={handleStartTimeChange}
-                    title='Start Time'
+                    title={form.watch('startTime') || 'Start Time'}
                     name='startTime'
                     selectedDate={form.watch('startDate')?.toLocaleDateString('en-CA')}
                     type='startHour'
@@ -362,7 +403,11 @@ const CarsPage = () => {
                   <DatePicker
                     form={form}
                     handleSelect={handleEndDateChange}
-                    title='End Date'
+                    title={
+                      form.watch('endDate')
+                        ? form.watch('endDate').toLocaleDateString('vi-VN')
+                        : 'End Date'
+                    }
                     name='endDate'
                   />
                 </div>
@@ -370,34 +415,23 @@ const CarsPage = () => {
                   <TimePicker
                     form={form}
                     handleSelect={handleEndTimeChange}
-                    title='End Time'
+                    title={form.watch('endTime') || 'End Time'}
                     name='endTime'
                     selectedDate={form.watch('endDate')?.toLocaleDateString('en-CA')}
                     type='endHour'
                   />
                 </div>
-                {(form.watch('startDate') ||
-                  form.watch('startTime') ||
-                  form.watch('endDate') ||
-                  form.watch('endTime')) && (
-                  <button
-                    onClick={() => {
-                      form.reset()
-                      dispatch(
-                        setSearchForm({
-                          startDate: null,
-                          startHour: null,
-                          endDate: null,
-                          endHour: null
-                        })
-                      )
-                    }}
-                    className='flex items-center gap-2 rounded-lg p-2 px-3 hover:cursor-pointer hover:bg-gray-200'
-                  >
-                    Clear
-                    <X className='h-4 w-4' />
-                  </button>
-                )}
+                {form.watch('startDate') &&
+                  form.watch('startTime') &&
+                  form.watch('endDate') &&
+                  form.watch('endTime') && (
+                    <Button
+                      onClick={() => fetchCars()}
+                      className='flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700'
+                    >
+                      Search
+                    </Button>
+                  )}
               </div>
             </div>
           </div>

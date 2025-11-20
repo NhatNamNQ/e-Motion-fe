@@ -22,6 +22,7 @@ import StationDetailPage from '@/features/dashboard/pages/StationDetailPage'
 import UserDetailPage from '@/features/dashboard/pages/UserDetailPage'
 import CarsPage from '@/features/dashboard/pages/CarsPage'
 import CarDetailPage from '@/features/cars/pages/CarDetailPage'
+import CheckingRentalPage from '@/features/booking/pages/CheckingRentalPage'
 
 export const dashboardRoutes = {
   path: '/dashboard',
@@ -224,6 +225,16 @@ export const dashboardRoutes = {
         <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
           <Suspense fallback={<Loader />}>
             <CarDetailPage />
+          </Suspense>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: '/dashboard/booking/confirm',
+      element: (
+        <ProtectedRoute allowedRoles={['ROLE_ADMIN', 'ROLE_STAFF']}>
+          <Suspense fallback={<Loader />}>
+            <CheckingRentalPage />
           </Suspense>
         </ProtectedRoute>
       )
