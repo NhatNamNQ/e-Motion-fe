@@ -111,7 +111,7 @@ const CarsTable = ({
                       >
                         Chỉnh sửa <Edit2 className='h-4 w-4' />
                       </DropdownMenuItem>
-                      {car.status == 'Sẵn sàng' && (
+                      {car.status == 'Sẵn sàng' && car.battery < 80 && (
                         <>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className='flex justify-between text-green-600 hover:text-green-700'>
@@ -138,10 +138,6 @@ const CarsTable = ({
                           </DropdownMenuItem>
                         </>
                       )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className='flex justify-between text-yellow-600 hover:text-yellow-700'>
-                        Báo lỗi <ShieldAlert className='h-4 w-4' />
-                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => handleDeleteCar(car.id)}

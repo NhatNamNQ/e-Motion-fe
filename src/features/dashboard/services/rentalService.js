@@ -48,9 +48,11 @@ export const rentalService = {
       throw handleError(error)
     }
   },
-  checkInRental: async (id) => {
+  checkInRental: async (id, point) => {
     try {
-      const { data } = await instance.post(`/rentals/${id}/check-inpayment`, id)
+      const { data } = await instance.get(`/rentals/check-inpayment`, {
+        params: { rentalId: id, point: point }
+      })
       const { url, qrCode } = data.data
       return { url, qrCode }
     } catch (error) {

@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import { Separator } from '@/components/ui/separator'
 import PaymentQRDialog from '../components/PaymentQRDialog'
 import { Spinner } from '@/components/ui/spinner'
+import { Input } from '@/components/ui/input'
 
 const InfoRow = ({ label, children }) => (
   <div className='space-y-1'>
@@ -30,12 +31,21 @@ const RentalDetailPage = () => {
   const [qrCode, setQrCode] = useState(null)
   const [isContractLoading, setIsContractLoading] = useState(false)
   const [isCancelLoading, setIsCancelLoading] = useState(false)
+  const [usedPoints, setUsedPoints] = useState(0)
+
+  console.log('rental:', rental)
 
   const rentFee = rental?.rentFee || 0
   const reservationFee = rental?.reservationDeposit?.amount || 0
   const rentalFee = rental?.rentalDeposit?.amount || 0
   const checkOutFee = rental?.rentalCheckLists[1]?.fee || 0
   const vehicleLogFee = rental?.vehicleLog?.cost || 0
+  const renterPoints = rental?.userPoint || 0
+  const totalCheckoutFee = rentalFee + reservationFee
+
+  const finalDiscountPoints =
+    rental?.discountPoint !== undefined ? rental.discountPoint : usedPoints
+  const pointDiscount = finalDiscountPoints * 1000
 
   const fetchRentalDetail = useCallback(async () => {
     if (!id) return
@@ -59,7 +69,7 @@ const RentalDetailPage = () => {
   const handleCreateCheckInPayment = async () => {
     try {
       setLoading(true)
-      const { qrCode } = await rentalService.checkInRental(id)
+      const { qrCode } = await rentalService.checkInRental(id, usedPoints)
       setQrCode(qrCode)
       setShowPaymentDialog(true)
     } catch (error) {
@@ -115,6 +125,28 @@ const RentalDetailPage = () => {
     } finally {
       setIsCancelLoading(false)
     }
+  }
+
+  const handlePointsChange = (e) => {
+    const value = parseInt(e.target.value) || 0
+    const maxDiscount = Math.floor(rentFee / 1000) // Max điểm = tiền thuê / 1000
+
+    if (value > renterPoints) {
+      toast.error(`Bạn chỉ có ${renterPoints} điểm`)
+      setUsedPoints(Math.min(renterPoints, maxDiscount))
+    } else if (value > maxDiscount) {
+      toast.error(`Chỉ được giảm tối đa ${maxDiscount} điểm (= ${formatCurrency(rentFee)})`)
+      setUsedPoints(maxDiscount)
+    } else if (value < 0) {
+      setUsedPoints(0)
+    } else {
+      setUsedPoints(value)
+    }
+  }
+
+  const handleUseAllPoints = () => {
+    const maxDiscount = Math.floor(rentFee / 1000)
+    setUsedPoints(Math.min(renterPoints, maxDiscount))
   }
 
   if (loading) return <Loader />
@@ -274,6 +306,54 @@ const RentalDetailPage = () => {
                       {formatCurrency(rentFee)}
                     </span>
                   </div>
+
+                  {isContracting && renterPoints > 0 && (
+                    <div className='border-t border-blue-200 pt-3'>
+                      <div className='mb-3 flex items-center justify-between gap-2'>
+                        <span className='text-sm font-semibold text-gray-700'>
+                          Điểm hiện có: {renterPoints}
+                        </span>
+                        {!rental?.discountPoint && (
+                          <Button
+                            size='sm'
+                            variant='outline'
+                            onClick={handleUseAllPoints}
+                            disabled={renterPoints === 0}
+                          >
+                            Dùng hết
+                          </Button>
+                        )}
+                      </div>
+                      <div className='mb-2 flex items-center gap-2'>
+                        <Input
+                          type='number'
+                          min='0'
+                          max={Math.floor(rentFee / 1000)}
+                          value={usedPoints}
+                          onChange={handlePointsChange}
+                          placeholder='Nhập số điểm'
+                          className='h-8 border-2 border-gray-400 bg-white text-sm'
+                        />
+                        <span className='text-xs text-gray-600'>điểm</span>
+                      </div>
+                      <div className='flex items-start justify-between gap-2'>
+                        <span className='text-sm text-gray-700'>Giảm giá (1 điểm = 1.000đ):</span>
+                        <span className='text-right text-sm font-semibold text-green-900'>
+                          -{formatCurrency(pointDiscount)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className='border-t border-blue-200 pt-3'></div>
+                  {pointDiscount > 0 && (
+                    <div className='flex items-start justify-between gap-2'>
+                      <span className='flex-1 text-sm text-gray-700'>Giảm giá:</span>
+                      <span className='flex-shrink-0 text-right text-sm font-semibold text-green-900'>
+                        -{formatCurrency(pointDiscount)}
+                      </span>
+                    </div>
+                  )}
                   {reservationFee > 0 && (
                     <div className='flex items-start justify-between gap-2'>
                       <span className='flex-1 text-sm text-gray-700'>Phí giữ chỗ:</span>
@@ -294,7 +374,7 @@ const RentalDetailPage = () => {
                 <div className='flex items-start justify-between gap-2 px-2'>
                   <span className='flex-1 text-base font-bold'>Tổng Tiền Check-in:</span>
                   <span className='flex-shrink-0 text-right text-lg font-bold'>
-                    {formatCurrency(rentalFee + rentFee)}
+                    {formatCurrency(Math.max(0, rentFee + rentalFee - pointDiscount))}
                   </span>
                 </div>
 
@@ -318,9 +398,7 @@ const RentalDetailPage = () => {
                 <div className='flex items-start justify-between gap-2 px-2'>
                   <span className='flex-1 text-base font-bold'>Tổng Tiền Check-out:</span>
                   <span className='flex-shrink-0 text-right text-lg font-bold'>
-                    {formatCurrency(
-                      rental.rentalDeposit.amount + reservationFee - checkOutFee - vehicleLogFee
-                    )}
+                    {formatCurrency(Math.max(0, totalCheckoutFee - checkOutFee - vehicleLogFee))}
                   </span>
                 </div>
               </div>
