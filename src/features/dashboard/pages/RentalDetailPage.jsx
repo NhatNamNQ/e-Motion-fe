@@ -348,7 +348,7 @@ const RentalDetailPage = () => {
                   <div className='border-t border-blue-200 pt-3'></div>
                   {pointDiscount > 0 && (
                     <div className='flex items-start justify-between gap-2'>
-                      <span className='flex-1 text-sm text-gray-700'>Giảm giá:</span>
+                      <span className='flex-1 text-sm text-green-700'>Giảm giá:</span>
                       <span className='flex-shrink-0 text-right text-sm font-semibold text-green-900'>
                         -{formatCurrency(pointDiscount)}
                       </span>

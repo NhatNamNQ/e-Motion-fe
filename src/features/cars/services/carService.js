@@ -1,6 +1,5 @@
 import instance from '@/lib/axios'
 import { handleError } from '@/lib/handleError'
-import { ca } from 'date-fns/locale'
 
 export const carService = {
   getCars: async () => {
