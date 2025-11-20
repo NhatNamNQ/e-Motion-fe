@@ -10,9 +10,13 @@ export const adminService = {
       throw handleError(error)
     }
   },
-  getReports: async () => {
+  getReports: async (filters = {}) => {
     try {
-      const { data } = await instance.get('/reports')
+      const { data } = await instance.post('/reports/search', {
+        title: filters.title || '',
+        type: filters.type || null,
+        status: filters.status || null
+      })
       return data.data
     } catch (error) {
       throw handleError(error)
