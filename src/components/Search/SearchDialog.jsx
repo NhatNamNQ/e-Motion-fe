@@ -41,28 +41,24 @@ const SearchDialog = ({ triggerChildren }) => {
   }, [dispatch, searchForm])
 
   const onSubmit = async (values) => {
-    try {
-      dispatch(setSearchForm(values))
-      setOpen(false)
-      navigate('/cars')
-      const result = await dispatch(
-        searchCars({
-          brands: [],
-          categories: [],
-          page: 1,
-          limit: 8,
-          search: '',
-          city: values.location,
-          startTime: `${formatDate(values.startDate)}T${values.startHour}:00`,
-          endTime: `${formatDate(values.endDate)}T${values.endHour}:00`
-        })
-      )
+    dispatch(setSearchForm(values))
+    setOpen(false)
+    navigate('/cars')
+    const result = await dispatch(
+      searchCars({
+        brands: [],
+        categories: [],
+        page: 1,
+        limit: 8,
+        search: '',
+        city: values.location,
+        startTime: `${formatDate(values.startDate)}T${values.startHour}:00`,
+        endTime: `${formatDate(values.endDate)}T${values.endHour}:00`
+      })
+    )
 
-      if (searchCars.rejected.match(result)) {
-        toast.error('Có lỗi xảy ra khi tìm kiếm xe')
-      }
-    } catch (error) {
-      toast.error(error.message)
+    if (searchCars.rejected.match(result)) {
+      toast.error(result.payload)
     }
   }
 
