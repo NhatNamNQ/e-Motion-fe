@@ -11,6 +11,7 @@ export const searchCars = createAsyncThunk(
         minPrice: searchValues.minPrice,
         maxPrice: searchValues.maxPrice,
         seats: searchValues.seats,
+        stationId: searchValues.stationId,
         page: searchValues.page,
         limit: searchValues.limit,
         search: searchValues.search,

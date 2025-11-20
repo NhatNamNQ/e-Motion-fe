@@ -48,18 +48,18 @@ const FilterPopover = ({
             </Button>
           </div>
           <div className='max-h-80 space-y-3 overflow-y-auto'>
-            {items.map((item) => (
-              <div key={item.id} className='flex items-center space-x-3'>
+            {items.map((item, index) => (
+              <div key={index} className='flex items-center space-x-3'>
                 <Checkbox
-                  id={`${label}-${item.id}`}
-                  checked={selectedItems.includes(item.name)}
-                  onCheckedChange={(checked) => onItemChange(item.name, checked)}
+                  id={`${label}-${index}`}
+                  checked={selectedItems.includes(item)}
+                  onCheckedChange={(checked) => onItemChange(item, checked)}
                 />
                 <Label
-                  htmlFor={`${label}-${item.id}`}
+                  htmlFor={`${label}-${index}`}
                   className='flex-1 cursor-pointer text-sm font-normal'
                 >
-                  {item.name}
+                  {item}
                 </Label>
               </div>
             ))}
