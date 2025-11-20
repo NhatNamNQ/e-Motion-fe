@@ -80,5 +80,13 @@ export const userService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  makeReport: async (reportData) => {
+    try {
+      const { data } = await instance.post('/reports', reportData)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }
