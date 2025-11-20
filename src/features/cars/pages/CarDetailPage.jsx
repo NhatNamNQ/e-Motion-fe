@@ -123,7 +123,7 @@ const CarDetailPage = () => {
   }
 
   return (
-    <div className='min-h-screen'>
+    <div className='my-4 min-h-screen'>
       <div className='container mx-auto px-4'>
         <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
           {/* Left Column - Car Details */}
@@ -184,11 +184,15 @@ const CarDetailPage = () => {
             </div>
           </div>
         </div>
-        <div className='mt-8'>
-          <h2 className='text-2xl text-gray-700'>Các loại xe tương tự </h2>
-          <div className='bg-secondary my-2 h-1 w-10 rounded-full' />{' '}
-          <CarsSlider cars={car.similarVehicleList} />
-        </div>
+        {user?.role === 'ROLE_STAFF' || user?.role === 'ROLE_ADMIN' ? (
+          ''
+        ) : (
+          <div className='mt-8'>
+            <h2 className='text-2xl text-gray-700'>Các loại xe tương tự </h2>
+            <div className='bg-secondary my-2 h-1 w-10 rounded-full' />{' '}
+            <CarsSlider cars={car.similarVehicleList} />
+          </div>
+        )}
       </div>
       <SchedulePopup
         isOpen={schedulePopup.open}
