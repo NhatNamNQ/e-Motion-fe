@@ -161,13 +161,17 @@ const UsersTable = ({
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent align='end' className='w-40'>
-                          <DropdownMenuItem
-                            className='flex justify-between'
-                            onClick={() => handleClickEdit(user)}
-                          >
-                            Edit <Edit2 className='h-4 w-4' />
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          {user.role === 'ROLE_STAFF' && (
+                            <>
+                              <DropdownMenuItem
+                                className='flex justify-between'
+                                onClick={() => handleClickEdit(user)}
+                              >
+                                Edit <Edit2 className='h-4 w-4' />
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                            </>
+                          )}
                           <DropdownMenuItem
                             className={`${user.blocked ? 'text-teal-600 focus:text-teal-600' : 'text-red-600 focus:text-red-600'} flex justify-between`}
                             onClick={() => handleToggleBlock(user)}

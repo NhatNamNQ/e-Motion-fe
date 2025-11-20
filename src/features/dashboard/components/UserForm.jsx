@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { addUserSchema, editUserSchema } from '@/features/auth/schemas/authSchemas'
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
-import { roleOptions } from '../constants/userConfig'
 import {
   Dialog,
   DialogContent,
@@ -21,16 +20,8 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select'
-import { useSelector } from 'react-redux'
-import { selectUser } from '@/store/selectors/authSelectors'
 
 const UserForm = ({ mode, handleSubmitUser, setShowUserForm, stations }) => {
-  const currentUser = useSelector(selectUser)
-  const filteredRoleOptions =
-    currentUser?.role === 'ROLE_ADMIN'
-      ? roleOptions
-      : roleOptions.filter((r) => r.value === 'ROLE_USER')
-
   const isAdd = mode.type === 'add'
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -59,18 +50,20 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm, stations }) => {
       email: mode.user?.email || '',
       password: '',
       confirmPassword: '',
-      role: mode.user?.role || (currentUser?.role === 'ROLE_ADMIN' ? 'ROLE_STAFF' : 'ROLE_USER'),
+      role: 'ROLE_STAFF',
       stationId: mode.user?.station?.id || 1
     }
   })
+
+  console.log(mode.user)
 
   return (
     <Dialog open onOpenChange={setShowUserForm}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isAdd ? 'Add New User' : 'Edit Role User'}</DialogTitle>
+          <DialogTitle>{isAdd ? 'Add New Staff' : 'Edit Station Staff'}</DialogTitle>
           <DialogDescription>
-            {isAdd ? 'Fill in the details to add a new user' : 'Update role of user'}
+            {isAdd ? 'Fill in the details to add a new staff' : 'Update station of user'}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(handleSubmitUser)} className='px-6 py-4'>
@@ -133,56 +126,28 @@ const UserForm = ({ mode, handleSubmitUser, setShowUserForm, stations }) => {
             </div>
 
             <div className='flex items-start gap-4'>
-              <Label className='mt-3 w-32' htmlFor='role'>
-                Role
+              <Label className='mt-3 w-32' htmlFor='stationId'>
+                Station
               </Label>
               <Select
-                id='role'
-                value={watch('role')}
-                onValueChange={(value) => setValue('role', value)}
+                id='stationId'
+                value={String(watch('stationId'))}
+                onValueChange={(value) => setValue('stationId', Number(value))}
               >
                 <SelectTrigger>
                   <SelectValue>
-                    {filteredRoleOptions.find((r) => r.value === watch('role'))?.label ||
-                      'Select a role'}
+                    {stations.find((s) => s.id === watch('stationId'))?.name || 'Select a station'}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {filteredRoleOptions.map((role) => (
-                    <SelectItem key={role.value} value={role.value}>
-                      {role.label}
+                  {stations.map((station) => (
+                    <SelectItem key={station.id} value={String(station.id)}>
+                      {station.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
-            {watch('role') === 'ROLE_STAFF' && (
-              <div className='flex items-start gap-4'>
-                <Label className='mt-3 w-32' htmlFor='stationId'>
-                  Station
-                </Label>
-                <Select
-                  id='stationId'
-                  value={String(watch('stationId'))}
-                  onValueChange={(value) => setValue('stationId', Number(value))}
-                >
-                  <SelectTrigger>
-                    <SelectValue>
-                      {stations.find((s) => s.id === watch('stationId'))?.name ||
-                        'Select a station'}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stations.map((station) => (
-                      <SelectItem key={station.id} value={String(station.id)}>
-                        {station.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
 
             {isAdd && (
               <div className='flex items-start gap-4'>

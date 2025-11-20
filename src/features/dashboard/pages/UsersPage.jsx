@@ -120,7 +120,7 @@ const UsersPage = () => {
     try {
       await userService.addUser(userData)
       toast.success('User added successfully!')
-      fetchUsers()
+      await fetchUsers()
     } catch (error) {
       setShowUserForm(true)
       toast.error('Error adding user: ' + error.message)
@@ -135,7 +135,7 @@ const UsersPage = () => {
     try {
       await userService.editUser(userData)
       toast.success('Edit user successfully!')
-      fetchUsers()
+      await fetchUsers()
     } catch (error) {
       setShowUserForm(true)
       toast.error('Error adding user: ' + error.message)
@@ -195,10 +195,12 @@ const UsersPage = () => {
               <h1 className='text-3xl font-bold text-gray-900'>Manage Users</h1>
               <p className='mt-1 text-gray-500'>Manage your users and their roles here.</p>
             </div>
-            <Button onClick={handleCLickAddUserBtn}>
-              <UserPlus className='h-4 w-4' />
-              Add User
-            </Button>
+            {isAdmin && (
+              <Button onClick={handleCLickAddUserBtn}>
+                <UserPlus className='h-4 w-4' />
+                Add Staff
+              </Button>
+            )}
           </div>
         </div>
 
