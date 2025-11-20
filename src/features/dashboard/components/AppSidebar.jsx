@@ -71,8 +71,7 @@ export function AppSidebar() {
     {
       title: 'Đơn yêu cầu',
       url: '/dashboard/reports',
-      icon: Flag,
-      role: 'ROLE_ADMIN'
+      icon: Flag
     }
   ]
 

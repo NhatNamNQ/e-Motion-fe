@@ -88,5 +88,13 @@ export const userService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getReportDetail: async (reportId) => {
+    try {
+      const { data } = await instance.get(`/reports/${reportId}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

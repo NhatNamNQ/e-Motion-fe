@@ -21,6 +21,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { userService } from '../services/userService'
 import { toast } from 'sonner'
 import { Spinner } from '@/components/ui/spinner'
@@ -39,37 +46,52 @@ const REPORT_TYPE_LABELS = {
   STAFF_TRANSFER: 'Chuyển giao nhân viên'
 }
 
-const ReportDialog = ({ open, onOpenChange, userEmail, type }) => {
+const ReportDialog = ({ open, onOpenChange, userEmail = null, type = null, onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false)
+
+  const isUserReport = !!userEmail
 
   const form = useForm({
     resolver: zodResolver(reportSchema),
     defaultValues: {
       title: '',
       description: '',
-      type: type || 'REPORT_USER'
+      type: type || (isUserReport ? 'REPORT_USER' : 'VEHICLE_TRANSFER')
     }
   })
 
   useEffect(() => {
-    if (open && type) {
-      form.setValue('type', type)
+    if (open) {
+      if (type) {
+        form.setValue('type', type)
+      } else if (isUserReport) {
+        form.setValue('type', 'REPORT_USER')
+      }
     }
-  }, [open, type, form])
+  }, [open, type, isUserReport, form])
 
   const onSubmit = async (values) => {
     setIsLoading(true)
     try {
       const reportData = {
         ...values,
-        userEmail: userEmail
+        ...(userEmail && { userEmail })
       }
       await userService.makeReport(reportData)
-      toast.success('Tạo khiếu nại thành công')
+
+      const successMessage = isUserReport
+        ? 'Tạo khiếu nại thành công'
+        : 'Tạo đơn điều phối thành công'
+
+      toast.success(successMessage)
       onOpenChange(false)
       form.reset()
+      if (onSuccess) onSuccess()
     } catch (error) {
-      toast.error('Tạo khiếu nại thất bại: ' + error.message)
+      const errorMessage = isUserReport
+        ? 'Tạo khiếu nại thất bại: '
+        : 'Tạo đơn điều phối thất bại: '
+      toast.error(errorMessage + error.message)
     } finally {
       setIsLoading(false)
     }
@@ -80,14 +102,17 @@ const ReportDialog = ({ open, onOpenChange, userEmail, type }) => {
     onOpenChange(false)
   }
 
+  const dialogTitle = isUserReport ? 'Tạo khiếu nại' : 'Tạo đơn điều phối'
+  const dialogDescription = isUserReport
+    ? `Tạo khiếu nại cho người dùng: ${userEmail}`
+    : 'Tạo yêu cầu chuyển giao xe hoặc nhân viên giữa các trạm'
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
-          <DialogTitle>Tạo khiếu nại</DialogTitle>
-          <DialogDescription>
-            Tạo khiếu nại cho người dùng: <span className='font-semibold'>{userEmail}</span>
-          </DialogDescription>
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -97,14 +122,32 @@ const ReportDialog = ({ open, onOpenChange, userEmail, type }) => {
               name='type'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Loại khiếu nại</FormLabel>
-                  <FormControl>
-                    <Input
-                      value={REPORT_TYPE_LABELS[field.value] || field.value}
-                      disabled
-                      className='bg-gray-50'
-                    />
-                  </FormControl>
+                  <FormLabel>Loại {isUserReport ? 'khiếu nại' : 'điều phối'}</FormLabel>
+                  {isUserReport ? (
+                    <FormControl>
+                      <Input
+                        value={REPORT_TYPE_LABELS[field.value] || field.value}
+                        disabled
+                        className='bg-gray-50'
+                      />
+                    </FormControl>
+                  ) : (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Chọn loại điều phối' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value='VEHICLE_TRANSFER'>
+                          {REPORT_TYPE_LABELS.VEHICLE_TRANSFER}
+                        </SelectItem>
+                        <SelectItem value='STAFF_TRANSFER'>
+                          {REPORT_TYPE_LABELS.STAFF_TRANSFER}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -117,7 +160,10 @@ const ReportDialog = ({ open, onOpenChange, userEmail, type }) => {
                 <FormItem>
                   <FormLabel>Tiêu đề</FormLabel>
                   <FormControl>
-                    <Input placeholder='Nhập tiêu đề khiếu nại' {...field} />
+                    <Input
+                      placeholder={`Nhập tiêu đề ${isUserReport ? 'khiếu nại' : 'đơn điều phối'}`}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -132,7 +178,7 @@ const ReportDialog = ({ open, onOpenChange, userEmail, type }) => {
                   <FormLabel>Mô tả chi tiết</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Nhập mô tả chi tiết về khiếu nại'
+                      placeholder={`Nhập mô tả chi tiết về ${isUserReport ? 'khiếu nại' : 'yêu cầu điều phối'}`}
                       className='min-h-[120px] resize-none'
                       {...field}
                     />
@@ -147,7 +193,7 @@ const ReportDialog = ({ open, onOpenChange, userEmail, type }) => {
                 Hủy
               </Button>
               <Button type='submit' disabled={isLoading}>
-                {isLoading ? <Spinner className='h-4 w-4' /> : 'Tạo khiếu nại'}
+                {isLoading ? <Spinner className='h-4 w-4' /> : 'Tạo'}
               </Button>
             </DialogFooter>
           </form>

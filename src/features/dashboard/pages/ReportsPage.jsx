@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { adminService } from '../services/adminService'
 import { toast } from 'sonner'
 import {
@@ -11,9 +12,12 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import Loader from '@/components/Loader'
 import { formatHourDate, getStatusColor } from '@/lib/utils'
+import ReportDialog from '../components/ReportDialog'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@/store/selectors/authSelectors'
 
 const REPORT_TYPE_LABELS = {
   REPORT_USER: 'Báo cáo người dùng',
@@ -28,9 +32,14 @@ const STATUS_LABELS = {
 }
 
 const ReportsPage = () => {
+  const navigate = useNavigate()
+  const currentUser = useSelector(selectUser)
   const [reports, setReports] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [processingId, setProcessingId] = useState(null)
+  const [showReportDialog, setShowReportDialog] = useState(false)
+
+  const isAdmin = currentUser?.role === 'ROLE_ADMIN'
 
   useEffect(() => {
     fetchReports()
@@ -48,7 +57,8 @@ const ReportsPage = () => {
     }
   }
 
-  const handleApprove = async (reportId, reportType) => {
+  const handleApprove = async (e, reportId, reportType) => {
+    e.stopPropagation()
     try {
       setProcessingId(reportId)
       await adminService.updateReportStatus({
@@ -65,7 +75,8 @@ const ReportsPage = () => {
     }
   }
 
-  const handleReject = async (reportId, reportType) => {
+  const handleReject = async (e, reportId, reportType) => {
+    e.stopPropagation()
     try {
       setProcessingId(reportId)
       await adminService.updateReportStatus({
@@ -86,71 +97,99 @@ const ReportsPage = () => {
     return <Badge className={getStatusColor(status)}>{STATUS_LABELS[status] || status}</Badge>
   }
 
+  const handleRowClick = (reportId) => {
+    navigate(`/dashboard/reports/${reportId}`)
+  }
+
   if (isLoading) {
     return <Loader />
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Danh sách báo cáo</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Tiêu đề</TableHead>
-              <TableHead>Loại báo cáo</TableHead>
-              <TableHead>Trạng thái</TableHead>
-              <TableHead>Ngày tạo</TableHead>
-              <TableHead className='text-right'>Hành động</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {reports.length === 0 ? (
+    <div>
+      <div className='mb-8'>
+        <div className='flex items-start justify-between'>
+          <div>
+            <h1 className='text-3xl font-bold text-gray-900'>Đơn báo cáo</h1>
+          </div>
+          <div>
+            <Button onClick={() => setShowReportDialog(true)}>Tạo đơn điều phối</Button>
+          </div>
+        </div>
+      </div>
+      <Card>
+        <CardContent>
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={5} className='text-muted-foreground text-center'>
-                  Không có báo cáo nào
-                </TableCell>
+                <TableHead>Tiêu đề</TableHead>
+                <TableHead>Loại báo cáo</TableHead>
+                <TableHead>Trạng thái</TableHead>
+                <TableHead>Ngày tạo</TableHead>
+                {isAdmin && <TableHead className='text-right'>Hành động</TableHead>}
               </TableRow>
-            ) : (
-              reports.map((report) => (
-                <TableRow key={report.id}>
-                  <TableCell className='font-medium'>{report.title}</TableCell>
-                  <TableCell>{REPORT_TYPE_LABELS[report.type] || report.type}</TableCell>
-                  <TableCell>{getStatusBadge(report.status)}</TableCell>
-                  <TableCell>{formatHourDate(report.createdAt)}</TableCell>
-                  <TableCell className='text-right'>
-                    {report.status === 'PENDING' ? (
-                      <div className='flex justify-end gap-2'>
-                        <Button
-                          size='sm'
-                          className='bg-green-600 hover:bg-green-700'
-                          onClick={() => handleApprove(report.id, report.type)}
-                          disabled={processingId === report.id}
-                        >
-                          Duyệt
-                        </Button>
-                        <Button
-                          size='sm'
-                          variant='destructive'
-                          onClick={() => handleReject(report.id, report.type)}
-                          disabled={processingId === report.id}
-                        >
-                          Từ chối
-                        </Button>
-                      </div>
-                    ) : (
-                      <span className='text-muted-foreground text-sm'>Đã xử lý</span>
-                    )}
+            </TableHeader>
+            <TableBody>
+              {reports.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={isAdmin ? 5 : 4}
+                    className='text-muted-foreground text-center'
+                  >
+                    Không có báo cáo nào
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+              ) : (
+                reports.map((report) => (
+                  <TableRow
+                    key={report.id}
+                    className='cursor-pointer hover:bg-gray-50'
+                    onClick={() => handleRowClick(report.id)}
+                  >
+                    <TableCell className='font-medium'>{report.title}</TableCell>
+                    <TableCell>{REPORT_TYPE_LABELS[report.type] || report.type}</TableCell>
+                    <TableCell>{getStatusBadge(report.status)}</TableCell>
+                    <TableCell>{formatHourDate(report.createdAt)}</TableCell>
+                    {isAdmin && (
+                      <TableCell className='text-right'>
+                        {report.status === 'PENDING' ? (
+                          <div className='flex justify-end gap-2'>
+                            <Button
+                              size='sm'
+                              className='bg-green-600 hover:bg-green-700'
+                              onClick={(e) => handleApprove(e, report.id, report.type)}
+                              disabled={processingId === report.id}
+                            >
+                              Duyệt
+                            </Button>
+                            <Button
+                              size='sm'
+                              variant='destructive'
+                              onClick={(e) => handleReject(e, report.id, report.type)}
+                              disabled={processingId === report.id}
+                            >
+                              Từ chối
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className='text-muted-foreground text-sm'>Đã xử lý</span>
+                        )}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <ReportDialog
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+        onSuccess={fetchReports}
+      />
+    </div>
   )
 }
 
