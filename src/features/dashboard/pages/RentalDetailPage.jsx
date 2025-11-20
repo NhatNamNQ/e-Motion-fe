@@ -43,7 +43,7 @@ const RentalDetailPage = () => {
   const renterPoints = rental?.userPoint || 0
   const totalCheckoutFee = rentalFee + reservationFee
 
-  const finalDiscountPoints = rental.discountPoint > 0 ? rental.discountPoint : usedPoints
+  const finalDiscountPoints = rental?.discountPoint > 0 ? rental.discountPoint : usedPoints
   const pointDiscount = finalDiscountPoints * 1000
   console.log('finalDiscountPoints:', finalDiscountPoints)
   console.log('usedPoints:', usedPoints)
