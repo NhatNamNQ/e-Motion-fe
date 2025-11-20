@@ -17,6 +17,7 @@ import { searchCars } from '@/store/actions/searchActions'
 import { formatDate } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const SearchDialog = ({ triggerChildren }) => {
   const dispatch = useDispatch()
@@ -40,21 +41,29 @@ const SearchDialog = ({ triggerChildren }) => {
   }, [dispatch, searchForm])
 
   const onSubmit = async (values) => {
-    dispatch(setSearchForm(values))
-    setOpen(false)
-    navigate('/cars')
-    await dispatch(
-      searchCars({
-        brands: [],
-        categories: [],
-        page: 1,
-        limit: 8,
-        search: '',
-        city: values.location,
-        startTime: `${formatDate(values.startDate)}T${values.startHour}:00`,
-        endTime: `${formatDate(values.endDate)}T${values.endHour}:00`
-      })
-    )
+    try {
+      dispatch(setSearchForm(values))
+      setOpen(false)
+      navigate('/cars')
+      const result = await dispatch(
+        searchCars({
+          brands: [],
+          categories: [],
+          page: 1,
+          limit: 8,
+          search: '',
+          city: values.location,
+          startTime: `${formatDate(values.startDate)}T${values.startHour}:00`,
+          endTime: `${formatDate(values.endDate)}T${values.endHour}:00`
+        })
+      )
+
+      if (searchCars.rejected.match(result)) {
+        toast.error('Có lỗi xảy ra khi tìm kiếm xe')
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   return (

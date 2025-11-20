@@ -6,7 +6,7 @@ import { CalendarIcon } from 'lucide-react'
 import { Calendar } from './ui/calendar'
 import { useState } from 'react'
 
-const DatePicker = ({ form, handleSelect, title, name }) => {
+const DatePicker = ({ form, handleSelect, title, name, minDate, maxDate }) => {
   const [open, setOpen] = useState(false)
 
   return (
@@ -30,7 +30,13 @@ const DatePicker = ({ form, handleSelect, title, name }) => {
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className='w-auto p-0' align='start'>
+            <PopoverContent
+              className='w-auto p-0'
+              align='start'
+              side={name === 'startDate' ? 'bottom' : 'top'}
+              sideOffset={4}
+              avoidCollisions={false}
+            >
               <Calendar
                 mode='single'
                 selected={field.value}
@@ -39,7 +45,28 @@ const DatePicker = ({ form, handleSelect, title, name }) => {
                   handleSelect(date)
                   setOpen(false)
                 }}
-                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                disabled={(date) => {
+                  const today = new Date()
+                  today.setHours(0, 0, 0, 0)
+                  const checkDate = new Date(date)
+                  checkDate.setHours(0, 0, 0, 0)
+
+                  if (checkDate < today) return true
+
+                  if (minDate) {
+                    const min = new Date(minDate)
+                    min.setHours(0, 0, 0, 0)
+                    if (checkDate < min) return true
+                  }
+
+                  if (maxDate) {
+                    const max = new Date(maxDate)
+                    max.setHours(0, 0, 0, 0)
+                    if (checkDate > max) return true
+                  }
+
+                  return false
+                }}
               />
             </PopoverContent>
           </Popover>
