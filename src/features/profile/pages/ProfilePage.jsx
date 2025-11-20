@@ -100,50 +100,64 @@ export default function ProfilePage({ user }) {
                 ))}
             </div>
 
-            {/* Full Name */}
-            <div>
-              <label className='mb-2 block text-sm font-medium text-gray-600'>Họ và tên:</label>
-              {isEditing ? (
-                <input
-                  type='text'
-                  name='fullName'
-                  value={editedUser.fullName || ''}
-                  onChange={handleInputChange}
-                  className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
-                />
-              ) : (
-                <p className='text-gray-800'>{user?.fullName}</p>
-              )}
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label className='mb-2 block text-sm font-medium text-gray-600'>Số điện thoại:</label>
-              {isEditing ? (
-                <input
-                  type='text'
-                  name='phone'
-                  value={editedUser.phone || ''}
-                  onChange={handleInputChange}
-                  className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
-                />
-              ) : (
-                <span className='text-gray-800'>{user.phone}</span>
-              )}
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className='mb-2 block text-sm font-medium text-gray-600'>Email:</label>
-              <div className='flex items-center gap-2'>
-                <span className='text-gray-800'>{user.email}</span>
+            <div className='grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2'>
+              <div>
+                <label className='mb-2 block text-sm font-medium text-gray-600'>Họ và tên:</label>
+                {isEditing ? (
+                  <input
+                    type='text'
+                    name='fullName'
+                    value={editedUser.fullName || ''}
+                    onChange={handleInputChange}
+                    className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
+                  />
+                ) : (
+                  <p className='text-gray-800'>{user?.fullName}</p>
+                )}
               </div>
-            </div>
 
-            {/* Role */}
-            <div>
-              <label className='mb-2 block text-sm font-medium text-gray-600'>Vai trò:</label>
-              <p className='text-gray-800'>{user.role}</p>
+              <div>
+                <label className='mb-2 block text-sm font-medium text-gray-600'>
+                  Số điện thoại:
+                </label>
+                {isEditing ? (
+                  <input
+                    type='text'
+                    name='phone'
+                    value={editedUser.phone || ''}
+                    onChange={handleInputChange}
+                    className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
+                  />
+                ) : (
+                  <span className='text-gray-800'>{user.phone}</span>
+                )}
+              </div>
+
+              <div>
+                <label className='mb-2 block text-sm font-medium text-gray-600'>Email:</label>
+                <div className='flex items-center gap-2'>
+                  <span className='text-gray-800'>{user.email}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className='mb-2 block text-sm font-medium text-gray-600'>Vai trò:</label>
+                <p className='text-gray-800'>{user.role}</p>
+              </div>
+
+              {user.role === 'ROLE_USER' && (
+                <div>
+                  <label className='mb-2 block text-sm font-medium text-gray-600'>Điểm:</label>
+                  <p className='text-gray-800'>{user.point}</p>
+                </div>
+              )}
+
+              {user.role === 'ROLE_STAFF' && (
+                <div>
+                  <label className='mb-2 block text-sm font-medium text-gray-600'>Trạm:</label>
+                  <p className='text-gray-800'>{user.station.name}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

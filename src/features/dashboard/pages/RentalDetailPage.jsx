@@ -43,9 +43,10 @@ const RentalDetailPage = () => {
   const renterPoints = rental?.userPoint || 0
   const totalCheckoutFee = rentalFee + reservationFee
 
-  const finalDiscountPoints =
-    rental?.discountPoint !== undefined ? rental.discountPoint : usedPoints
+  const finalDiscountPoints = rental.discountPoint > 0 ? rental.discountPoint : usedPoints
   const pointDiscount = finalDiscountPoints * 1000
+  console.log('finalDiscountPoints:', finalDiscountPoints)
+  console.log('usedPoints:', usedPoints)
 
   const fetchRentalDetail = useCallback(async () => {
     if (!id) return
@@ -187,6 +188,7 @@ const RentalDetailPage = () => {
   const isOverdue = rental.status === 'OVERDUE'
   const isCanceled = rental.status === 'CANCELLED'
   const isContractPending = rental.status === 'CONTRACTING' && rental.contractStatus === 'PENDING'
+  const isSignedContract = rental.contractStatus === 'SIGNED'
   const isViewContract = !isContractPending && !isPending && !isCanceled
 
   return (
@@ -307,7 +309,7 @@ const RentalDetailPage = () => {
                     </span>
                   </div>
 
-                  {isContracting && renterPoints > 0 && (
+                  {isSignedContract && isContracting && renterPoints > 0 && (
                     <div className='border-t border-blue-200 pt-3'>
                       <div className='mb-3 flex items-center justify-between gap-2'>
                         <span className='text-sm font-semibold text-gray-700'>
