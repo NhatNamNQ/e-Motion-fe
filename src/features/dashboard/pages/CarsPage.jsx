@@ -190,7 +190,7 @@ const CarsPage = () => {
     try {
       await carService.addNewCar(carData)
       toast.success('Car added successfully!')
-      fetchCars()
+      await fetchCars()
     } catch (error) {
       setShowCarForm(true)
       toast.error('Error adding car: ' + error.message)
@@ -204,11 +204,11 @@ const CarsPage = () => {
     setIsLoading(true)
     try {
       await carService.updateCar(carData)
+      toast.success('Edit car successfully!')
       await fetchCars()
-      toast.success('Edit user successfully!')
     } catch (error) {
       setShowCarForm(true)
-      toast.error('Error adding user: ' + error.message)
+      toast.error('Error update car: ' + error.message)
     } finally {
       setIsLoading(false)
     }

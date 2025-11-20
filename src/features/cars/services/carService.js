@@ -1,5 +1,6 @@
 import instance from '@/lib/axios'
 import { handleError } from '@/lib/handleError'
+import { ca } from 'date-fns/locale'
 
 export const carService = {
   getCars: async () => {
@@ -112,6 +113,30 @@ export const carService = {
   getUpdateCar: async (id) => {
     try {
       const { data } = await instance.get(`/vehicles/update/${id}`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  updateCar: async (carData) => {
+    try {
+      const { data } = await instance.put('/vehicles/update', {
+        id: carData.id,
+        name: carData.name,
+        description: carData.description,
+        category: carData.category,
+        brand: carData.brand,
+        seats: carData.seats,
+        depositFee: carData.depositFee,
+        point: carData.point,
+        pricePer4Hours: carData.pricePer4Hours,
+        consumptionRate: carData.consumptionRate,
+        batteryCapacity: carData.batteryCapacity,
+        batteryLevel: carData.batteryLevel,
+        plateNumber: carData.plateNumber,
+        stationId: carData.stationId,
+        images: carData.images
+      })
       return data.data
     } catch (error) {
       throw handleError(error)
