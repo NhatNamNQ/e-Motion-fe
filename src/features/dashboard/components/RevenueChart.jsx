@@ -23,7 +23,7 @@ export default function RevenueChart({ revenueInYear, peakHours }) {
           <BarChart data={revenueInYear} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray='0' stroke='#f0f0f0' vertical={false} />
             <XAxis
-              dataKey='month'
+              dataKey='name'
               axisLine={false}
               tickLine={false}
               tick={{ fill: '#9ca3af', fontSize: 14 }}
@@ -32,7 +32,7 @@ export default function RevenueChart({ revenueInYear, peakHours }) {
               axisLine={false}
               tickLine={false}
               tick={{ fill: '#9ca3af', fontSize: 14 }}
-              tickFormatter={(revenue) => `${formatCurrency(revenue)}`}
+              tickFormatter={(data) => `${formatCurrency(data)}`}
             />
             <Tooltip
               cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
@@ -42,9 +42,9 @@ export default function RevenueChart({ revenueInYear, peakHours }) {
                 borderRadius: '8px',
                 padding: '8px 12px'
               }}
-              formatter={(revenue) => [`${formatCurrency(revenue)}`, 'Revenue']}
+              formatter={(value) => [`${formatCurrency(value)}`, 'Doanh thu']}
             />
-            <Bar dataKey='revenue' fill='#1e293b' radius={[4, 4, 0, 0]} maxBarSize={60} />
+            <Bar dataKey='data' fill='#1e293b' radius={[4, 4, 0, 0]} maxBarSize={60} />
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -26,7 +26,7 @@ const StationRevenueTable = ({ stationDetail }) => {
               </td>
               <td className='px-4 py-2'>{station.cars}</td>
               <td className='px-4 py-2'>{station.bookings}</td>
-              <td className='px-4 py-2'>{station.usageRate}%</td>
+              <td className='px-4 py-2'>{station.usageRate.toFixed(2)}%</td>
               <td className='px-4 py-2'>
                 {station.peakHours.map((hour) => (
                   <span

@@ -19,6 +19,7 @@ const DashboardPage = () => {
       const dataSummary = data.totalStats
       const dataStationDetail = data.stationStats
       const dataRevenue = data.revenueInYear
+      console.log('dataRevenue:', dataRevenue)
       const dataPeakHours = data.peakHours
 
       setSummary({
@@ -44,8 +45,8 @@ const DashboardPage = () => {
 
       setRevenueInYear(
         dataRevenue.map((item) => ({
-          month: item.month,
-          revenue: item.revenue ?? 0
+          name: item.name,
+          data: item.data ?? 0
         }))
       )
 

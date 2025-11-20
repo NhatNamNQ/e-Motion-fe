@@ -141,5 +141,12 @@ export const carService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  deleteCar: async (id) => {
+    try {
+      await instance.delete(`/vehicles/${id}`)
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }

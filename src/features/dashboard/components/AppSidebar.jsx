@@ -69,7 +69,7 @@ export function AppSidebar() {
       icon: Car
     },
     {
-      title: 'Báo cáo',
+      title: 'Đơn yêu cầu',
       url: '/dashboard/reports',
       icon: Flag,
       role: 'ROLE_ADMIN'

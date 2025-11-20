@@ -1,4 +1,4 @@
-import { BatteryCharging, MoreHorizontal, Edit2, Wrench, ShieldAlert } from 'lucide-react'
+import { BatteryCharging, MoreHorizontal, Edit2, Wrench, ShieldAlert, Trash2 } from 'lucide-react'
 import Pagination from '@/components/Pagination'
 import { toast } from 'sonner'
 import {
@@ -20,7 +20,9 @@ const CarsTable = ({
   setCurrentPage,
   totalPages,
   setMode,
-  setShowCarForm
+  setShowCarForm,
+  setIsLoading,
+  fetchCars
 }) => {
   const paginationProps = { limitPerPage, setLimitPerPage, currentPage, setCurrentPage, totalPages }
 
@@ -34,6 +36,19 @@ const CarsTable = ({
     } catch (error) {
       setShowCarForm(false)
       toast.error('Lỗi: ' + error.message)
+    }
+  }
+
+  const handleDeleteCar = async (cid) => {
+    setIsLoading(true)
+    try {
+      await carService.deleteCar(cid)
+      toast.success('Xóa xe thành công!')
+      await fetchCars()
+    } catch (error) {
+      toast.error('Lỗi khi xóa xe: ' + error.message)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -124,8 +139,15 @@ const CarsTable = ({
                         </>
                       )}
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className='flex justify-between text-red-600 hover:text-red-700'>
+                      <DropdownMenuItem className='flex justify-between text-yellow-600 hover:text-yellow-700'>
                         Báo lỗi <ShieldAlert className='h-4 w-4' />
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => handleDeleteCar(car.id)}
+                        className='flex justify-between text-red-600 hover:text-red-700'
+                      >
+                        Xóa xe <Trash2 className='h-4 w-4' />
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

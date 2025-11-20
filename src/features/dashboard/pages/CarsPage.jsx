@@ -362,10 +362,15 @@ const CarsPage = () => {
                     </Select>
                   )}
 
-                  {(selectedStatuses.length > 0 || selectedStation != null) && (
+                  {(selectedStatuses.length > 0 ||
+                    selectedStation != null ||
+                    form.watch('startDate') ||
+                    form.watch('startTime') ||
+                    form.watch('endDate') ||
+                    form.watch('endTime')) && (
                     <button
                       onClick={clearFilters}
-                      className='flex items-center gap-2 rounded-lg p-3 px-4 py-2 hover:cursor-pointer hover:bg-gray-200'
+                      className='flex items-center gap-2 rounded-lg px-4 py-2 hover:bg-gray-200'
                     >
                       Reset
                       <X className='h-5 w-5' />

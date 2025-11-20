@@ -31,7 +31,7 @@ const SummaryCard = ({ summary }) => {
     },
     {
       title: 'Usage Rate',
-      value: `${summary.usageRate}%`,
+      value: `${summary.usageRate.toFixed(2)}%`,
       icon: <PieChart className='h-6 w-6 text-red-500' />
     }
   ]
