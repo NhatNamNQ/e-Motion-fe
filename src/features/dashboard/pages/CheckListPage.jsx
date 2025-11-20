@@ -26,18 +26,18 @@ const CheckListPage = () => {
 
   const columns = [
     columnHelper.accessor('rentalId', {
-      header: 'Rental ID',
+      header: 'Mã thuê xe',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('staffEmail', {
-      header: 'Staff email',
+      header: 'Email nhân viên',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('createdAt', {
-      header: 'Created At',
+      header: 'Ngày tạo',
       cell: (info) => {
         const date = new Date(info.getValue())
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('vi-VN', {
           year: 'numeric',
           month: 'short',
           day: 'numeric',
@@ -86,18 +86,18 @@ const CheckListPage = () => {
   return (
     <div className='flex h-full flex-col space-y-4'>
       <div>
-        <h2 className='text-2xl font-bold tracking-tight'>Check Lists</h2>
-        <p className='text-muted-foreground'>Manage vehicle check-in and check-out records</p>
+        <h2 className='text-2xl font-bold tracking-tight'>Danh sách kiểm tra</h2>
+        <p className='text-muted-foreground'>Quản lý hồ sơ giao và nhận xe</p>
       </div>
 
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Search by ID, Rental ID, or Type...'
+        searchPlaceholder='Tìm kiếm theo email'
         searchKey={searchKey}
         setSearchKey={setSearchKey}
         statusFilter={typeFilter}
         setStatusFilter={setTypeFilter}
-        filterLabel='Type'
+        filterLabel='Loại'
       />
 
       <div className='flex flex-1 flex-col'>

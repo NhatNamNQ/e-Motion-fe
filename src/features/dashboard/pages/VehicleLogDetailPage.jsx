@@ -66,17 +66,6 @@ const VehicleLogDetailPage = () => {
             Quay lại danh sách
           </Button>
         </div>
-        <div>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={() =>
-              navigate(`/dashboard/rentals/${log.rentalId}/vehicle-log/edit/${log.id}`)
-            }
-          >
-            Chỉnh sửa nhật ký xe
-          </Button>
-        </div>
       </div>
 
       <Card>

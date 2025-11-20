@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
+import { Link } from 'react-router-dom'
 
 const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading, user }) => {
   const { startDate, startHour, endDate, endHour } = searchForm
@@ -121,16 +122,26 @@ const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading, us
         </Button>
 
         {/* Terms */}
-        <p className='mt-4 text-center text-sm text-gray-500'>
+        <div className='mt-4 text-center text-sm text-gray-500'>
           Bằng việc chuyển giữ chỗ và thuê xe, bạn đồng ý với{' '}
-          <span className='text-secondary cursor-pointer font-medium hover:underline'>
+          <Link
+            to='/term-of-use'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-secondary cursor-pointer font-medium hover:underline'
+          >
             Điều khoản sử dụng
-          </span>{' '}
+          </Link>{' '}
           và{' '}
-          <span className='text-secondary cursor-pointer font-medium hover:underline'>
-            Chính sách bảo mật
-          </span>
-        </p>
+          <Link
+            to='/rental-policy'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-secondary cursor-pointer font-medium hover:underline'
+          >
+            Chính sách thuê xe
+          </Link>
+        </div>
       </CardContent>
     </Card>
   )

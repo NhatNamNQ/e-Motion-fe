@@ -44,7 +44,15 @@ const RentalsPage = () => {
   const [totalPages, setTotalPages] = useState(1)
   const [limitPerPage, setLimitPerPage] = useState(10)
 
-  const statusOptions = ['ONGOING', 'COMPLETED', 'PENDING_FEE', 'CONFIRM', 'OVERDUE']
+  const statusOptions = [
+    'ONGOING',
+    'COMPLETED',
+    'PENDING_FEE',
+    'CONFIRM',
+    'OVERDUE',
+    'CONTRACTING',
+    'CANCELLED'
+  ]
 
   const columns = [
     columnHelper.accessor('id', {
@@ -52,23 +60,23 @@ const RentalsPage = () => {
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('userEmail', {
-      header: 'User Email',
+      header: 'Email người dùng',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('status', {
-      header: 'Status',
+      header: 'Trạng thái',
       cell: (info) => {
         const status = info.getValue()
         return <Badge className={getStatusColor(status)}>{status}</Badge>
       }
     }),
     columnHelper.accessor('startTime', {
-      header: 'Start Time',
-      cell: (info) => new Date(info.getValue()).toLocaleDateString()
+      header: 'Thời gian bắt đầu',
+      cell: (info) => new Date(info.getValue()).toLocaleDateString('vi-VN')
     }),
     columnHelper.accessor('endTime', {
-      header: 'End Time',
-      cell: (info) => new Date(info.getValue()).toLocaleDateString()
+      header: 'Thời gian kết thúc',
+      cell: (info) => new Date(info.getValue()).toLocaleDateString('vi-VN')
     })
   ]
 
@@ -91,7 +99,7 @@ const RentalsPage = () => {
       setEmailLoading(false)
     } catch (e) {
       setEmailLoading(false)
-      toast.error('lỗi: ' + e.message)
+      toast.error('Lỗi: ' + e.message)
     }
   }
 
@@ -122,15 +130,15 @@ const RentalsPage = () => {
     <div className='flex h-full flex-col space-y-4'>
       <div className='flex items-center justify-between'>
         <div>
-          <h2 className='text-2xl font-bold tracking-tight'>Rentals</h2>
-          <p className='text-muted-foreground'>Manage your rental operations</p>
+          <h2 className='text-2xl font-bold tracking-tight'>Hợp đồng thuê xe</h2>
+          <p className='text-muted-foreground'>Quản lý các hợp đồng thuê xe</p>
         </div>
         <Button onClick={() => setShowRenterForm(true)}>+ Tạo đơn thuê</Button>
       </div>
 
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Search by customer email...'
+        searchPlaceholder='Tìm kiếm theo email khách hàng...'
         searchKey={searchKey}
         setSearchKey={setSearchKey}
         statusOptions={statusOptions}
@@ -162,8 +170,8 @@ const RentalsPage = () => {
         <Dialog open={showRenterForm} onOpenChange={setShowRenterForm}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Renter</DialogTitle>
-              <DialogDescription>Fill email's renter</DialogDescription>
+              <DialogTitle>Người thuê xe</DialogTitle>
+              <DialogDescription>Nhập email của người thuê xe</DialogDescription>
             </DialogHeader>
             {emailLoading ? (
               <Loader />
@@ -172,7 +180,7 @@ const RentalsPage = () => {
                 <div className='space-y-3'>
                   <div className='flex items-start gap-4'>
                     <Label className='mt-3 w-32' htmlFor='email'>
-                      Email's Renter
+                      Email người thuê
                     </Label>
                     <div className='flex-1 flex-col'>
                       <Input
