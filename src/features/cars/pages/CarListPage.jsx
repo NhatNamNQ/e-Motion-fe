@@ -26,6 +26,7 @@ const initialState = {
   selectedCategories: [],
   priceRange: [],
   selectedSeat: null,
+  selectedStation: null,
   search: '',
   availableCars: [],
   unavailableCars: [],
@@ -52,6 +53,7 @@ const carListReducer = (state, action) => {
         selectedCategories: action.payload.categories,
         priceRange: action.payload.priceRange,
         selectedSeat: action.payload.seat,
+        selectedStation: action.payload.station,
         currentPage: 1,
         availableCars: [],
         unavailableCars: []
@@ -156,7 +158,8 @@ const CarListPage = () => {
     state.selectedBrands,
     state.selectedCategories,
     state.priceRange,
-    state.selectedSeat
+    state.selectedSeat,
+    state.selectedStation
   ])
 
   useEffect(() => {
@@ -167,6 +170,7 @@ const CarListPage = () => {
         minPrice: state.priceRange[0] || 0.1,
         maxPrice: state.priceRange[1] || 100000000,
         seats: state.selectedSeat || null,
+        stationId: state.selectedStation || null,
         page: state.currentPage,
         limit: 8,
         search: state.search,
@@ -181,6 +185,7 @@ const CarListPage = () => {
     state.selectedCategories,
     state.priceRange,
     state.selectedSeat,
+    state.selectedStation,
     state.search,
     city,
     startTime,
@@ -224,14 +229,15 @@ const CarListPage = () => {
     }
   }, [searchResults, state.currentPage])
 
-  const handleFilterChange = ({ brands, categories, priceRange: newPriceRange, seat }) => {
+  const handleFilterChange = ({ brands, categories, priceRange: newPriceRange, seat, station }) => {
     localDispatch({
       type: 'SET_FILTERS',
       payload: {
         brands,
         categories,
         priceRange: newPriceRange,
-        seat
+        seat,
+        station
       }
     })
   }
@@ -280,6 +286,7 @@ const CarListPage = () => {
             selectedCategories={state.selectedCategories}
             priceRange={state.priceRange}
             selectedSeat={state.selectedSeat}
+            selectedStation={state.selectedStation}
           />
           <CarNameSearchBar onSearch={handeSearchCarName} />
         </div>

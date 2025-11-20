@@ -4,47 +4,45 @@ import { Button } from '@/components/ui/button'
 import FilterPopover from './FilterPopover'
 import PriceFilter from './PriceFilter'
 import SeatsFilter from './SeatsFilter'
+import StationFilter from './StationFilter'
+import { carService } from '../services/carService'
+import { useSelector } from 'react-redux'
+import { selectCity } from '@/store/selectors/searchSelectors'
 
 const FilterSidebar = ({
   onFilterChange,
   selectedBrands,
   selectedCategories,
   priceRange = [],
-  selectedSeat = null
+  selectedSeat = null,
+  selectedStation = null
 }) => {
   const [brands, setBrands] = useState([])
   const [categories, setCategories] = useState([])
+  const [stations, setStations] = useState([])
   const [localBrands, setLocalBrands] = useState(selectedBrands || [])
   const [localCategories, setLocalCategories] = useState(selectedCategories || [])
   const [localPriceRange, setLocalPriceRange] = useState(priceRange)
   const [localSeat, setLocalSeat] = useState(selectedSeat)
+  const [localStation, setLocalStation] = useState(selectedStation)
   const [openPopover, setOpenPopover] = useState(null)
+  const city = useSelector(selectCity)
 
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        setBrands([
-          { id: 1, name: 'HYUNDAI' },
-          { id: 2, name: 'HONDA' },
-          { id: 3, name: 'BMW' },
-          { id: 4, name: 'BYD' },
-          { id: 5, name: 'VINFAST' },
-          { id: 6, name: 'MERCEDES_BENZ' },
-          { id: 7, name: 'TESLA' },
-          { id: 8, name: 'FORD' }
-        ])
-        setCategories([
-          { id: 1, name: 'HATCHBACK' },
-          { id: 2, name: 'SUV' },
-          { id: 3, name: 'CROSSOVER' },
-          { id: 4, name: 'SEDAN' }
-        ])
+        const brands = await carService.getCarBrands()
+        setBrands(brands)
+        const categories = await carService.getCarCategories()
+        setCategories(categories)
+        const stations = await carService.getStattionByCity(city)
+        setStations(stations)
       } catch (error) {
         console.error('Error fetching filters:', error)
       }
     }
     fetchFilters()
-  }, [])
+  }, [city])
 
   const handleBrandChange = (brandName, checked) => {
     const newBrands = checked
@@ -60,12 +58,24 @@ const FilterSidebar = ({
     setLocalCategories(newCategories)
   }
 
+  const handleStationChange = (stationId) => {
+    setLocalStation(stationId)
+    onFilterChange({
+      brands: localBrands,
+      categories: localCategories,
+      priceRange: localPriceRange,
+      seat: localSeat,
+      station: stationId
+    })
+  }
+
   const handleApplyFilters = () => {
     onFilterChange({
       brands: localBrands,
       categories: localCategories,
       priceRange: localPriceRange,
-      seat: localSeat
+      seat: localSeat,
+      station: localStation
     })
     setOpenPopover(null)
   }
@@ -95,11 +105,13 @@ const FilterSidebar = ({
     setLocalCategories([])
     setLocalPriceRange([0, 1000000])
     setLocalSeat(null)
+    setLocalStation(null)
     onFilterChange({
       brands: [],
       categories: [],
       priceRange: [0, 1000000],
-      seat: null
+      seat: null,
+      station: null
     })
   }
 
@@ -108,7 +120,8 @@ const FilterSidebar = ({
     localCategories.length > 0 ||
     localPriceRange[0] > 0 ||
     localPriceRange[1] < 1000000 ||
-    localSeat !== null
+    localSeat !== null ||
+    localStation !== null
 
   return (
     <div className='flex flex-wrap items-center gap-3'>
@@ -162,6 +175,15 @@ const FilterSidebar = ({
         onSeatChange={handleSeatChange}
         isOpen={openPopover === 'seats'}
         onOpenChange={(open) => setOpenPopover(open ? 'seats' : null)}
+      />
+
+      {/* Station Filter - Thay FilterPopover bằng StationFilter */}
+      <StationFilter
+        stations={stations}
+        selectedStation={localStation}
+        onStationChange={handleStationChange}
+        isOpen={openPopover === 'stations'}
+        onOpenChange={(open) => setOpenPopover(open ? 'stations' : null)}
       />
 
       {/* Clear All Button */}

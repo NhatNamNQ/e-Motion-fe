@@ -147,5 +147,33 @@ export const carService = {
     } catch (error) {
       throw handleError(error)
     }
+  },
+  getStattionByCity: async (city) => {
+    try {
+      const { data } = await instance.get(`/stations/city`, {
+        params: {
+          city: city
+        }
+      })
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getCarBrands: async () => {
+    try {
+      const { data } = await instance.get(`/vehicles/brand`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
+  },
+  getCarCategories: async () => {
+    try {
+      const { data } = await instance.get(`/vehicles/category`)
+      return data.data
+    } catch (error) {
+      throw handleError(error)
+    }
   }
 }
