@@ -26,6 +26,7 @@ import {
 import { useForm, FormProvider } from 'react-hook-form'
 import DatePicker from '@/components/DatePicker'
 import TimePicker from '@/components/TimePicker'
+import { format } from 'date-fns'
 
 import CarsTable from '../components/CarsTable'
 import { useDebounce } from 'use-debounce'
@@ -45,10 +46,10 @@ const CarsPage = () => {
   const isAdmin = currentUser.role === 'ROLE_ADMIN'
   const form = useForm({
     defaultValues: {
-      startDate: null,
-      startTime: null,
-      endDate: null,
-      endTime: null
+      startDate: '',
+      startHour: '',
+      endDate: '',
+      endHour: ''
     }
   })
 
@@ -68,11 +69,9 @@ const CarsPage = () => {
   const [debouncedSearch] = useDebounce(searchKey, 500)
   const [stations, setStations] = useState([])
 
-  const handleStartDateChange = (date) => {
-    form.setValue('startDate', date)
-    const formattedDate = date
-      ? date.toLocaleDateString('en-CA').split('-').reverse().join('/')
-      : null
+  const handleStartDateSelect = (date) => {
+    const formattedDate = format(date, 'dd/MM/yyyy')
+    form.setValue('startDate', formattedDate)
     dispatch(
       setSearchForm({
         startDate: formattedDate
@@ -80,8 +79,8 @@ const CarsPage = () => {
     )
   }
 
-  const handleStartTimeChange = (time) => {
-    form.setValue('startTime', time)
+  const handleStartHourSelect = (time) => {
+    form.setValue('startHour', time)
     dispatch(
       setSearchForm({
         startHour: time
@@ -89,11 +88,9 @@ const CarsPage = () => {
     )
   }
 
-  const handleEndDateChange = (date) => {
-    form.setValue('endDate', date)
-    const formattedDate = date
-      ? date.toLocaleDateString('en-CA').split('-').reverse().join('/')
-      : null
+  const handleEndDateSelect = (date) => {
+    const formattedDate = format(date, 'dd/MM/yyyy')
+    form.setValue('endDate', formattedDate)
     dispatch(
       setSearchForm({
         endDate: formattedDate
@@ -101,8 +98,8 @@ const CarsPage = () => {
     )
   }
 
-  const handleEndTimeChange = (time) => {
-    form.setValue('endTime', time)
+  const handleEndHourSelect = (time) => {
+    form.setValue('endHour', time)
     dispatch(
       setSearchForm({
         endHour: time
@@ -113,16 +110,16 @@ const CarsPage = () => {
   const fetchCars = useCallback(async () => {
     setIsLoading(true)
     try {
-      // Check if date/time are selected, otherwise pass null
+      const { startDate, startHour, endDate, endHour } = form.watch()
+
+      // Convert dd/MM/yyyy HH:mm to ISO format
       const startDateTime =
-        form.watch('startDate') && form.watch('startTime')
-          ? `${form.watch('startDate').toLocaleDateString('en-CA')}T${form.watch('startTime')}:00`
+        startDate && startHour
+          ? `${startDate.split('/').reverse().join('-')}T${startHour}:00`
           : null
 
       const endDateTime =
-        form.watch('endDate') && form.watch('endTime')
-          ? `${form.watch('endDate').toLocaleDateString('en-CA')}T${form.watch('endTime')}:00`
-          : null
+        endDate && endHour ? `${endDate.split('/').reverse().join('-')}T${endHour}:00` : null
 
       const res = await carService.getManageCars(
         currentPage,
@@ -147,11 +144,12 @@ const CarsPage = () => {
       setCars(carData)
       setTotalPages(res.totalPages)
     } catch (error) {
-      toast.error('Error get users: ' + error.message)
+      toast.error('Lỗi khi tải danh sách xe: ' + error.message)
     } finally {
       setIsLoading(false)
     }
   }, [currentPage, debouncedSearch, limitPerPage, selectedStation?.id, selectedStatuses, form])
+
   const handleClickFilterStatus = (status) => {
     if (selectedStatuses.includes(status)) {
       setSelectedStatuses(selectedStatuses.filter((s) => s !== status))
@@ -164,10 +162,10 @@ const CarsPage = () => {
     setSelectedStatuses([])
     setSelectedStation(null)
     form.reset({
-      startDate: null,
-      startTime: null,
-      endDate: null,
-      endTime: null
+      startDate: '',
+      startHour: '',
+      endDate: '',
+      endHour: ''
     })
     dispatch(
       setSearchForm({
@@ -189,11 +187,11 @@ const CarsPage = () => {
     setIsLoading(true)
     try {
       await carService.addNewCar(carData)
-      toast.success('Car added successfully!')
+      toast.success('Thêm xe thành công!')
       await fetchCars()
     } catch (error) {
       setShowCarForm(true)
-      toast.error('Error adding car: ' + error.message)
+      toast.error('Lỗi khi thêm xe: ' + error.message)
     } finally {
       setIsLoading(false)
     }
@@ -204,11 +202,11 @@ const CarsPage = () => {
     setIsLoading(true)
     try {
       await carService.updateCar(carData)
-      toast.success('Edit car successfully!')
+      toast.success('Cập nhật xe thành công!')
       await fetchCars()
     } catch (error) {
       setShowCarForm(true)
-      toast.error('Error update car: ' + error.message)
+      toast.error('Lỗi khi cập nhật xe: ' + error.message)
     } finally {
       setIsLoading(false)
     }
@@ -225,7 +223,9 @@ const CarsPage = () => {
         const res = await stationService.getAllStations()
         setStations(res)
       } catch (error) {
-        toast.error('Error get users: ' + error.message)
+        toast.error('Lỗi khi tải danh sách trạm: ' + error.message)
+      } finally {
+        setIsLoading(false)
       }
     }
     fetchStationNames()
@@ -235,10 +235,10 @@ const CarsPage = () => {
     if (model === 'rental') {
       const defaultTimes = createDefaultTimes()
       form.reset({
-        startDate: new Date(defaultTimes.startDate.split('/').reverse().join('-')),
-        startTime: defaultTimes.startHour,
-        endDate: new Date(defaultTimes.endDate.split('/').reverse().join('-')),
-        endTime: defaultTimes.endHour
+        startDate: defaultTimes.startDate,
+        startHour: defaultTimes.startHour,
+        endDate: defaultTimes.endDate,
+        endHour: defaultTimes.endHour
       })
       dispatch(setSearchForm(defaultTimes))
     }
@@ -261,6 +261,8 @@ const CarsPage = () => {
     fetchCars
   }
 
+  const { startDate, startHour, endDate, endHour } = form.watch()
+
   return (
     <div className='min-h-screen'>
       <div className='mx-auto max-w-7xl'>
@@ -268,7 +270,7 @@ const CarsPage = () => {
           <div className='mb-2 flex items-start justify-between'>
             <div>
               <h1 className='text-3xl font-bold text-gray-900'>Quản lý xe</h1>
-              <p className='mt-1 text-gray-500'>Quản lý xe của bạn ở đây </p>
+              <p className='mt-1 text-gray-500'>Quản lý xe của bạn ở đây</p>
             </div>
             <Button onClick={handleCLickAddUserBtn}>
               +<Car className='h-4 w-4' />
@@ -284,10 +286,10 @@ const CarsPage = () => {
               <div className='flex items-center justify-between'>
                 <div className='flex flex-1 items-center gap-4'>
                   <Input
-                    placeholder='Filter car name...'
+                    placeholder='Tìm theo tên xe...'
                     value={searchKey ?? ''}
                     onChange={(e) => setSearchKey(e.target.value)}
-                    className='h-8 w-[150px] pl-8 lg:w-[250px]'
+                    className='h-8 w-[150px] lg:w-[250px]'
                   />
                   {/* Status Filter */}
                   <DropdownMenu modal={false}>
@@ -318,12 +320,12 @@ const CarsPage = () => {
 
                     <DropdownMenuContent align='start' className='w-60'>
                       <DropdownMenuItem>
-                        <h3 className='font-semibold text-gray-900'>Filter by Status</h3>
+                        <h3 className='font-semibold text-gray-900'>Lọc theo trạng thái</h3>
                       </DropdownMenuItem>
 
                       <DropdownMenuSeparator />
                       {carStatusOptions.map((status) => (
-                        <Label>
+                        <Label key={status.value}>
                           <DropdownMenuItem className='w-full'>
                             <Checkbox
                               checked={selectedStatuses.includes(status.value)}
@@ -364,15 +366,15 @@ const CarsPage = () => {
 
                   {(selectedStatuses.length > 0 ||
                     selectedStation != null ||
-                    form.watch('startDate') ||
-                    form.watch('startTime') ||
-                    form.watch('endDate') ||
-                    form.watch('endTime')) && (
+                    startDate ||
+                    startHour ||
+                    endDate ||
+                    endHour) && (
                     <button
                       onClick={clearFilters}
                       className='flex items-center gap-2 rounded-lg px-4 py-2 hover:bg-gray-200'
                     >
-                      Reset
+                      Đặt lại
                       <X className='h-5 w-5' />
                     </button>
                   )}
@@ -384,22 +386,18 @@ const CarsPage = () => {
                 <div className='w-40'>
                   <DatePicker
                     form={form}
-                    handleSelect={handleStartDateChange}
-                    title={
-                      form.watch('startDate')
-                        ? form.watch('startDate').toLocaleDateString('vi-VN')
-                        : 'Start Date'
-                    }
+                    handleSelect={handleStartDateSelect}
+                    title={startDate || 'Ngày bắt đầu'}
                     name='startDate'
                   />
                 </div>
                 <div className='w-32'>
                   <TimePicker
                     form={form}
-                    handleSelect={handleStartTimeChange}
-                    title={form.watch('startTime') || 'Start Time'}
-                    name='startTime'
-                    selectedDate={form.watch('startDate')?.toLocaleDateString('en-CA')}
+                    handleSelect={handleStartHourSelect}
+                    title={startHour || 'Giờ bắt đầu'}
+                    name='startHour'
+                    selectedDate={startDate}
                     type='startHour'
                   />
                 </div>
@@ -407,36 +405,29 @@ const CarsPage = () => {
                 <div className='w-40'>
                   <DatePicker
                     form={form}
-                    handleSelect={handleEndDateChange}
-                    title={
-                      form.watch('endDate')
-                        ? form.watch('endDate').toLocaleDateString('vi-VN')
-                        : 'End Date'
-                    }
+                    handleSelect={handleEndDateSelect}
+                    title={endDate || 'Ngày kết thúc'}
                     name='endDate'
                   />
                 </div>
                 <div className='w-32'>
                   <TimePicker
                     form={form}
-                    handleSelect={handleEndTimeChange}
-                    title={form.watch('endTime') || 'End Time'}
-                    name='endTime'
-                    selectedDate={form.watch('endDate')?.toLocaleDateString('en-CA')}
+                    handleSelect={handleEndHourSelect}
+                    title={endHour || 'Giờ kết thúc'}
+                    name='endHour'
+                    selectedDate={endDate}
                     type='endHour'
                   />
                 </div>
-                {form.watch('startDate') &&
-                  form.watch('startTime') &&
-                  form.watch('endDate') &&
-                  form.watch('endTime') && (
-                    <Button
-                      onClick={() => fetchCars()}
-                      className='flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700'
-                    >
-                      Search
-                    </Button>
-                  )}
+                {startDate && startHour && endDate && endHour && (
+                  <Button
+                    onClick={() => fetchCars()}
+                    className='flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700'
+                  >
+                    Tìm kiếm
+                  </Button>
+                )}
               </div>
             </div>
           </div>
