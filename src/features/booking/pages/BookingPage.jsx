@@ -10,7 +10,7 @@ import { bookingService } from '../services/bookingService'
 import { toast } from 'sonner'
 import SuccessPaymentCard from '../../../components/SuccessPaymentCard'
 import FailedPaymentCard from '../../../components/FailedPaymentCard'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getCarDetail } from '@/store/actions/carsActions'
 
 const BookingPage = () => {
@@ -23,8 +23,8 @@ const BookingPage = () => {
   const authUser = useSelector(selectUser)
   const renterUser = useSelector((state) => state.renter.user)
   const user = authUser.role !== 'ROLE_USER' ? renterUser : authUser
-  console.log('BookingPage user:', user)
 
+  const [isLoading, setIsLoading] = useState(false)
   const car = useSelector(selectSelectedCar)
   const bookingFees = useSelector(selectBookingFees)
   const searchForm = useSelector(selectSearchForm)
@@ -47,6 +47,7 @@ const BookingPage = () => {
 
   const onSubmit = async () => {
     try {
+      setIsLoading(true)
       const { data } = await bookingService.bookReservation({
         userEmail: user.email,
         vehicleId: car.id,
@@ -57,6 +58,8 @@ const BookingPage = () => {
       window.location.href = data.vnpayUrl
     } catch (error) {
       toast.error(error.message)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -89,6 +92,7 @@ const BookingPage = () => {
           )
         ) : (
           <BookingForm
+            submitLoading={isLoading}
             onSubmit={onSubmit}
             bookingFees={bookingFees}
             car={car}

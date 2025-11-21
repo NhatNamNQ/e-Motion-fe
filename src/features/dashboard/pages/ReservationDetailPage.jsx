@@ -165,23 +165,6 @@ const ReservationDetailPage = () => {
                   <InfoRow label='Tên trạm'>{reservation.vehicle.station.name}</InfoRow>
                   <InfoRow label='Địa điểm'>{reservation.vehicle.station.address}</InfoRow>
                 </div>
-                <div className='space-y-4'>
-                  <h3 className='flex items-center gap-2 font-semibold'>
-                    <Bell size={18} /> Trạng thái thông báo
-                  </h3>
-                  <div className='flex items-center justify-between text-sm'>
-                    <span>Sắp hết hạn:</span>
-                    <Badge variant={reservation.expiringNotified ? 'default' : 'secondary'}>
-                      {reservation.expiringNotified ? 'Đã gửi' : 'Chưa gửi'}
-                    </Badge>
-                  </div>
-                  <div className='flex items-center justify-between text-sm'>
-                    <span>Quá hạn:</span>
-                    <Badge variant={reservation.overdueNotified ? 'default' : 'secondary'}>
-                      {reservation.overdueNotified ? 'Đã gửi' : 'Chưa gửi'}
-                    </Badge>
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -199,10 +182,14 @@ const ReservationDetailPage = () => {
                 <>
                   <Button
                     onClick={handleCreateRental}
-                    className='bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full'
+                    className='bg-secondary hover:bg-secondary/90 w-full'
                     disabled={submitLoading || cancelLoading}
                   >
-                    {submitLoading ? <Spinner /> : 'Tạo hợp đồng thuê'}
+                    {submitLoading ? (
+                      <Spinner />
+                    ) : (
+                      <span className='text-white'>Tạo hợp đồng thuê</span>
+                    )}
                   </Button>
                   <Button
                     onClick={() => setShowCancelDialog(true)}
