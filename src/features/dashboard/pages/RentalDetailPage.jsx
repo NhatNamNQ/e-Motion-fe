@@ -417,7 +417,7 @@ const RentalDetailPage = () => {
                 <div className='flex items-start justify-between gap-2 px-2'>
                   <span className='flex-1 text-base font-bold'>Tổng Tiền Check-out:</span>
                   <span className='flex-shrink-0 text-right text-lg font-bold'>
-                    {formatCurrency(Math.max(0, totalCheckoutFee - checkOutFee - vehicleLogFee))}
+                    {formatCurrency(totalCheckoutFee - checkOutFee - vehicleLogFee)}
                   </span>
                 </div>
               </div>
