@@ -107,17 +107,19 @@ const UsersTable = ({
             <thead className='border-b border-gray-200 bg-gray-50'>
               <tr>
                 <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                  Full Name
+                  Họ và Tên
                 </th>
                 <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Email</th>
                 <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                  Phone Number
+                  Số điện thoại
                 </th>
                 <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                  Created At
+                  Ngày tham gia
                 </th>
-                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Status</th>
-                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Role</th>
+                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
+                  Trạng thái
+                </th>
+                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Vai trò</th>
                 {currentUser?.role === 'ROLE_ADMIN' && (
                   <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'></th>
                 )}

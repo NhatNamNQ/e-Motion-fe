@@ -192,13 +192,13 @@ const UsersPage = () => {
         <div className='mb-8'>
           <div className='mb-2 flex items-start justify-between'>
             <div>
-              <h1 className='text-3xl font-bold text-gray-900'>Manage Users</h1>
-              <p className='mt-1 text-gray-500'>Manage your users and their roles here.</p>
+              <h1 className='text-3xl font-bold text-gray-900'>Quản lý người dùng</h1>
+              <p className='mt-1 text-gray-500'>Quản lý người dùng và vai trò.</p>
             </div>
             {isAdmin && (
               <Button onClick={handleCLickAddUserBtn}>
                 <UserPlus className='h-4 w-4' />
-                Add Staff
+                Thêm Nhân Viên
               </Button>
             )}
           </div>
@@ -225,7 +225,7 @@ const UsersPage = () => {
                     }`}
                   >
                     <CirclePlus className='size-4' />
-                    Status
+                    Trạng thái
                     {selectedStatuses.length > 0 && (
                       <span className='ml-2 flex flex-wrap gap-1'>
                         {selectedStatuses.map((status) => (
@@ -276,7 +276,7 @@ const UsersPage = () => {
                     }`}
                   >
                     <CirclePlus className='size-4' />
-                    Role
+                    Vai trò
                     {selectedRoles.length > 0 && (
                       <span className='ml-2 flex flex-wrap gap-1'>
                         {selectedRoles.map((role) => (

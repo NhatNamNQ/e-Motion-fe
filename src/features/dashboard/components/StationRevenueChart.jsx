@@ -7,14 +7,14 @@ const StationRevenueTable = ({ stationDetail }) => {
       <table className='min-w-full divide-y divide-gray-200'>
         <thead className='bg-gray-50'>
           <tr>
-            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Station</th>
-            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Revenue</th>
-            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Cars</th>
-            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Total Rentals</th>
+            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Trạm</th>
+            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Doanh thu</th>
+            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Xe</th>
+            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Số lượt thuê</th>
             <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>
-              Usage Rate (%)
+              Tỷ lệ sử dụng (%)
             </th>
-            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Peak Hours</th>
+            <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>Giờ cao điểm</th>
           </tr>
         </thead>
         <tbody className='divide-y divide-gray-200'>

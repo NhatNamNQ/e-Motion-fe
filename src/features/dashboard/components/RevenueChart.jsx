@@ -17,7 +17,7 @@ export default function RevenueChart({ revenueInYear, peakHours }) {
     <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
       {/* Biểu đồ doanh thu */}
       <div className='rounded-2xl bg-white p-8 shadow-sm'>
-        <h1 className='mb-8 text-3xl font-bold text-gray-900'>Revenue (Month)</h1>
+        <h1 className='mb-8 text-3xl font-bold text-gray-900'>Doanh thu năm</h1>
 
         <ResponsiveContainer width='100%' height={400}>
           <BarChart data={revenueInYear} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -50,7 +50,7 @@ export default function RevenueChart({ revenueInYear, peakHours }) {
       </div>
 
       <div className='rounded-2xl bg-white p-8 shadow-sm'>
-        <h1 className='mb-8 text-3xl font-bold text-gray-900'>Peak Hours (24h)</h1>
+        <h1 className='mb-8 text-3xl font-bold text-gray-900'>Giờ cao điểm</h1>
 
         <ResponsiveContainer width='100%' height={400}>
           <LineChart data={peakHours} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>

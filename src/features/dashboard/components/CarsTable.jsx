@@ -110,14 +110,14 @@ const CarsTable = ({
         <table className='w-full'>
           <thead className='border-b border-gray-200 bg-gray-50'>
             <tr>
-              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Car Name</th>
-              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Plate</th>
-              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Brand</th>
+              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Tên xe</th>
+              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Biển số</th>
+              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Hãng</th>
+              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Pin(%)</th>
+              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Trạm</th>
               <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                Battery(%)
+                Trạng thái
               </th>
-              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Station</th>
-              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Status</th>
               <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'></th>
             </tr>
           </thead>

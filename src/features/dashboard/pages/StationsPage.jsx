@@ -45,22 +45,22 @@ const StationsPage = () => {
 
   const cards = [
     {
-      title: 'Total Stations',
+      title: 'Tổng số trạm',
       value: stations.length,
       icon: <Building2 className='h-12 w-12 text-blue-500' />
     },
     {
-      title: 'Total Cars',
+      title: 'Tổng số xe',
       value: totalVehicles,
       icon: <Car className='h-12 w-12 text-green-500' />
     },
     {
-      title: 'Total Staffs',
+      title: 'Số nhân viên',
       value: totalStaff,
       icon: <User className='h-12 w-12 text-purple-500' />
     },
     {
-      title: 'Active Stations',
+      title: 'Trạm hoạt động',
       value: activeStations,
       icon: <Activity className='h-12 w-12 text-indigo-500' />
     }
@@ -127,9 +127,9 @@ const StationsPage = () => {
         <div className='mb-8'>
           <div className='flex items-start justify-between'>
             <div>
-              <h1 className='text-3xl font-bold text-gray-900'>Station</h1>
+              <h1 className='text-3xl font-bold text-gray-900'>Trạm</h1>
               <p className='mt-1 text-gray-500'>
-                Manage stations and coordinate vehicles and staff.
+                Quản lý tất cả các trạm và xem phân tích chi tiết về hiệu suất của từng trạm.
               </p>
             </div>
           </div>
@@ -147,17 +147,21 @@ const StationsPage = () => {
             <thead>
               <tr className='border-b border-gray-200 bg-gray-50'>
                 <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
-                  Station Name
+                  Tên trạm
                 </th>
-                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Address</th>
-                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>City</th>
-                <th className='px-6 py-3 text-center text-sm font-semibold text-gray-900'>Car</th>
-                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Staff</th>
-                <th className='px-6 py-3 text-center text-sm font-semibold text-gray-900'>
-                  Status
+                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Địa chỉ</th>
+                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
+                  Thành phố
+                </th>
+                <th className='px-6 py-3 text-center text-sm font-semibold text-gray-900'>Xe</th>
+                <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
+                  Nhân viên
                 </th>
                 <th className='px-6 py-3 text-center text-sm font-semibold text-gray-900'>
-                  History
+                  Trạng thái
+                </th>
+                <th className='px-6 py-3 text-center text-sm font-semibold text-gray-900'>
+                  Lịch sử thuê
                 </th>
               </tr>
             </thead>
@@ -248,7 +252,7 @@ const StationsPage = () => {
         <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
           <div className='col-span-2 rounded-2xl bg-white p-8 shadow-sm'>
             <div className='mb-8 flex flex-wrap items-center justify-between gap-4'>
-              <h1 className='text-3xl font-bold text-gray-900'>Revenue</h1>
+              <h1 className='text-3xl font-bold text-gray-900'>Doanh thu</h1>
 
               <div className='flex items-center gap-3'>
                 <Select onValueChange={(value) => setType(value)} value={type}>
@@ -378,13 +382,13 @@ const StationsPage = () => {
               <table className='min-w-full border border-gray-200 text-sm'>
                 <thead className='sticky top-0 bg-gray-50'>
                   <tr>
-                    <th className='border-b px-4 py-2 text-left'>Date</th>
-                    <th className='border-b px-4 py-2 text-left'>User</th>
-                    <th className='border-b px-4 py-2 text-left'>Vehicle</th>
-                    <th className='border-b px-4 py-2 text-left'>Start</th>
-                    <th className='border-b px-4 py-2 text-left'>End</th>
-                    <th className='border-b px-4 py-2 text-left'>Fee</th>
-                    <th className='border-b px-4 py-2 text-left'>Status</th>
+                    <th className='border-b px-4 py-2 text-left'>Ngày</th>
+                    <th className='border-b px-4 py-2 text-left'>Người thuê</th>
+                    <th className='border-b px-4 py-2 text-left'>Xe</th>
+                    <th className='border-b px-4 py-2 text-left'>Bắt đầu</th>
+                    <th className='border-b px-4 py-2 text-left'>Kêt thúc</th>
+                    <th className='border-b px-4 py-2 text-left'>Phí thuê</th>
+                    <th className='border-b px-4 py-2 text-left'>Trạng thái</th>
                   </tr>
                 </thead>
                 <tbody>

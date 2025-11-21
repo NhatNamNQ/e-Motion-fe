@@ -5,32 +5,32 @@ import CardDashboard from '@/components/CardDashboard'
 const SummaryCard = ({ summary }) => {
   const cards = [
     {
-      title: 'Clients',
+      title: 'Khách hàng',
       value: summary.totalUsers,
       icon: <User className='h-6 w-6 text-blue-500' />
     },
     {
-      title: 'Total Cars',
+      title: 'Số xe',
       value: summary.totalCars,
       icon: <Car className='h-6 w-6 text-green-500' />
     },
     {
-      title: 'Total Reservations',
+      title: 'Số đơn đặt',
       value: summary.totalReservations,
       icon: <CalendarCheck className='h-6 w-6 text-purple-500' />
     },
     {
-      title: 'Total Rentals',
+      title: 'Số lượt thuê',
       value: summary.totalBookings,
       icon: <ClipboardCheck className='h-6 w-6 text-indigo-500' />
     },
     {
-      title: 'Total Revenue',
+      title: 'Tổng doanh thu',
       value: formatCurrency(summary.totalRevenue),
       icon: <CreditCard className='h-6 w-6 text-yellow-500' />
     },
     {
-      title: 'Usage Rate',
+      title: 'Tỷ lệ sử dụng',
       value: `${summary.usageRate.toFixed(2)}%`,
       icon: <PieChart className='h-6 w-6 text-red-500' />
     }

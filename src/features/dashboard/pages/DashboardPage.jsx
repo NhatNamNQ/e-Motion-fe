@@ -70,7 +70,6 @@ const DashboardPage = () => {
   }
   return (
     <div>
-      <h1 className='mb-6 text-3xl font-bold text-gray-800'>Staff Dashboard</h1>
       <SummaryCard summary={summary} />
       <StationRevenueChart stationDetail={stationDetail} />
       <RevenueChart revenueInYear={revenueInYear} peakHours={peakHours} />
