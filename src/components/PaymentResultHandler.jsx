@@ -47,11 +47,11 @@ const PaymentResultHandler = () => {
           }
         } else {
           console.error('Không tìm thấy thông tin thanh toán cho txnRef:', txnRef)
-          navigate('/error-page')
+          navigate('/payment-result')
         }
       } catch (error) {
         console.error('Lỗi khi lấy thông tin thanh toán:', error)
-        navigate('/payment-error')
+        navigate('/payment-result')
       }
     }
 

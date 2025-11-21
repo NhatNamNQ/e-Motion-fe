@@ -75,7 +75,7 @@ const PriceFilter = ({ priceRange, onPriceChange, isOpen, onOpenChange }) => {
       <PopoverContent className='w-80 p-4' align='start'>
         <div className='space-y-4'>
           <div className='flex items-center justify-between'>
-            <h3 className='font-semibold text-gray-800'>Giá thuê (VNĐ/giờ)</h3>
+            <h3 className='font-semibold text-gray-800'>Giá thuê </h3>
             <Button
               variant='ghost'
               size='sm'

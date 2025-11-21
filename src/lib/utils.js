@@ -91,6 +91,7 @@ export const getStatusColor = (status) => {
     case 'CONFIRM':
       return 'bg-blue-100 text-blue-800'
     case 'PENDING':
+    case 'CONTRACTING':
       return 'bg-yellow-100 text-yellow-800'
     case 'PENDING_FEE':
       return 'bg-orange-200 text-orange-800'

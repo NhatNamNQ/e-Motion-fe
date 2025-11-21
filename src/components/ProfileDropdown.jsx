@@ -91,13 +91,6 @@ const ProfileDropdown = () => {
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link to='/help'>
-            <HelpCircle />
-            Hỗ trợ
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className='text-red-600'>
           <LogOut />
           Đăng xuất

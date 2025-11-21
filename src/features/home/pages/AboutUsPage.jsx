@@ -1,14 +1,14 @@
 // eslint-disable-next-line
 import { motion } from 'framer-motion'
-import { Zap, Shield, Leaf, Users, Award, Heart } from 'lucide-react'
+import { Zap, Shield, Leaf, Users, Award, Heart, Car, CarFront } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
 const AboutUsPage = () => {
   const stats = [
-    { icon: Users, label: 'Khách hàng', value: '10,000+' },
-    { icon: Zap, label: 'Xe điện', value: '500+' },
-    { icon: Award, label: 'Trạm sạc', value: '50+' },
-    { icon: Leaf, label: 'CO₂ giảm', value: '100 tấn' }
+    { icon: Users, label: 'Khách hàng', value: '20+' },
+    { icon: Car, label: 'Xe điện', value: '40+' },
+    { icon: Award, label: 'Trạm cho thuê', value: '6' },
+    { icon: CarFront, label: 'Dòng xe đa dạng', value: '10+' }
   ]
 
   const values = [
@@ -31,27 +31,6 @@ const AboutUsPage = () => {
       icon: Heart,
       title: 'Khách hàng là trọng tâm',
       description: 'Hỗ trợ 24/7, luôn lắng nghe và đáp ứng nhu cầu của bạn'
-    }
-  ]
-
-  const team = [
-    {
-      name: 'Lê Văn Đức',
-      role: 'CEO & Founder',
-      image: 'https://avatars.githubusercontent.com/u/155161101?v=4',
-      description: '10+ năm kinh nghiệm trong ngành công nghệ và xe điện'
-    },
-    {
-      name: 'Bùi Ngọc Duy Khang',
-      role: 'CTO',
-      image: 'https://avatars.githubusercontent.com/u/172641805?v=4',
-      description: 'Chuyên gia công nghệ với nhiều dự án thành công'
-    },
-    {
-      name: 'Võ Quang Trung',
-      role: 'COO',
-      image: 'https://avatars.githubusercontent.com/u/231065727?s=64&v=4',
-      description: 'Kinh nghiệm quản lý vận hành và phát triển kinh doanh'
     }
   ]
 
@@ -85,8 +64,8 @@ const AboutUsPage = () => {
           >
             <h1 className='mb-6 text-5xl font-bold md:text-6xl'>Về e-Motion</h1>
             <p className='mx-auto max-w-3xl text-xl md:text-2xl'>
-              Nền tảng cho thuê xe điện hàng đầu Việt Nam, tiên phong trong việc xây dựng tương lai
-              xanh và bền vững
+              Nền tảng cho thuê xe điện tiên phong tại Việt Nam, mang đến giải pháp di chuyển xanh,
+              thông minh và bền vững
             </p>
           </motion.div>
         </div>
@@ -135,21 +114,24 @@ const AboutUsPage = () => {
             </h2>
             <div className='space-y-6 text-lg leading-relaxed text-gray-700'>
               <p>
-                e-Motion được thành lập vào năm 2020 với sứ mệnh mang đến giải pháp di chuyển xanh,
-                sạch và bền vững cho người dân Việt Nam. Chúng tôi tin rằng xe điện không chỉ là
-                phương tiện di chuyển mà còn là một phần quan trọng trong việc bảo vệ môi trường và
-                xây dựng tương lai tốt đẹp hơn.
+                e-Motion ra đời với sứ mệnh tiên phong trong việc phát triển hệ sinh thái xe điện
+                tại Việt Nam. Chúng tôi tin rằng xe điện không chỉ là phương tiện di chuyển hiện đại
+                mà còn là giải pháp bền vững cho tương lai xanh của đất nước.
               </p>
               <p>
-                Với đội ngũ chuyên gia giàu kinh nghiệm trong lĩnh vực công nghệ và ô tô, chúng tôi
-                đã xây dựng một nền tảng thuê xe điện hiện đại, dễ sử dụng và đáng tin cậy. Từ việc
-                chọn xe, đặt xe, thanh toán đến nhận xe, mọi quy trình đều được tối ưu hóa để mang
-                lại trải nghiệm tốt nhất cho khách hàng.
+                Hiện tại, e-Motion tự hào sở hữu hơn 40 xe điện đa dạng với 10+ dòng xe từ các
+                thương hiệu uy tín, đáp ứng mọi nhu cầu di chuyển của khách hàng. Với mạng lưới 6
+                trạm cho thuê tại Hồ Chí Minh và Hà Nội, chúng tôi cam kết mang đến sự tiện lợi tối
+                đa cho khách hàng.
               </p>
               <p>
-                Hơn 3 năm hoạt động, e-Motion tự hào phục vụ hơn 10,000 khách hàng với hơn 500 xe
-                điện chất lượng cao và mạng lưới 50+ trạm sạc trên toàn quốc. Chúng tôi không ngừng
-                đổi mới và phát triển để đáp ứng nhu cầu ngày càng tăng của thị trường.
+                Đội ngũ e-Motion bao gồm các chuyên gia giàu kinh nghiệm trong lĩnh vực công nghệ, ô
+                tô và dịch vụ khách hàng. Chúng tôi không ngừng đổi mới, phát triển nền tảng và mở
+                rộng đội xe để phục vụ ngày càng nhiều khách hàng tin tưởng lựa chọn.
+              </p>
+              <p>
+                Với hơn 20 khách hàng đã tin dùng và số lượng ngày càng tăng, e-Motion đang từng
+                bước khẳng định vị thế là đơn vị cho thuê xe điện uy tín và chất lượng tại Việt Nam.
               </p>
             </div>
           </motion.div>
@@ -191,46 +173,6 @@ const AboutUsPage = () => {
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className='py-16'>
-        <div className='container mx-auto px-4'>
-          <motion.h2
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className='text-secondary mb-12 text-center text-4xl font-bold'
-          >
-            Đội ngũ lãnh đạo
-          </motion.h2>
-          <motion.div
-            variants={containerVariants}
-            initial='hidden'
-            whileInView='visible'
-            viewport={{ once: true }}
-            className='grid gap-8 md:grid-cols-3'
-          >
-            {team.map((member, index) => (
-              <motion.div key={index} variants={itemVariants}>
-                <Card className='h-[500px] overflow-hidden transition-shadow hover:shadow-lg'>
-                  <div className='relative h-64 overflow-hidden bg-gray-200'>
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className='h-full w-full object-cover transition-transform hover:scale-110'
-                    />
-                  </div>
-                  <CardContent className='p-6 text-center'>
-                    <h3 className='mb-2 text-xl font-bold text-gray-800'>{member.name}</h3>
-                    <p className='text-secondary mb-3 font-semibold'>{member.role}</p>
-                    <p className='text-sm text-gray-600'>{member.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* Mission Section */}
       <section className='from-secondary/90 to-secondary bg-gradient-to-r py-16 text-white'>
         <div className='container mx-auto px-4'>
@@ -243,10 +185,11 @@ const AboutUsPage = () => {
           >
             <h2 className='mb-6 text-4xl font-bold'>Sứ mệnh của chúng tôi</h2>
             <p className='mb-8 text-xl leading-relaxed'>
-              "Xây dựng hệ sinh thái di chuyển xanh, góp phần bảo vệ môi trường và nâng cao chất
+              "Xây dựng hệ sinh thái xe điện toàn diện, góp phần bảo vệ môi trường và nâng cao chất
               lượng cuộc sống cho cộng đồng. Chúng tôi cam kết mang đến dịch vụ thuê xe điện chất
-              lượng cao, an toàn và tiện lợi, đồng thời khuyến khích người dân Việt Nam chuyển đổi
-              sang phương tiện giao thông xanh."
+              lượng cao với đội xe đa dạng, giá cả hợp lý, quy trình thuê xe đơn giản và hỗ trợ
+              khách hàng tận tâm, đồng thời khuyến khích người dân Việt Nam chuyển đổi sang phương
+              tiện giao thông xanh."
             </p>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <a

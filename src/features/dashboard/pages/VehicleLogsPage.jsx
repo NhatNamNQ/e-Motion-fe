@@ -28,16 +28,23 @@ const VehicleLogsPage = () => {
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('vehicleId', {
-      header: 'Vehicle ID',
+      header: 'Mã xe',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('rentalId', {
-      header: 'RentalId',
+      header: 'Mã hợp đồng thuê',
       cell: (info) => info.getValue()
     }),
     columnHelper.accessor('createdAt', {
-      header: 'Created At',
-      cell: (info) => new Date(info.getValue()).toLocaleString()
+      header: 'Ngày tạo',
+      cell: (info) =>
+        new Date(info.getValue()).toLocaleString('vi-VN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
     })
   ]
 
@@ -77,13 +84,13 @@ const VehicleLogsPage = () => {
   return (
     <div className='flex h-full flex-col space-y-4'>
       <div>
-        <h2 className='text-2xl font-bold tracking-tight'>Vehicle Logs</h2>
-        <p className='text-muted-foreground'>View and manage vehicle activity logs</p>
+        <h2 className='text-2xl font-bold tracking-tight'>Nhật ký xe</h2>
+        <p className='text-muted-foreground'>Xem và quản lý nhật ký hoạt động của xe</p>
       </div>
 
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Search by vehicle ID, action, or description...'
+        searchPlaceholder='Tìm kiếm theo mã xe'
         searchKey={searchKey}
         setSearchKey={setSearchKey}
       />

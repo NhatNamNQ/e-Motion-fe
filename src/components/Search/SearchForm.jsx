@@ -3,7 +3,7 @@ import { Button } from '../ui/button'
 import DatePicker from '../DatePicker'
 import Combobox from '../Combobox'
 import TimePicker from '../TimePicker'
-import { format, parse, isBefore, isEqual } from 'date-fns'
+import { format, parse, isBefore, isEqual, addMonths } from 'date-fns'
 import { useEffect, useState } from 'react'
 
 const locations = [
@@ -25,7 +25,7 @@ const SearchForm = ({ form, onSubmit }) => {
       const endDateTime = parse(`${endDate} ${endHour}`, 'dd/MM/yyyy HH:mm', new Date())
 
       if (isBefore(endDateTime, startDateTime) || isEqual(endDateTime, startDateTime)) {
-        setDateTimeError('Thời gian trả xe phải sau thời gian nhận xe ít nhất 3 tiếng ')
+        setDateTimeError('Thời gian trả xe phải sau thời gian nhận xe')
       } else {
         setDateTimeError('')
       }
@@ -59,6 +59,28 @@ const SearchForm = ({ form, onSubmit }) => {
     onSubmit(data)
   }
 
+  const getEndDateConstraints = () => {
+    if (!startDate) return {}
+
+    const parsedStartDate = parse(startDate, 'dd/MM/yyyy', new Date())
+    return {
+      minDate: parsedStartDate,
+      maxDate: addMonths(parsedStartDate, 6)
+    }
+  }
+
+  const endDateConstraints = getEndDateConstraints()
+
+  const getStartDateConstraints = () => {
+    const today = new Date()
+    return {
+      minDate: today,
+      maxDate: addMonths(today, 6)
+    }
+  }
+
+  const startDateConstraints = getStartDateConstraints()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)} className='space-y-6'>
@@ -82,6 +104,8 @@ const SearchForm = ({ form, onSubmit }) => {
               handleSelect={handleStartDateSelect}
               title={startDate || 'Ngày nhận xe'}
               name='startDate'
+              minDate={startDateConstraints.minDate}
+              maxDate={startDateConstraints.maxDate}
             />
             <TimePicker
               form={form}
@@ -102,6 +126,8 @@ const SearchForm = ({ form, onSubmit }) => {
               handleSelect={handleEndDateSelect}
               title={endDate || 'Ngày trả xe'}
               name='endDate'
+              minDate={endDateConstraints.minDate}
+              maxDate={endDateConstraints.maxDate}
             />
             <TimePicker
               form={form}

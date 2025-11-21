@@ -24,10 +24,12 @@ const CheckListCard = ({ checklist, typeLabel, badgeColor }) => {
       return { label: 'Trung bình', variant: 'secondary', color: 'text-yellow-600' }
     return { label: 'Thấp', variant: 'destructive', color: 'text-red-600' }
   }
+
   const formatDateTime = (dateTimeString) => {
     if (!dateTimeString) return 'N/A'
     return format(new Date(dateTimeString), 'dd/MM/yyyy HH:mm')
   }
+
   return (
     <Card className='mb-8'>
       <CardHeader>
@@ -95,7 +97,7 @@ const CheckListCard = ({ checklist, typeLabel, badgeColor }) => {
             <div className='flex flex-wrap gap-3'>
               <img
                 src={checklist.img}
-                alt={`Vehicle ${typeLabel}`}
+                alt={`Xe ${typeLabel}`}
                 className='h-auto max-w-md rounded border object-cover'
                 onError={(e) => (e.target.style.display = 'none')}
               />
@@ -124,7 +126,7 @@ const CheckListDetailPage = () => {
         setCheckLists(Array.isArray(data) ? data : [data])
       } catch (error) {
         console.error(error)
-        setError('Failed to load checklist details')
+        setError('Không thể tải chi tiết biên bản')
       } finally {
         setLoading(false)
       }
@@ -137,12 +139,13 @@ const CheckListDetailPage = () => {
 
   if (loading) return <Loader />
 
-  if (error) return <div>Error</div>
+  if (error)
+    return <div className='flex h-64 items-center justify-center text-red-600'>{error}</div>
 
   if (!checkLists || checkLists.length === 0) {
     return (
       <div className='flex h-64 flex-col items-center justify-center space-y-4'>
-        <p>Không tìm thấy checklist</p>
+        <p>Không tìm thấy biên bản</p>
         <Button onClick={() => navigate('/dashboard/check-list')}>Quay lại danh sách</Button>
       </div>
     )
@@ -177,35 +180,35 @@ const CheckListDetailPage = () => {
         </div>
       </div>
 
-      {/* Card Check In */}
+      {/* Card Biên bản giao xe */}
       {checkInList && (
         <CheckListCard
           checklist={checkInList}
-          typeLabel='Check In'
+          typeLabel='Biên bản giao xe'
           badgeColor='bg-green-100 text-green-800 hover:bg-green-100'
         />
       )}
 
-      {/* Card Check Out */}
+      {/* Card Biên bản nhận xe */}
       {checkOutList && (
         <CheckListCard
           checklist={checkOutList}
-          typeLabel='Check Out'
+          typeLabel='Biên bản nhận xe'
           badgeColor='bg-blue-100 text-blue-800 hover:bg-blue-100'
         />
       )}
 
-      {/* Battery Difference */}
+      {/* Chênh lệch pin */}
       {batteryDifference !== null && (
         <Card>
           <CardContent>
             <div className='bg-muted/40 mt-4 rounded-lg p-4'>
               <p className='mb-2 font-semibold'>Chênh lệch mức pin:</p>
               <div className='flex items-center gap-2'>
-                <span className='text-muted-foreground'>Pin khi nhận:</span>
+                <span className='text-muted-foreground'>Pin khi giao:</span>
                 <span className='font-bold'>{checkInList.currentBattery?.toFixed(0)}%</span>
                 <span className='text-muted-foreground'>→</span>
-                <span className='text-muted-foreground'>Pin khi trả:</span>
+                <span className='text-muted-foreground'>Pin khi nhận:</span>
                 <span className='font-bold'>{checkOutList.currentBattery?.toFixed(0)}%</span>
                 <span className='text-muted-foreground'>=</span>
                 <span

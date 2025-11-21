@@ -13,6 +13,16 @@ import { Separator } from '@/components/ui/separator'
 import PaymentQRDialog from '../components/PaymentQRDialog'
 import { Spinner } from '@/components/ui/spinner'
 import { Input } from '@/components/ui/input'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 
 const InfoRow = ({ label, children }) => (
   <div className='space-y-1'>
@@ -32,6 +42,7 @@ const RentalDetailPage = () => {
   const [isContractLoading, setIsContractLoading] = useState(false)
   const [isCancelLoading, setIsCancelLoading] = useState(false)
   const [usedPoints, setUsedPoints] = useState(0)
+  const [showCancelDialog, setShowCancelDialog] = useState(false)
 
   console.log('rental:', rental)
 
@@ -118,6 +129,7 @@ const RentalDetailPage = () => {
   const handleCancelRental = async () => {
     try {
       setIsCancelLoading(true)
+      setShowCancelDialog(false)
       const res = await rentalService.cancelRental(id)
       toast.success(res.message || 'Hủy hợp đồng thành công')
       fetchRentalDetail()
@@ -244,7 +256,12 @@ const RentalDetailPage = () => {
                     </Button>
                   )}
                   {(isContractPending || isPending) && (
-                    <Button onClick={handleCancelRental} variant='destructive' className='text-sm'>
+                    <Button
+                      onClick={() => setShowCancelDialog(true)}
+                      variant='destructive'
+                      className='text-sm'
+                      disabled={isCancelLoading}
+                    >
                       {isCancelLoading ? <Spinner /> : 'Hủy hợp đồng'}
                     </Button>
                   )}
@@ -479,6 +496,30 @@ const RentalDetailPage = () => {
         rentalId={id}
         onPaymentSuccess={handlePaymentSuccess}
       />
+
+      {/* Cancel Confirmation Dialog */}
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xác nhận hủy hợp đồng</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc chắn muốn hủy hợp đồng #{rental?.id}?
+              <br />
+              <br />
+              Hành động này không thể hoàn tác và tiền đặt cọc sẽ được hoàn lại cho khách hàng.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy bỏ</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelRental}
+              className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+            >
+              Xác nhận hủy
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

@@ -17,6 +17,7 @@ import { searchCars } from '@/store/actions/searchActions'
 import { formatDate } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const SearchDialog = ({ triggerChildren }) => {
   const dispatch = useDispatch()
@@ -43,7 +44,7 @@ const SearchDialog = ({ triggerChildren }) => {
     dispatch(setSearchForm(values))
     setOpen(false)
     navigate('/cars')
-    await dispatch(
+    const result = await dispatch(
       searchCars({
         brands: [],
         categories: [],
@@ -55,6 +56,10 @@ const SearchDialog = ({ triggerChildren }) => {
         endTime: `${formatDate(values.endDate)}T${values.endHour}:00`
       })
     )
+
+    if (searchCars.rejected.match(result)) {
+      toast.error(result.payload)
+    }
   }
 
   return (

@@ -24,7 +24,7 @@ const HistoryPage = () => {
   // Debounce search term
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500)
 
-  const RESERVATION_STATUSES = ['PENDING', 'CONFIRM', 'COMPLETED', 'CANCELLED', 'OVERDUE']
+  const RESERVATION_STATUSES = ['PENDING', 'CONFIRM', 'COMPLETED', 'CANCELLED', 'OVERDUE', 'FAILED']
 
   const RENTAL_STATUSES = ['CONTRACTING', 'CONFIRM', 'ONGOING', 'OVERDUE', 'COMPLETED', 'CANCELLED']
 
@@ -35,7 +35,8 @@ const HistoryPage = () => {
     CANCELLED: 'Đã hủy',
     CONTRACTING: 'Chờ ký hợp đồng',
     ONGOING: 'Đang thuê',
-    OVERDUE: 'Quá hạn'
+    OVERDUE: 'Quá hạn',
+    FAILED: 'Thất bại'
   }
 
   useEffect(() => {

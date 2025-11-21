@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { ScrollArea } from './ui/scroll-area'
 import { Clock } from 'lucide-react'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { parse, isSameDay } from 'date-fns'
 
 const TimePicker = ({ form, handleSelect, title, name, selectedDate, type }) => {
   const [open, setOpen] = useState(false)
@@ -12,14 +13,21 @@ const TimePicker = ({ form, handleSelect, title, name, selectedDate, type }) => 
   const currentDate = new Date()
   const currentHour = currentDate.getHours()
   const currentMinutes = currentDate.getMinutes()
-  const isToday =
-    selectedDate &&
-    new Date(selectedDate.split('/').reverse().join('-')).toDateString() ===
-      currentDate.toDateString()
-  const addHour = currentMinutes === 0 ? 3 : 4
+
+  const selectedDateObj = selectedDate ? parse(selectedDate, 'dd/MM/yyyy', new Date()) : null
+
+  const isToday = selectedDateObj && isSameDay(selectedDateObj, currentDate)
+
+  // Lấy startDate và startHour nếu đang chọn endHour
+  const startDate = type === 'endHour' ? form.watch('startDate') : null
+  const startHour = type === 'endHour' ? form.watch('startHour') : null
+  const startDateObj = startDate ? parse(startDate, 'dd/MM/yyyy', new Date()) : null
+  const isSameAsStartDate =
+    selectedDateObj && startDateObj && isSameDay(selectedDateObj, startDateObj)
 
   const generateHours = () => {
     const hours = []
+    const addHour = currentMinutes === 0 ? 3 : 4
 
     for (let i = 0; i < 24; i++) {
       const hourString = i.toString().padStart(2, '0')
@@ -27,11 +35,19 @@ const TimePicker = ({ form, handleSelect, title, name, selectedDate, type }) => 
 
       let disabled = false
 
-      if (isToday) {
-        if (type === 'startHour') {
+      if (type === 'startHour' && isToday) {
+        // startHour: disable nếu nhỏ hơn currentHour + addHour
+        disabled = i < currentHour + addHour
+      } else if (type === 'endHour') {
+        if (isToday) {
+          // endHour trong ngày hôm nay: disable nếu nhỏ hơn currentHour + addHour
           disabled = i < currentHour + addHour
-        } else {
-          disabled = i < currentHour + addHour + 4
+        }
+
+        if (isSameAsStartDate && startHour) {
+          // endHour cùng ngày với startDate: disable nếu < startHour + 3
+          const startHourValue = parseInt(startHour.split(':')[0])
+          disabled = disabled || i < startHourValue + 4
         }
       }
 
@@ -73,7 +89,17 @@ const TimePicker = ({ form, handleSelect, title, name, selectedDate, type }) => 
       }
       setTimeout(scrollToCurrentTime, 100)
     }
-  }, [open, selectedDate, hours, form, name, handleSelect, scrollToCurrentTime])
+  }, [
+    open,
+    selectedDate,
+    startDate,
+    startHour,
+    hours,
+    form,
+    name,
+    handleSelect,
+    scrollToCurrentTime
+  ])
 
   return (
     <FormField
