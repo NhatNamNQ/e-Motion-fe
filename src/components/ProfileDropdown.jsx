@@ -81,12 +81,14 @@ const ProfileDropdown = () => {
               Hồ sơ
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to='/account/history'>
-              <Settings />
-              Lịch sử đặt chỗ
-            </Link>
-          </DropdownMenuItem>
+          {role === 'ROLE_USER' && (
+            <DropdownMenuItem asChild>
+              <Link to='/account/history'>
+                <Settings />
+                Lịch sử đặt chỗ
+              </Link>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
