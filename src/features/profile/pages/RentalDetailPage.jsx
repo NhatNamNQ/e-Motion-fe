@@ -78,6 +78,7 @@ const RentalDetailPage = () => {
   const checkOutFee = rental?.rentalCheckLists[1]?.fee || 0
   const vehicleLogFee = rental?.vehicleLog?.cost || 0
   const isPendingExtendFee = rental?.status === 'PENDING_EXTEND_FEE'
+  const isPendingFee = rental?.status === 'PENDING_FEE'
   const isPending = rental?.status === 'PENDING'
   const isCanceled = rental.status === 'CANCELLED'
   const isContractPending = rental.status === 'CONTRACTING' && rental.contractStatus === 'PENDING'
@@ -258,10 +259,16 @@ const RentalDetailPage = () => {
             </div>
             <Separator />
             <div className='flex items-start justify-between gap-2'>
-              <span className='flex-1 text-base font-bold'>Tiền hoàn cọc:</span>
+              <span className='flex-1 text-base font-bold'>
+                {rental.rentalDeposit.amount + reservationFee - checkOutFee - vehicleLogFee >= 0
+                  ? 'Tiền hoàn cọc:'
+                  : 'Tiền cần thanh toán thêm:'}
+              </span>
               <span className='flex-shrink-0 text-right text-lg font-bold'>
                 {formatCurrency(
-                  rental.rentalDeposit.amount + reservationFee - checkOutFee - vehicleLogFee
+                  Math.abs(
+                    rental.rentalDeposit.amount + reservationFee - checkOutFee - vehicleLogFee
+                  )
                 )}
               </span>
             </div>
@@ -290,7 +297,7 @@ const RentalDetailPage = () => {
           </div>
         )}
 
-        {isPendingExtendFee && (
+        {(isPendingExtendFee || isPendingFee) && (
           <div className='flex justify-end'>
             <Button
               size='sm'
