@@ -17,8 +17,7 @@ const PriceBreakdown = ({ bookingFees }) => {
         <span className='text-secondary'>{formatCurrency(total)}</span>
       </div>
       <p className='text-xs text-gray-400'>
-        Thanh toán khi nhận xe và kiểm tra xe, không nhận cọc xe máy. Lưu ý: Mức cọc sẽ cao hơn đối
-        với bằng lái mới được cấp dưới 1 năm.
+        Thanh toán khi nhận xe và kiểm tra xe, không nhận cọc xe máy.
       </p>
     </div>
   )

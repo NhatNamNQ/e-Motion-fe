@@ -13,7 +13,7 @@ const MainLayout = () => {
   return (
     <div className='flex min-h-screen flex-col'>
       <Header />
-      <main className='flex-1'>
+      <main className='mb-4 flex-1'>
         <Outlet />
       </main>
       <Footer />

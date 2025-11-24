@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select'
-import { Upload, X, Eye } from 'lucide-react'
+import { Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { carBrands, carCategories } from '../constants/carConfig'
@@ -74,6 +74,9 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
       category: mode.car?.category || '',
       seats: mode.car?.seats || 2,
       pricePer4Hours: mode.car?.pricePer4Hours || 0,
+      pricePer8Hours: mode.car?.pricePer8Hours || 0,
+      pricePer12Hours: mode.car?.pricePer12Hours || 0,
+      pricePerDay: mode.car?.pricePerDay || 0,
       depositFee: mode.car?.depositFee || 0,
       point: mode.car?.point || 0,
       consumptionRate: mode.car?.consumptionRate || 0,
@@ -331,7 +334,7 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
             <div className='grid gap-4 md:grid-cols-3'>
               <div>
                 <Label className='text-sm font-medium' htmlFor='pricePer4Hours'>
-                  Giá (4 giờ)
+                  Giá 4 giờ (VNĐ)
                 </Label>
                 <Input
                   id='pricePer4Hours'
@@ -346,8 +349,56 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
               </div>
 
               <div>
+                <Label className='text-sm font-medium' htmlFor='pricePer8Hours'>
+                  Giá 8 giờ (VNĐ)
+                </Label>
+                <Input
+                  id='pricePer8Hours'
+                  type='number'
+                  step='any'
+                  {...register('pricePer8Hours', { valueAsNumber: true })}
+                  className='mt-1'
+                />
+                {errors.pricePer8Hours && (
+                  <p className='mt-1 text-xs text-red-500'>{errors.pricePer8Hours.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Label className='text-sm font-medium' htmlFor='pricePer12Hours'>
+                  Giá 12 giờ (VNĐ)
+                </Label>
+                <Input
+                  id='pricePer12Hours'
+                  type='number'
+                  step='any'
+                  {...register('pricePer12Hours', { valueAsNumber: true })}
+                  className='mt-1'
+                />
+                {errors.pricePer12Hours && (
+                  <p className='mt-1 text-xs text-red-500'>{errors.pricePer12Hours.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Label className='text-sm font-medium' htmlFor='pricePerDay'>
+                  Giá 1 ngày (VNĐ)
+                </Label>
+                <Input
+                  id='pricePerDay'
+                  type='number'
+                  step='any'
+                  {...register('pricePerDay', { valueAsNumber: true })}
+                  className='mt-1'
+                />
+                {errors.pricePerDay && (
+                  <p className='mt-1 text-xs text-red-500'>{errors.pricePerDay.message}</p>
+                )}
+              </div>
+
+              <div>
                 <Label className='text-sm font-medium' htmlFor='depositFee'>
-                  Tiền đặt cọc
+                  Tiền đặt cọc (VNĐ)
                 </Label>
                 <Input
                   id='depositFee'
@@ -362,11 +413,11 @@ const CarForm = ({ mode, handleSubmitCar, setShowCarForm, stations }) => {
               </div>
 
               <div>
-                <Label className='text-sm font-medium' htmlFor='consumptionRate'>
+                <Label className='text-sm font-medium' htmlFor='point'>
                   Điểm giảm giá
                 </Label>
                 <Input
-                  id='consumptionRate'
+                  id='point'
                   type='number'
                   step='any'
                   {...register('point', { valueAsNumber: true })}
