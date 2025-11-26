@@ -103,13 +103,13 @@ const FilterSidebar = ({
   const handleClearAll = () => {
     setLocalBrands([])
     setLocalCategories([])
-    setLocalPriceRange([0, 1000000])
+    setLocalPriceRange([0, 100000000])
     setLocalSeat(null)
     setLocalStation(null)
     onFilterChange({
       brands: [],
       categories: [],
-      priceRange: [0, 1000000],
+      priceRange: [0, 100000000],
       seat: null,
       station: null
     })
@@ -119,7 +119,7 @@ const FilterSidebar = ({
     localBrands.length > 0 ||
     localCategories.length > 0 ||
     localPriceRange[0] > 0 ||
-    localPriceRange[1] < 1000000 ||
+    localPriceRange[1] < 100000000 ||
     localSeat !== null ||
     localStation !== null
 

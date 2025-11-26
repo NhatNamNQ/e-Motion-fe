@@ -3,7 +3,7 @@ import { Button } from '../ui/button'
 import DatePicker from '../DatePicker'
 import Combobox from '../Combobox'
 import TimePicker from '../TimePicker'
-import { format, parse, isBefore, isEqual, addMonths } from 'date-fns'
+import { format, parse, isBefore, isEqual, addMonths, addDays } from 'date-fns'
 import { useEffect, useState } from 'react'
 
 const locations = [
@@ -69,8 +69,6 @@ const SearchForm = ({ form, onSubmit, type }) => {
     }
   }
 
-  const endDateConstraints = getEndDateConstraints()
-
   const getStartDateConstraints = () => {
     const today = new Date()
     return {
@@ -79,7 +77,18 @@ const SearchForm = ({ form, onSubmit, type }) => {
     }
   }
 
+  const getEndTimeConstraints = () => {
+    if (!startDate) return {}
+
+    const parsedStartDate = parse(startDate, 'dd/MM/yyyy', new Date())
+    return {
+      maxDate: addDays(parsedStartDate, 29)
+    }
+  }
+
   const startDateConstraints = getStartDateConstraints()
+  const endDateConstraints = getEndDateConstraints()
+  const endTimeConstraints = getEndTimeConstraints()
 
   return (
     <Form {...form}>
@@ -129,7 +138,7 @@ const SearchForm = ({ form, onSubmit, type }) => {
               title={endDate || 'Ngày trả xe'}
               name='endDate'
               minDate={endDateConstraints.minDate}
-              maxDate={endDateConstraints.maxDate}
+              maxDate={endTimeConstraints.maxDate}
             />
             <TimePicker
               form={form}
@@ -141,6 +150,15 @@ const SearchForm = ({ form, onSubmit, type }) => {
             />
           </div>
           {dateTimeError && <p className='text-sm text-red-500'>{dateTimeError}</p>}
+        </div>
+
+        <div className='space-y-3 rounded-lg bg-yellow-50 p-4'>
+          <div className='flex gap-3'>
+            <div className='mt-1 flex-shrink-0'></div>
+            <p className='text-sm text-gray-700'>
+              Chỉ được thuê tối đa 1 tháng (30 ngày) kể từ ngày nhận xe.
+            </p>
+          </div>
         </div>
 
         <div className='pt-4'>

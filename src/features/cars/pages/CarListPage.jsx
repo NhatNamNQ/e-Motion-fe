@@ -165,15 +165,15 @@ const CarListPage = () => {
   useEffect(() => {
     dispatch(
       searchCars({
-        brands: state.selectedBrands,
-        categories: state.selectedCategories,
+        brands: state.selectedBrands || null,
+        categories: state.selectedCategories || null,
         minPrice: state.priceRange[0] || 0.1,
-        maxPrice: state.priceRange[1] || 100000000,
+        maxPrice: state.priceRange[1] || 1000000000,
         seats: state.selectedSeat || null,
         stationId: state.selectedStation || null,
         page: state.currentPage,
         limit: 8,
-        search: state.search,
+        search: state.search || '',
         city,
         startTime,
         endTime

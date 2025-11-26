@@ -28,21 +28,22 @@ const PriceFilter = ({ priceRange, onPriceChange, isOpen, onOpenChange }) => {
 
   const handleApply = () => {
     const minPrice = Math.max(0, parseInt(localMinPrice) || 0)
-    const maxPrice = parseInt(localMaxPrice) || 1000000
+    const maxPrice = parseInt(localMaxPrice) || 100000000
 
     if (maxPrice < minPrice) {
       setError('Giá cao nhất phải lớn hơn hoặc bằng giá thấp nhất')
       return
     }
 
-    onPriceChange([minPrice, Math.min(1000000, maxPrice)])
+    onPriceChange([minPrice, Math.min(100000000, maxPrice)])
     onOpenChange(false)
     setError('')
   }
 
   const handleClear = () => {
     setLocalMinPrice(0)
-    setLocalMaxPrice(1000000)
+    setLocalMaxPrice(100000000)
+    onPriceChange([0, 100000000])
     setError('')
   }
 
@@ -50,7 +51,7 @@ const PriceFilter = ({ priceRange, onPriceChange, isOpen, onOpenChange }) => {
     return parseInt(price || 0).toLocaleString('vi-VN')
   }
 
-  const hasValue = priceRange[0] > 0 || priceRange[1] < 1000000
+  const hasValue = priceRange[0] > 0 || priceRange[1] < 100000000
 
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
@@ -97,7 +98,7 @@ const PriceFilter = ({ priceRange, onPriceChange, isOpen, onOpenChange }) => {
                   id='minPrice'
                   type='number'
                   min='0'
-                  max='1000000'
+                  max='100000000'
                   step='10000'
                   value={localMinPrice}
                   onChange={handleMinPriceChange}
@@ -126,7 +127,7 @@ const PriceFilter = ({ priceRange, onPriceChange, isOpen, onOpenChange }) => {
                   id='maxPrice'
                   type='number'
                   min='0'
-                  max='1000000'
+                  max='100000000'
                   step='10000'
                   value={localMaxPrice}
                   onChange={handleMaxPriceChange}
@@ -136,7 +137,7 @@ const PriceFilter = ({ priceRange, onPriceChange, isOpen, onOpenChange }) => {
                     }
                   }}
                   className='pr-12'
-                  placeholder='1000000'
+                  placeholder='100000000'
                 />
                 <span className='absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-500'>
                   đ
@@ -197,7 +198,7 @@ const PriceFilter = ({ priceRange, onPriceChange, isOpen, onOpenChange }) => {
                   size='sm'
                   onClick={() => {
                     setLocalMinPrice(1000000)
-                    setLocalMaxPrice(1000000)
+                    setLocalMaxPrice(100000000)
                     setError('')
                   }}
                   className='text-xs'
