@@ -65,7 +65,11 @@ const ReservationsPage = () => {
   })
 
   const handleRowClick = (row) => {
-    navigate(`/dashboard/reservations/${row.code}`)
+    navigate(`/dashboard/reservations/${row.code}`, {
+      state: {
+        id: row.id
+      }
+    })
   }
 
   useEffect(() => {

@@ -2,9 +2,9 @@ import instance from '@/lib/axios'
 import { handleError } from '@/lib/handleError'
 
 export const reservationService = {
-  getReservationByCode: async (code) => {
+  getReservationById: async (id) => {
     try {
-      const { data } = await instance.get(`/reservations/${code}`)
+      const { data } = await instance.get(`/reservations/${id}`)
       return data.data
     } catch (error) {
       throw handleError(error)

@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -35,6 +35,8 @@ const InfoRow = ({ label, children }) => (
 
 const ReservationDetailPage = () => {
   const { code } = useParams()
+  const location = useLocation()
+  const id = location?.state?.id
   const navigate = useNavigate()
   const user = useSelector(selectUser)
   const [reservation, setReservation] = useState(null)
@@ -46,10 +48,10 @@ const ReservationDetailPage = () => {
 
   useEffect(() => {
     const fetchReservation = async () => {
-      if (!code) return
+      if (!id) return
       try {
         setLoading(true)
-        const data = await reservationService.getReservationByCode(code)
+        const data = await reservationService.getReservationById(id)
         setReservation(data)
       } catch (error) {
         toast.error(error.message)
@@ -58,7 +60,7 @@ const ReservationDetailPage = () => {
       }
     }
     fetchReservation()
-  }, [code])
+  }, [id])
 
   const handleCreateRental = async () => {
     try {
@@ -95,8 +97,8 @@ const ReservationDetailPage = () => {
   if (!reservation) {
     return (
       <div className='flex h-64 flex-col items-center justify-center space-y-4'>
-        <p>Reservation not found</p>
-        <Button onClick={() => navigate('/dashboard/reservations')}>Back to Reservations</Button>
+        <p>Không tìm thấy đơn đặt chỗ</p>
+        <Button onClick={() => navigate('/dashboard/reservations')}>Trở về</Button>
       </div>
     )
   }
