@@ -15,7 +15,7 @@ const locations = [
   }
 ]
 
-const SearchForm = ({ form, onSubmit }) => {
+const SearchForm = ({ form, onSubmit, type }) => {
   const { startDate, endDate, location, startHour, endHour } = form.watch()
   const [dateTimeError, setDateTimeError] = useState('')
 
@@ -84,17 +84,19 @@ const SearchForm = ({ form, onSubmit }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)} className='space-y-6'>
-        <div className='space-y-2'>
-          <label className='text-sm font-medium text-gray-700'>Địa điểm nhận xe</label>
-          <Combobox
-            handleSelect={handleLocationSelect}
-            list={locations}
-            title={location ? location : 'Chọn địa điểm cần thuê'}
-            name='location'
-            form={form}
-            width={320}
-          />
-        </div>
+        {type !== 'calculateFees' && (
+          <div className='space-y-2'>
+            <label className='text-sm font-medium text-gray-700'>Địa điểm nhận xe</label>
+            <Combobox
+              handleSelect={handleLocationSelect}
+              list={locations}
+              title={location ? location : 'Chọn địa điểm cần thuê'}
+              name='location'
+              form={form}
+              width={320}
+            />
+          </div>
+        )}
 
         <div className='space-y-2'>
           <label className='text-sm font-medium text-gray-700'>Thời gian nhận xe</label>

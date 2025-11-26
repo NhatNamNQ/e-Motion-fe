@@ -123,7 +123,7 @@ const CheckOutPage = () => {
           className='text-secondary hover:text-secondary/80'
         >
           <ArrowLeft className='mr-1 h-4 w-4' />
-          Back to Rental Details
+          Quay lại chi tiết thuê xe
         </Button>
       </div>
 
@@ -131,11 +131,9 @@ const CheckOutPage = () => {
       <div>
         <h1 className='flex items-center gap-2 text-2xl font-bold'>
           <ClipboardList className='h-6 w-6' />
-          Vehicle Check-Out
+          Trả xe
         </h1>
-        <p className='text-muted-foreground'>
-          Complete the vehicle check-out process for rental #{id}
-        </p>
+        <p className='text-muted-foreground'>Hoàn thành quy trình trả xe cho đơn thuê #{id}</p>
       </div>
 
       {/* Check-Out Form */}
@@ -143,7 +141,7 @@ const CheckOutPage = () => {
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <Car className='h-5 w-5' />
-            Check-Out Information
+            Thông tin trả xe
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -156,9 +154,9 @@ const CheckOutPage = () => {
                   name='type'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Type</FormLabel>
+                      <FormLabel>Loại</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder='CHECK_OUT' readOnly className='bg-gray-50' />
+                        <Input {...field} placeholder='TRẢ XE' readOnly className='bg-gray-50' />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -171,7 +169,7 @@ const CheckOutPage = () => {
                   name='currentBattery'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Current Battery (%)</FormLabel>
+                      <FormLabel>Pin hiện tại (%)</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -193,7 +191,7 @@ const CheckOutPage = () => {
                   name='img'
                   render={() => (
                     <FormItem>
-                      <FormLabel>Vehicle Image</FormLabel>
+                      <FormLabel>Hình ảnh xe</FormLabel>
                       <FormControl>
                         <div className='space-y-4'>
                           {/* File Input */}
@@ -213,11 +211,11 @@ const CheckOutPage = () => {
                                 disabled={uploadingImage}
                               >
                                 {uploadingImage ? (
-                                  'Uploading...'
+                                  'Đang tải lên...'
                                 ) : (
                                   <>
                                     <Upload className='mr-2 h-4 w-4' />
-                                    Upload
+                                    Tải lên
                                   </>
                                 )}
                               </Button>
@@ -229,7 +227,7 @@ const CheckOutPage = () => {
                             <div className='relative inline-block'>
                               <img
                                 src={imagePreviews[0].url}
-                                alt='Preview'
+                                alt='Xem trước'
                                 className='h-32 w-32 rounded-lg border object-cover'
                               />
                               <Button
@@ -247,15 +245,13 @@ const CheckOutPage = () => {
                           {/* Uploaded Image Display */}
                           {form.watch('img') && (
                             <div className='mt-2'>
-                              <p className='text-sm text-green-600'>
-                                ✓ Image uploaded successfully
-                              </p>
+                              <p className='text-sm text-green-600'>✓ Tải hình ảnh thành công</p>
                             </div>
                           )}
                         </div>
                       </FormControl>
                       <FormDescription>
-                        Upload an image of the vehicle. Supported formats: JPEG, PNG, WebP (max 5MB)
+                        Tải lên hình ảnh xe. Định dạng hỗ trợ: JPEG, PNG, WebP (tối đa 5MB)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -270,7 +266,7 @@ const CheckOutPage = () => {
                   variant='outline'
                   onClick={() => navigate(`/dashboard/rentals/${id}`)}
                 >
-                  Cancel
+                  Hủy
                 </Button>
                 <Button
                   type='submit'
@@ -278,8 +274,8 @@ const CheckOutPage = () => {
                   disabled={form.formState.isSubmitting || uploadingImage}
                 >
                   {form.formState.isSubmitting || uploadingImage
-                    ? 'Processing...'
-                    : 'Complete Check-Out'}
+                    ? 'Đang xử lý...'
+                    : 'Hoàn thành trả xe'}
                 </Button>
               </div>
             </form>

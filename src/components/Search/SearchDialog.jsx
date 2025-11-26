@@ -6,7 +6,6 @@ import {
   DialogTrigger,
   DialogDescription
 } from '@/components/ui/dialog'
-import SearchBar from './SearchBar'
 import SearchForm from './SearchForm'
 import { useForm } from 'react-hook-form'
 

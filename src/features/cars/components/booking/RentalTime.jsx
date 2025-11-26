@@ -49,10 +49,9 @@ const RentalTime = () => {
       </DialogTrigger>
       <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
-          <DialogTitle>Tìm xe</DialogTitle>
-          <DialogDescription>Nhập thông tin để tìm chiếc xe phù hợp với bạn.</DialogDescription>
+          <DialogTitle>Thời gian thuê</DialogTitle>
         </DialogHeader>
-        <SearchForm form={form} onSubmit={onSubmit} />
+        <SearchForm form={form} onSubmit={onSubmit} type='calculateFees' />
       </DialogContent>
     </Dialog>
   )
