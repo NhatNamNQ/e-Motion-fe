@@ -59,7 +59,7 @@ const BookingForm = ({ car, bookingFees, searchForm, onSubmit, submitLoading, us
             <div>
               <div className='text-sm text-gray-600'>Email người thuê</div>
               <div className='font-medium text-gray-800'>
-                {user.email || 'email sẽ được cập nhật'}
+                {user?.email || 'email sẽ được cập nhật'}
               </div>
             </div>
           </div>

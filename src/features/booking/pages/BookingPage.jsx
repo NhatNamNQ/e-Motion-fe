@@ -22,7 +22,7 @@ const BookingPage = () => {
 
   const authUser = useSelector(selectUser)
   const renterUser = useSelector((state) => state.renter.user)
-  const user = authUser.role !== 'ROLE_USER' ? renterUser : authUser
+  const user = authUser?.role !== 'ROLE_USER' ? renterUser : authUser
 
   const [isLoading, setIsLoading] = useState(false)
   const car = useSelector(selectSelectedCar)

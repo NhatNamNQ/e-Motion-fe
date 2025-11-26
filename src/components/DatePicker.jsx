@@ -33,7 +33,6 @@ const DatePicker = ({ form, handleSelect, title, name, minDate, maxDate }) => {
             <PopoverContent
               className='w-auto p-0'
               align='start'
-              side={name === 'startDate' ? 'bottom' : 'top'}
               sideOffset={4}
               avoidCollisions={false}
             >
