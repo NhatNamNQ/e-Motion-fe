@@ -14,7 +14,7 @@ const PaymentResultPage = () => {
         navigate(`/account/rentals/${payment.rentalResponse.id}`)
         break
       case 'PENALTY_FEE_RENTAL':
-        navigate(`/account/rentals`)
+        navigate(`/account/history`)
         break
       default:
         break
