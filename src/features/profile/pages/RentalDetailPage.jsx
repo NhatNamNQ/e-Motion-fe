@@ -75,6 +75,7 @@ const RentalDetailPage = () => {
   const rentFee = rental?.rentFee || 0
   const reservationFee = rental?.reservationDeposit?.amount || 0
   const rentalFee = rental?.rentalDeposit?.amount || 0
+  const discountFee = rental?.discountPoint * 1000 || 0
   const checkOutFee = rental?.rentalCheckLists[1]?.fee || 0
   const vehicleLogFee = rental?.vehicleLog?.cost || 0
   const isPendingExtendFee = rental?.status === 'PENDING_EXTEND_FEE'
@@ -233,11 +234,17 @@ const RentalDetailPage = () => {
                 {formatCurrency(rentalFee)}
               </span>
             </div>
+            <div className='flex items-start justify-between gap-2'>
+              <span className='flex-1 text-sm text-gray-700'>Giảm giá từ điểm:</span>
+              <span className='flex-shrink-0 text-right text-sm font-semibold text-green-600'>
+                -{formatCurrency(discountFee)}
+              </span>
+            </div>
             <Separator />
             <div className='flex items-start justify-between gap-2'>
               <span className='flex-1 text-base font-bold'>Tổng tiền check-in:</span>
               <span className='flex-shrink-0 text-right text-lg font-bold'>
-                {formatCurrency(rentalFee + rentFee)}
+                {formatCurrency(rentalFee + rentFee - discountFee)}
               </span>
             </div>
           </div>
