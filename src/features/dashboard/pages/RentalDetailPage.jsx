@@ -49,7 +49,7 @@ const RentalDetailPage = () => {
   const rentFee = rental?.rentFee || 0
   const reservationFee = rental?.reservationDeposit?.amount || 0
   const rentalFee = rental?.rentalDeposit?.amount || 0
-  const checkOutFee = rental?.rentalCheckLists[1]?.fee || 0
+  const checkOutFee = rental?.rentalCheckLists?.[1]?.fee || 0
   const vehicleLogFee = rental?.vehicleLog?.cost || 0
   const renterPoints = rental?.userPoint || 0
   const totalCheckoutFee = rentalFee + reservationFee
@@ -113,18 +113,18 @@ const RentalDetailPage = () => {
   const handleCreateCheckIn = () =>
     navigate(`/dashboard/rentals/${id}/check-in`, {
       state: {
-        currentBattery: rental.vehicle.batteryLevel
+        currentBattery: rental?.vehicle?.batteryLevel
       }
     })
   const handleCreateCheckOut = () => navigate(`/dashboard/rentals/${id}/check-out`)
 
   const handleCreateVehicleLog = () =>
     navigate(`/dashboard/rentals/${id}/vehicle-log`, {
-      state: { carId: rental.vehicle.id }
+      state: { carId: rental?.vehicle?.id }
     })
 
   const handleUpdateVehicleLog = () =>
-    navigate(`/dashboard/rentals/${id}/vehicle-log/edit/${rental.vehicleLog.id}`)
+    navigate(`/dashboard/rentals/${id}/vehicle-log/edit/${rental?.vehicleLog?.id}`)
 
   const handleCancelRental = async () => {
     try {
@@ -235,9 +235,11 @@ const RentalDetailPage = () => {
                 <InfoRow label='Email khách hàng'>{rental.userEmail}</InfoRow>
                 <InfoRow label='Bắt đầu thuê'>{formatDateTime(rental.startTime)}</InfoRow>
                 <InfoRow label='Kết thúc thuê'>{formatDateTime(rental.endTime)}</InfoRow>
-                <InfoRow label='Tên xe'>{rental.vehicle.name}</InfoRow>
-                <InfoRow label='Nhân viên phụ trách'>{rental.staff.fullName}</InfoRow>
-                <InfoRow label='Tên trạm'>{rental.vehicle.station.name}</InfoRow>
+                <InfoRow label='Tên xe'>{rental.vehicle?.name || 'N/A'}</InfoRow>
+                <InfoRow label='Nhân viên phụ trách'>
+                  {rental.staff?.fullName || 'Chưa phân công'}
+                </InfoRow>
+                <InfoRow label='Tên trạm'>{rental.vehicle?.station?.name || 'N/A'}</InfoRow>
                 {rental.contractStatus && (
                   <InfoRow label='Tình trạng hợp đồng'>{rental.contractStatus}</InfoRow>
                 )}

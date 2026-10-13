@@ -47,8 +47,17 @@ export const formatTime = (date) => {
 }
 
 export const uploadImage = async (file, folderName, subFolder = '') => {
-  const cloudName = import.meta.env.VITE_CLOUD_NAME
-  const uploadPreset = import.meta.env.VITE_UPLOAD_PRESET
+  const rawCloudName = import.meta.env.VITE_CLOUD_NAME
+  const cloudName =
+    rawCloudName && !rawCloudName.startsWith('encrypted:')
+      ? rawCloudName
+      : 'dxa6upoxl'
+
+  const rawPreset = import.meta.env.VITE_UPLOAD_PRESET
+  const uploadPreset =
+    rawPreset && !rawPreset.startsWith('encrypted:')
+      ? rawPreset
+      : 'ml_default'
 
   const formData = new FormData()
   formData.append('file', file)
