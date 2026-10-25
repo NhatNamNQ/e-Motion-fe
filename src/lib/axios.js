@@ -17,9 +17,7 @@ const processQueue = (error, token = null) => {
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL
 const baseURL =
-  rawBaseUrl && !rawBaseUrl.startsWith('encrypted:')
-    ? rawBaseUrl
-    : 'http://localhost:8080/api'
+  rawBaseUrl && !rawBaseUrl.startsWith('encrypted:') ? rawBaseUrl : 'http://localhost:8080/api'
 
 const instance = axios.create({
   baseURL,
